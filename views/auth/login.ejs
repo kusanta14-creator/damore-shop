@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>로그인 | DAMORE</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f3ef;
+      color: #111;
+    }
+    .wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      width: 100%;
+      max-width: 460px;
+      background: #fff;
+      border-radius: 24px;
+      padding: 36px 28px;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: 34px;
+    }
+    p {
+      margin: 0 0 24px;
+      color: #666;
+      font-size: 14px;
+    }
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    input {
+      width: 100%;
+      height: 52px;
+      padding: 0 14px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      font-size: 14px;
+      outline: none;
+    }
+    button {
+      width: 100%;
+      height: 54px;
+      border: 0;
+      border-radius: 999px;
+      background: #111;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .links {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 14px;
+    }
+    .links a {
+      color: #111;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .home-link {
+      display: inline-block;
+      margin-top: 16px;
+      font-size: 13px;
+      color: #666;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>로그인</h1>
+      <p>DAMORE 회원 로그인</p>
+
+      <form method="POST" action="/login">
+        <label>이메일</label>
+        <input type="text" name="email" required />
+
+        <label>비밀번호</label>
+        <input type="password" name="password" required />
+
+        <button type="submit">로그인</button>
+      </form>
+
+      <div class="links">
+        아직 회원이 아니면 <a href="/register">회원가입</a>
+      </div>
+
+      <a href="/" class="home-link">← 메인으로 돌아가기</a>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>주문 완료 | DAMORE</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #f5f3ef;
+      --white: #ffffff;
+      --black: #111111;
+      --muted: #6f6a63;
+      --line: rgba(17, 17, 17, 0.08);
+      --gold: #9d8660;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
+      --radius: 24px;
+      --max: 1180px;
+      --green: #1f7a4d;
+      --green-bg: #edf7f0;
+      --soft: #efe9df;
+    }
+
+    body {
+      font-family: "Pretendard", "Noto Sans KR", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--black);
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: 100%;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .page {
+      padding: 48px 0 80px;
+    }
+
+    .complete-card,
+    .order-card {
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .complete-card {
+      padding: 34px 30px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .complete-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 120px;
+      height: 38px;
+      padding: 0 16px;
+      border-radius: 999px;
+      background: var(--green-bg);
+      color: var(--green);
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .complete-title {
+      font-size: 38px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      letter-spacing: -0.03em;
+    }
+
+    .complete-desc {
+      color: var(--muted);
+      font-size: 15px;
+      margin-bottom: 18px;
+    }
+
+    .order-info {
+      display: inline-grid;
+      gap: 8px;
+      text-align: left;
+      background: #faf8f4;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px 18px;
+    }
+
+    .order-info-row {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+
+    .order-info-row span {
+      color: var(--muted);
+    }
+
+    .order-info-row strong {
+      color: var(--black);
+    }
+
+    .order-card {
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .item-list {
+      display: grid;
+      gap: 18px;
+    }
+
+    .item {
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .item:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .item-name {
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .item-meta {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .add-on-box {
+      margin-top: 8px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #faf8f4;
+      border: 1px solid var(--line);
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .add-on-box strong {
+      color: var(--black);
+    }
+
+    .item-price {
+      margin-top: 8px;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .total-box {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      display: grid;
+      gap: 10px;
+    }
+
+    .total-row,
+    .total-final {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .total-row {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .total-final {
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn {
+      min-width: 180px;
+      height: 52px;
+      padding: 0 20px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .btn-dark {
+      background: #111;
+      color: #fff;
+    }
+
+    .btn-light {
+      background: var(--soft);
+      color: #111;
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 0 16px;
+      }
+
+      .complete-card,
+      .order-card {
+        padding: 22px 20px;
+      }
+
+      .complete-title {
+        font-size: 30px;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%
+    const safeItems = Array.isArray(order.items) ? order.items : [];
+
+    const productOnlyTotal = safeItems.reduce((sum, item) => {
+      return sum + (Number(item.price || 0) * Number(item.quantity || 0));
+    }, 0);
+
+    const addOnGrandTotal = safeItems.reduce((sum, item) => {
+      return sum + Number(item.addOnTotal || 0);
+    }, 0);
+
+    const safeTotalPrice = Number(order.totalPrice || 0);
+  %>
+
+  <main class="page">
+    <div class="container">
+      <div class="complete-card">
+        <div class="complete-badge">ORDER COMPLETE</div>
+        <h1 class="complete-title">주문이 완료되었습니다</h1>
+        <p class="complete-desc">주문이 정상적으로 접수되었습니다. 결제 및 주문 정보를 아래에서 확인해주세요.</p>
+
+        <div class="order-info">
+          <div class="order-info-row">
+            <span>주문번호</span>
+            <strong><%= order.merchantUid || order._id %></strong>
+          </div>
+          <div class="order-info-row">
+            <span>주문자명</span>
+            <strong><%= order.customerName || '-' %></strong>
+          </div>
+          <div class="order-info-row">
+            <span>연락처</span>
+            <strong><%= order.phone || '-' %></strong>
+          </div>
+          <div class="order-info-row">
+            <span>주문상태</span>
+            <strong><%= order.status || '-' %></strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-card">
+        <h2 class="section-title">주문 상품</h2>
+
+        <div class="item-list">
+          <% safeItems.forEach((item) => { %>
+            <%
+              const addOnNames = Array.isArray(item.addOnNames) ? item.addOnNames : [];
+              const addOnTotal = Number(item.addOnTotal || 0);
+              const lineTotal = (Number(item.price || 0) * Number(item.quantity || 0)) + addOnTotal;
+            %>
+
+            <div class="item">
+              <div class="item-name"><%= item.name %></div>
+
+              <% if (item.option) { %>
+                <div class="item-meta">옵션: <%= item.option %></div>
+              <% } %>
+
+              <% if (item.color) { %>
+                <div class="item-meta">컬러: <%= item.color %></div>
+              <% } %>
+
+              <div class="item-meta">수량: <%= item.quantity %></div>
+
+              <% if (addOnNames.length > 0) { %>
+                <div class="add-on-box">
+                  <strong>추가상품</strong><br />
+                  <%= addOnNames.join(', ') %>
+                  <% if (addOnTotal > 0) { %>
+                    <br />추가금액: <strong><%= addOnTotal.toLocaleString() %>원</strong>
+                  <% } %>
+                </div>
+              <% } %>
+
+              <div class="item-price"><%= lineTotal.toLocaleString() %>원</div>
+            </div>
+          <% }) %>
+        </div>
+
+        <div class="total-box">
+          <div class="total-row">
+            <span>상품 합계</span>
+            <strong><%= productOnlyTotal.toLocaleString() %>원</strong>
+          </div>
+          <div class="total-row">
+            <span>추가상품 합계</span>
+            <strong><%= addOnGrandTotal.toLocaleString() %>원</strong>
+          </div>
+          <div class="total-row">
+            <span>배송비</span>
+            <strong>0원</strong>
+          </div>
+          <div class="total-final">
+            <span>최종 결제금액</span>
+            <span><%= safeTotalPrice.toLocaleString() %>원</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <a href="/" class="btn btn-dark">홈으로 가기</a>
+        <a href="/my-orders" class="btn btn-light">내 주문내역 보기</a>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>사이트 관리 | 관리자</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: Arial, sans-serif;
+      background: #f6f6f6;
+      color: #111;
+    }
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .topbar h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+    .top-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .top-links a {
+      text-decoration: none;
+      color: white;
+      background: #111;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+    .success-box {
+      margin-bottom: 20px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: #e8f5e9;
+      color: #1b5e20;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    form {
+      display: grid;
+      gap: 22px;
+    }
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.06);
+    }
+    .card h2 {
+      margin: 0 0 18px;
+      font-size: 20px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .full {
+      grid-column: 1 / -1;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    input[type="text"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      font-size: 14px;
+      background: #fff;
+    }
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+    .submit-box {
+      display: flex;
+      justify-content: flex-end;
+    }
+    button {
+      border: 0;
+      background: #111;
+      color: white;
+      padding: 14px 22px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .sns-list {
+      display: grid;
+      gap: 12px;
+    }
+    .sns-item {
+      display: grid;
+      grid-template-columns: 180px 1fr 180px auto;
+      gap: 10px;
+      align-items: end;
+      padding: 14px;
+      border: 1px solid #e7e1d8;
+      border-radius: 14px;
+      background: #faf7f3;
+    }
+    .sns-remove {
+      background: #f3d7d7;
+      color: #8a1f1f;
+      padding: 12px 14px;
+    }
+    .sns-add-wrap {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 14px;
+    }
+    .sns-add {
+      background: #ece5dc;
+      color: #111;
+    }
+    @media (max-width: 900px) {
+      .sns-item {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 760px) {
+      body { padding: 14px; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <h1>사이트 관리</h1>
+      <div class="top-links">
+        <a href="/admin/dashboard">관리자 홈</a>
+        <a href="/">사이트 보기</a>
+      </div>
+    </div>
+
+    <% if (typeof success !== 'undefined' && success) { %>
+      <div class="success-box">저장되었습니다.</div>
+    <% } %>
+
+    <form action="/admin/site-content" method="POST">
+      <div class="card">
+        <h2>홈 섹션 콘텐츠</h2>
+        <div class="grid">
+          <div class="full">
+            <label>철학 제목</label>
+            <input type="text" name="philosophyTitle" value="<%= siteContent.philosophyTitle || '' %>">
+          </div>
+          <div class="full">
+            <label>철학 설명</label>
+            <textarea name="philosophyDesc"><%= siteContent.philosophyDesc || '' %></textarea>
+          </div>
+          <div class="full">
+            <label>철학 키워드</label>
+            <input type="text" name="philosophyKeywords" value="<%= siteContent.philosophyKeywords || '' %>">
+          </div>
+
+          <div class="full">
+            <label>신상품 섹션 제목</label>
+            <input type="text" name="newSectionTitle" value="<%= siteContent.newSectionTitle || '' %>">
+          </div>
+          <div class="full">
+            <label>신상품 섹션 설명</label>
+            <textarea name="newSectionDesc"><%= siteContent.newSectionDesc || '' %></textarea>
+          </div>
+
+          <div class="full">
+            <label>컬렉션 제목</label>
+            <input type="text" name="collectionTitle" value="<%= siteContent.collectionTitle || '' %>">
+          </div>
+          <div class="full">
+            <label>컬렉션 설명</label>
+            <textarea name="collectionDesc"><%= siteContent.collectionDesc || '' %></textarea>
+          </div>
+
+          <div class="full">
+            <label>에디토리얼 제목</label>
+            <input type="text" name="editorialTitle" value="<%= siteContent.editorialTitle || '' %>">
+          </div>
+          <div class="full">
+            <label>에디토리얼 설명</label>
+            <textarea name="editorialDesc"><%= siteContent.editorialDesc || '' %></textarea>
+          </div>
+
+          <div class="full">
+            <label>하단 about 제목</label>
+            <input type="text" name="aboutTitle" value="<%= siteContent.aboutTitle || '' %>">
+          </div>
+          <div class="full">
+            <label>하단 about 설명</label>
+            <textarea name="aboutDesc"><%= siteContent.aboutDesc || '' %></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>브랜드 소개 페이지 상단</h2>
+        <div class="grid">
+          <div class="full">
+            <label>상단 눈썹문구</label>
+            <input type="text" name="aboutHeroEyebrow" value="<%= siteContent.aboutHeroEyebrow || '' %>">
+          </div>
+          <div class="full">
+            <label>상단 메인 제목</label>
+            <input type="text" name="aboutHeroTitle" value="<%= siteContent.aboutHeroTitle || '' %>">
+          </div>
+          <div class="full">
+            <label>상단 메인 설명</label>
+            <textarea name="aboutHeroDesc"><%= siteContent.aboutHeroDesc || '' %></textarea>
+          </div>
+
+          <div class="full">
+            <label>우측 이미지 박스 제목</label>
+            <input type="text" name="aboutImageBannerTitle" value="<%= siteContent.aboutImageBannerTitle || '' %>">
+          </div>
+          <div class="full">
+            <label>우측 이미지 박스 설명</label>
+            <textarea name="aboutImageBannerDesc"><%= siteContent.aboutImageBannerDesc || '' %></textarea>
+          </div>
+
+          <div>
+            <label>우측 글 박스 라벨</label>
+            <input type="text" name="aboutTextCardLabel" value="<%= siteContent.aboutTextCardLabel || '' %>">
+          </div>
+          <div>
+            <label>키워드 박스 제목</label>
+            <input type="text" name="aboutKeywordTitle" value="<%= siteContent.aboutKeywordTitle || '' %>">
+          </div>
+
+          <div class="full">
+            <label>우측 글 박스 제목</label>
+            <input type="text" name="aboutTextCardTitle" value="<%= siteContent.aboutTextCardTitle || '' %>">
+          </div>
+          <div class="full">
+            <label>우측 글 박스 설명</label>
+            <textarea name="aboutTextCardDesc"><%= siteContent.aboutTextCardDesc || '' %></textarea>
+          </div>
+          <div class="full">
+            <label>키워드 박스 내용</label>
+            <textarea name="aboutKeywordDesc"><%= siteContent.aboutKeywordDesc || '' %></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>브랜드 소개 - 아이덴티티 섹션</h2>
+        <div class="grid">
+          <div>
+            <label>섹션 라벨</label>
+            <input type="text" name="identitySectionLabel" value="<%= siteContent.identitySectionLabel || '' %>">
+          </div>
+          <div class="full">
+            <label>섹션 제목</label>
+            <input type="text" name="identitySectionTitle" value="<%= siteContent.identitySectionTitle || '' %>">
+          </div>
+          <div class="full">
+            <label>섹션 설명</label>
+            <textarea name="identitySectionDesc"><%= siteContent.identitySectionDesc || '' %></textarea>
+          </div>
+
+          <div>
+            <label>카드1 제목</label>
+            <input type="text" name="identity1Title" value="<%= siteContent.identity1Title || '' %>">
+          </div>
+          <div>
+            <label>카드1 설명</label>
+            <textarea name="identity1Desc"><%= siteContent.identity1Desc || '' %></textarea>
+          </div>
+
+          <div>
+            <label>카드2 제목</label>
+            <input type="text" name="identity2Title" value="<%= siteContent.identity2Title || '' %>">
+          </div>
+          <div>
+            <label>카드2 설명</label>
+            <textarea name="identity2Desc"><%= siteContent.identity2Desc || '' %></textarea>
+          </div>
+
+          <div>
+            <label>카드3 제목</label>
+            <input type="text" name="identity3Title" value="<%= siteContent.identity3Title || '' %>">
+          </div>
+          <div>
+            <label>카드3 설명</label>
+            <textarea name="identity3Desc"><%= siteContent.identity3Desc || '' %></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>브랜드 소개 - 장면 배너</h2>
+        <div class="grid">
+          <div>
+            <label>섹션 라벨</label>
+            <input type="text" name="sceneSectionLabel" value="<%= siteContent.sceneSectionLabel || '' %>">
+          </div>
+          <div class="full">
+            <label>섹션 제목</label>
+            <input type="text" name="sceneSectionTitle" value="<%= siteContent.sceneSectionTitle || '' %>">
+          </div>
+          <div class="full">
+            <label>섹션 설명</label>
+            <textarea name="sceneSectionDesc"><%= siteContent.sceneSectionDesc || '' %></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>브랜드 소개 - 무드 카드 3개</h2>
+        <div class="grid">
+          <div>
+            <label>섹션 라벨</label>
+            <input type="text" name="moodSectionLabel" value="<%= siteContent.moodSectionLabel || '' %>">
+          </div>
+          <div class="full">
+            <label>섹션 제목</label>
+            <input type="text" name="moodSectionTitle" value="<%= siteContent.moodSectionTitle || '' %>">
+          </div>
+          <div class="full">
+            <label>섹션 설명</label>
+            <textarea name="moodSectionDesc"><%= siteContent.moodSectionDesc || '' %></textarea>
+          </div>
+
+          <div>
+            <label>카드1 번호</label>
+            <input type="text" name="moodCard1Label" value="<%= siteContent.moodCard1Label || '' %>">
+          </div>
+          <div>
+            <label>카드1 제목</label>
+            <input type="text" name="moodCard1Title" value="<%= siteContent.moodCard1Title || '' %>">
+          </div>
+          <div class="full">
+            <label>카드1 설명</label>
+            <textarea name="moodCard1Desc"><%= siteContent.moodCard1Desc || '' %></textarea>
+          </div>
+
+          <div>
+            <label>카드2 번호</label>
+            <input type="text" name="moodCard2Label" value="<%= siteContent.moodCard2Label || '' %>">
+          </div>
+          <div>
+            <label>카드2 제목</label>
+            <input type="text" name="moodCard2Title" value="<%= siteContent.moodCard2Title || '' %>">
+          </div>
+          <div class="full">
+            <label>카드2 설명</label>
+            <textarea name="moodCard2Desc"><%= siteContent.moodCard2Desc || '' %></textarea>
+          </div>
+
+          <div>
+            <label>카드3 번호</label>
+            <input type="text" name="moodCard3Label" value="<%= siteContent.moodCard3Label || '' %>">
+          </div>
+          <div>
+            <label>카드3 제목</label>
+            <input type="text" name="moodCard3Title" value="<%= siteContent.moodCard3Title || '' %>">
+          </div>
+          <div class="full">
+            <label>카드3 설명</label>
+            <textarea name="moodCard3Desc"><%= siteContent.moodCard3Desc || '' %></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>푸터 관리</h2>
+        <div class="grid">
+          <div>
+            <label>브랜드명</label>
+            <input type="text" name="footerBrandName" value="<%= siteContent.footerBrandName || '' %>">
+          </div>
+          <div>
+            <label>고객 메뉴 타이틀</label>
+            <input type="text" name="footerCustomerTitle" value="<%= siteContent.footerCustomerTitle || '' %>">
+          </div>
+
+          <div class="full">
+            <label>브랜드 설명</label>
+            <textarea name="footerDesc"><%= siteContent.footerDesc || '' %></textarea>
+          </div>
+
+          <div>
+            <label>고객센터 라벨</label>
+            <input type="text" name="footerCsLabel" value="<%= siteContent.footerCsLabel || '' %>">
+          </div>
+          <div>
+            <label>고객센터 번호</label>
+            <input type="text" name="footerCsPhone" value="<%= siteContent.footerCsPhone || '' %>">
+          </div>
+
+          <div>
+            <label>운영시간 1</label>
+            <input type="text" name="footerCsTime1" value="<%= siteContent.footerCsTime1 || '' %>">
+          </div>
+          <div>
+            <label>운영시간 2</label>
+            <input type="text" name="footerCsTime2" value="<%= siteContent.footerCsTime2 || '' %>">
+          </div>
+
+          <div>
+            <label>BANK ACCOUNT 타이틀</label>
+            <input type="text" name="footerBankTitle" value="<%= siteContent.footerBankTitle || '' %>">
+          </div>
+          <div>
+            <label>예금주</label>
+            <input type="text" name="footerDepositor" value="<%= siteContent.footerDepositor || '' %>">
+          </div>
+
+          <div>
+            <label>계좌 1</label>
+            <input type="text" name="footerBank1" value="<%= siteContent.footerBank1 || '' %>">
+          </div>
+          <div>
+            <label>계좌 2</label>
+            <input type="text" name="footerBank2" value="<%= siteContent.footerBank2 || '' %>">
+          </div>
+
+          <div>
+            <label>계좌 3</label>
+            <input type="text" name="footerBank3" value="<%= siteContent.footerBank3 || '' %>">
+          </div>
+          <div>
+            <label>BUSINESS INFO 타이틀</label>
+            <input type="text" name="footerBizTitle" value="<%= siteContent.footerBizTitle || '' %>">
+          </div>
+
+          <div>
+            <label>상호명</label>
+            <input type="text" name="footerBizName" value="<%= siteContent.footerBizName || '' %>">
+          </div>
+          <div>
+            <label>대표자명</label>
+            <input type="text" name="footerBizOwner" value="<%= siteContent.footerBizOwner || '' %>">
+          </div>
+
+          <div class="full">
+            <label>사업장 주소</label>
+            <input type="text" name="footerBizAddress" value="<%= siteContent.footerBizAddress || '' %>">
+          </div>
+
+          <div>
+            <label>사업자등록번호</label>
+            <input type="text" name="footerBizNumber" value="<%= siteContent.footerBizNumber || '' %>">
+          </div>
+          <div>
+            <label>통신판매업신고</label>
+            <input type="text" name="footerBizOnline" value="<%= siteContent.footerBizOnline || '' %>">
+          </div>
+
+          <div>
+            <label>개인정보관리책임자</label>
+            <input type="text" name="footerBizPrivacyManager" value="<%= siteContent.footerBizPrivacyManager || '' %>">
+          </div>
+          <div>
+            <label>슬로건</label>
+            <input type="text" name="footerSlogan" value="<%= siteContent.footerSlogan || '' %>">
+          </div>
+
+          <div class="full">
+            <label>은행 안내문</label>
+            <textarea name="footerBankNotice"><%= siteContent.footerBankNotice || '' %></textarea>
+          </div>
+
+          <div>
+            <label>이용약관 링크</label>
+            <input type="text" name="footerTermsLink" value="<%= siteContent.footerTermsLink || '' %>">
+          </div>
+          <div>
+            <label>개인정보처리방침 링크</label>
+            <input type="text" name="footerPrivacyLink" value="<%= siteContent.footerPrivacyLink || '' %>">
+          </div>
+
+          <div>
+            <label>사업자정보확인 링크</label>
+            <input type="text" name="footerBizInfoLink" value="<%= siteContent.footerBizInfoLink || '' %>">
+          </div>
+          <div>
+            <label>카피라이트</label>
+            <input type="text" name="footerCopyright" value="<%= siteContent.footerCopyright || '' %>">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>푸터 SNS</h2>
+
+        <%
+          const snsList = Array.isArray(siteContent.footerSns) && siteContent.footerSns.length > 0
+            ? siteContent.footerSns
+            : [{ type: 'instagram', url: '#', label: 'Instagram' }];
+        %>
+
+        <div id="snsList" class="sns-list">
+          <% snsList.forEach((sns) => { %>
+            <div class="sns-item">
+              <div>
+                <label>SNS 타입</label>
+                <select name="footerSnsType">
+                  <option value="instagram" <%= sns.type === 'instagram' ? 'selected' : '' %>>instagram</option>
+                  <option value="kakao" <%= sns.type === 'kakao' ? 'selected' : '' %>>kakao</option>
+                  <option value="youtube" <%= sns.type === 'youtube' ? 'selected' : '' %>>youtube</option>
+                  <option value="tiktok" <%= sns.type === 'tiktok' ? 'selected' : '' %>>tiktok</option>
+                  <option value="facebook" <%= sns.type === 'facebook' ? 'selected' : '' %>>facebook</option>
+                </select>
+              </div>
+
+              <div>
+                <label>링크</label>
+                <input type="text" name="footerSnsUrl" value="<%= sns.url || '' %>">
+              </div>
+
+              <div>
+                <label>표시명</label>
+                <input type="text" name="footerSnsLabel" value="<%= sns.label || '' %>">
+              </div>
+
+              <button type="button" class="sns-remove" onclick="removeSnsRow(this)">삭제</button>
+            </div>
+          <% }) %>
+        </div>
+
+        <div class="sns-add-wrap">
+          <button type="button" class="sns-add" onclick="addSnsRow()">SNS 추가</button>
+        </div>
+      </div>
+
+      <div class="submit-box">
+        <button type="submit">저장하기</button>
+      </div>
+    </form>
+  </div>
+
+  <template id="snsTemplate">
+    <div class="sns-item">
+      <div>
+        <label>SNS 타입</label>
+        <select name="footerSnsType">
+          <option value="instagram">instagram</option>
+          <option value="kakao">kakao</option>
+          <option value="youtube">youtube</option>
+          <option value="tiktok">tiktok</option>
+          <option value="facebook">facebook</option>
+        </select>
+      </div>
+
+      <div>
+        <label>링크</label>
+        <input type="text" name="footerSnsUrl" value="#">
+      </div>
+
+      <div>
+        <label>표시명</label>
+        <input type="text" name="footerSnsLabel" value="">
+      </div>
+
+      <button type="button" class="sns-remove" onclick="removeSnsRow(this)">삭제</button>
+    </div>
+  </template>
+
+  <script>
+    function addSnsRow() {
+      const template = document.getElementById('snsTemplate');
+      const list = document.getElementById('snsList');
+      list.insertAdjacentHTML('beforeend', template.innerHTML);
+    }
+
+    function removeSnsRow(button) {
+      const row = button.closest('.sns-item');
+      if (!row) return;
+      row.remove();
+    }
+  </script>
+</body>
+</html>

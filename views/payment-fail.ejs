@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>결제 실패 | DAMORE</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f3ef;
+      color: #111;
+    }
+
+    .wrap {
+      max-width: 760px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 28px;
+      padding: 32px;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.08);
+    }
+
+    h1 { margin-bottom: 12px; }
+
+    p {
+      color: #666;
+      line-height: 1.7;
+    }
+
+    .info {
+      margin: 20px 0;
+      padding: 18px;
+      background: #fff1ee;
+      border-radius: 18px;
+      line-height: 1.8;
+      color: #b23a2c;
+      font-weight: 700;
+    }
+
+    .actions {
+      display: grid;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 52px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .dark {
+      background: #111;
+      color: #fff;
+    }
+
+    .light {
+      background: #efe9df;
+      color: #111;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>결제에 실패했습니다</h1>
+      <p>재고는 차감되지 않았습니다.</p>
+
+      <div class="info">
+        <% if (order) { %>
+          주문번호: <strong><%= order.merchantUid %></strong><br />
+        <% } %>
+        실패 사유: <strong><%= reason %></strong>
+      </div>
+
+      <div class="actions">
+        <a class="dark" href="/order">주문서로 돌아가기</a>
+        <a class="light" href="/">메인으로 가기</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

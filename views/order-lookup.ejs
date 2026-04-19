@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>비회원 주문조회 | DAMORE</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #f5f3ef;
+      --white: #ffffff;
+      --black: #111111;
+      --muted: #6f6a63;
+      --line: rgba(17, 17, 17, 0.08);
+      --gold: #9d8660;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
+      --radius: 24px;
+      --max: 860px;
+      --soft: #efe9df;
+      --red: #b23a2c;
+      --red-bg: #fff1ee;
+    }
+
+    body {
+      font-family: "Pretendard", "Noto Sans KR", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--black);
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .container {
+      width: 100%;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .page {
+      padding: 44px 0 80px;
+    }
+
+    .page-head {
+      margin-bottom: 22px;
+    }
+
+    .page-head small {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .page-head h1 {
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+
+    .page-head p {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .top-btn {
+      min-width: 160px;
+      height: 48px;
+      padding: 0 18px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .top-btn-dark {
+      background: #111;
+      color: #fff;
+    }
+
+    .top-btn-light {
+      background: var(--soft);
+      color: #111;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+
+    .section-title {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .section-desc {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    input[type="text"],
+    input[type="tel"] {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 14px;
+      outline: none;
+      background: #fff;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="tel"]:focus {
+      border-color: rgba(157, 134, 96, 0.8);
+      box-shadow: 0 0 0 4px rgba(157, 134, 96, 0.12);
+    }
+
+    .input-help {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .error-box {
+      margin-bottom: 18px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: var(--red-bg);
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.7;
+    }
+
+    .error-text {
+      display: block;
+      min-height: 18px;
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    .submit-btn {
+      width: 100%;
+      height: 56px;
+      border: 0;
+      border-radius: 999px;
+      background: #111;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .note-box {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: #faf8f4;
+      border: 1px solid var(--line);
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 0 16px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .page-head h1 {
+        font-size: 34px;
+      }
+
+      .top-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="container">
+      <div class="page-head">
+        <small>Guest Order Lookup</small>
+        <h1>비회원 주문조회</h1>
+        <p>주문번호와 연락처를 입력하면 비회원 주문내역을 확인할 수 있습니다.</p>
+      </div>
+
+      <div class="top-actions">
+        <a href="/" class="top-btn top-btn-dark">상품 목록 가기</a>
+        <a href="/my-orders" class="top-btn top-btn-light">회원 주문내역 보기</a>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">주문 조회 정보 입력</h2>
+        <p class="section-desc">주문 시 입력한 연락처와 정확한 주문번호를 입력해주세요.</p>
+
+        <% if (error) { %>
+          <div class="error-box"><%= error %></div>
+        <% } %>
+
+        <form method="POST" action="/order/lookup" id="lookupForm">
+          <div class="form-group">
+            <label for="orderId">주문번호</label>
+            <input
+              type="text"
+              id="orderId"
+              name="orderId"
+              value="<%= orderId || '' %>"
+              placeholder="주문번호를 입력해주세요"
+            />
+            <small class="error-text" id="orderIdError"></small>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">연락처</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              value="<%= phone || '' %>"
+              placeholder="010-0000-0000"
+              maxlength="13"
+            />
+            <div class="input-help">숫자만 입력해도 자동으로 하이픈이 들어갑니다.</div>
+            <small class="error-text" id="phoneError"></small>
+          </div>
+
+          <button type="submit" class="submit-btn">주문 조회하기</button>
+        </form>
+
+        <div class="note-box">
+          비회원 주문조회는 주문번호와 연락처가 모두 일치해야 확인할 수 있습니다.
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const form = document.getElementById('lookupForm');
+    const orderIdInput = document.getElementById('orderId');
+    const phoneInput = document.getElementById('phone');
+    const orderIdError = document.getElementById('orderIdError');
+    const phoneError = document.getElementById('phoneError');
+
+    function formatPhone(value) {
+      const numbers = value.replace(/[^0-9]/g, '').slice(0, 11);
+
+      if (numbers.length < 4) return numbers;
+      if (numbers.length < 8) return numbers.slice(0, 3) + '-' + numbers.slice(3);
+      return numbers.slice(0, 3) + '-' + numbers.slice(3, 7) + '-' + numbers.slice(7);
+    }
+
+    function clearErrors() {
+      orderIdError.textContent = '';
+      phoneError.textContent = '';
+    }
+
+    function validateForm(orderId, phone) {
+      let valid = true;
+      clearErrors();
+
+      if (!orderId) {
+        orderIdError.textContent = '주문번호를 입력해주세요.';
+        valid = false;
+      }
+
+      if (!phone) {
+        phoneError.textContent = '연락처를 입력해주세요.';
+        valid = false;
+      } else {
+        const onlyNumbers = phone.replace(/[^0-9]/g, '');
+        if (onlyNumbers.length < 10 || onlyNumbers.length > 11) {
+          phoneError.textContent = '연락처 형식을 다시 확인해주세요.';
+          valid = false;
+        }
+      }
+
+      return valid;
+    }
+
+    phoneInput.addEventListener('input', function () {
+      phoneInput.value = formatPhone(phoneInput.value);
+    });
+
+    form.addEventListener('submit', function (e) {
+      const orderId = orderIdInput.value.trim();
+      const phone = phoneInput.value.trim();
+
+      if (!validateForm(orderId, phone)) {
+        e.preventDefault();
+      }
+    });
+  </script>
+</body>
+</html>

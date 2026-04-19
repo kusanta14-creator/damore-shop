@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>홈 섹션 관리 | 관리자</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: Arial, sans-serif;
+      background: #f6f6f6;
+      color: #111;
+    }
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .topbar h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+    .top-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .top-links a {
+      text-decoration: none;
+      color: #fff;
+      background: #111;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+    .top-links a.secondary {
+      background: #666;
+    }
+    .list {
+      display: grid;
+      gap: 16px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.06);
+    }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .title-box h2 {
+      margin: 0 0 6px;
+      font-size: 22px;
+    }
+    .meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #f0ece6;
+      color: #444;
+    }
+    .badge.visible {
+      background: #e5f6e8;
+      color: #1d6b2a;
+    }
+    .badge.hidden {
+      background: #f8e3e3;
+      color: #8d2222;
+    }
+    .desc {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.7;
+      margin-bottom: 14px;
+      white-space: pre-line;
+    }
+    .sub-info {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .info-box {
+      background: #faf7f3;
+      border: 1px solid #eee4d8;
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .info-box strong {
+      display: block;
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 6px;
+    }
+    .info-box span {
+      font-size: 14px;
+      color: #111;
+      word-break: break-word;
+    }
+    .tabs-box {
+      margin-bottom: 14px;
+    }
+    .tabs-box strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .tab {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #111;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .actions a,
+    .actions button {
+      border: 0;
+      text-decoration: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-edit { background: #111; color: #fff; }
+    .btn-order { background: #ece5dc; color: #111; }
+    .btn-delete { background: #f5dcdc; color: #8f1f1f; }
+    .empty {
+      background: #fff;
+      border-radius: 18px;
+      padding: 40px 24px;
+      text-align: center;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.06);
+      color: #666;
+    }
+    @media (max-width: 900px) {
+      .sub-info {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media (max-width: 640px) {
+      body { padding: 14px; }
+      .sub-info {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <h1>홈 섹션 관리</h1>
+      <div class="top-links">
+        <a href="/admin/home-sections/new">새 섹션 추가</a>
+        <a href="/admin/dashboard" class="secondary">관리자 홈</a>
+      </div>
+    </div>
+
+    <% if (!homeSections || homeSections.length === 0) { %>
+      <div class="empty">등록된 홈 섹션이 없습니다.</div>
+    <% } else { %>
+      <div class="list">
+        <% homeSections.forEach(section => { %>
+          <div class="card">
+            <div class="card-top">
+              <div class="title-box">
+                <h2><%= section.title || '제목 없음' %></h2>
+                <div class="meta">
+                  <span class="badge">order <%= section.order %></span>
+                  <span class="badge"><%= section.sectionType %></span>
+                  <span class="badge"><%= section.productSource %></span>
+                  <span class="badge <%= section.isVisible ? 'visible' : 'hidden' %>">
+                    <%= section.isVisible ? '노출중' : '숨김' %>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <% if (section.description) { %>
+              <div class="desc"><%= section.description %></div>
+            <% } %>
+
+            <div class="sub-info">
+              <div class="info-box">
+                <strong>섹션 키</strong>
+                <span><%= section.sectionKey || '-' %></span>
+              </div>
+              <div class="info-box">
+                <strong>카테고리</strong>
+                <span><%= section.category || '-' %></span>
+              </div>
+              <div class="info-box">
+                <strong>서브카테고리</strong>
+                <span><%= section.subCategory || '-' %></span>
+              </div>
+              <div class="info-box">
+                <strong>상품 개수</strong>
+                <span><%= section.productLimit || 0 %></span>
+              </div>
+            </div>
+
+            <% if (section.tabs && section.tabs.length > 0) { %>
+              <div class="tabs-box">
+                <strong>탭</strong>
+                <div class="tabs">
+                  <% section.tabs.forEach(tab => { %>
+                    <span class="tab">
+                      <%= tab.label || '탭' %>
+                      <% if (tab.category) { %> · <%= tab.category %><% } %>
+                      <% if (tab.subCategory) { %> / <%= tab.subCategory %><% } %>
+                    </span>
+                  <% }) %>
+                </div>
+              </div>
+            <% } %>
+
+            <div class="actions">
+              <a class="btn-edit" href="/admin/home-sections/<%= section._id %>/edit">수정</a>
+
+              <form method="POST" action="/admin/home-sections/<%= section._id %>/up" style="display:inline;">
+                <button type="submit" class="btn-order">위로</button>
+              </form>
+
+              <form method="POST" action="/admin/home-sections/<%= section._id %>/down" style="display:inline;">
+                <button type="submit" class="btn-order">아래로</button>
+              </form>
+
+              <form method="POST" action="/admin/home-sections/<%= section._id %>/delete" style="display:inline;" onsubmit="return confirm('이 섹션을 삭제할까요?');">
+                <button type="submit" class="btn-delete">삭제</button>
+              </form>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+</body>
+</html>

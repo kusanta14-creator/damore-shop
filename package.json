@@ -1,0 +1,27 @@
+{
+  "name": "damore-shop",
+  "version": "1.0.0",
+  "description": "DAMORE shopping mall project",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "seed-admin": "node utils/seedAdmin.js"
+  },
+  "dependencies": {
+    "axios": "^1.15.0",
+    "bcrypt": "^5.1.1",
+    "connect-mongo": "^5.1.0",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "method-override": "^3.0.0",
+    "mongoose": "^8.5.1",
+    "multer": "^2.1.1",
+    "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}

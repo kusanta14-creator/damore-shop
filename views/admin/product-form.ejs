@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= typeof isEdit !== 'undefined' && isEdit ? '상품 수정' : '상품 등록' %> | DAMORE ADMIN</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #f5f3ef;
+      --white: #ffffff;
+      --black: #111111;
+      --muted: #6f6a63;
+      --line: rgba(17, 17, 17, 0.08);
+      --gold: #9d8660;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
+      --radius: 24px;
+      --max: 1460px;
+      --soft: #efe9df;
+      --red: #b23a2c;
+      --red-bg: #fff1ee;
+      --green: #1f7a4d;
+      --green-bg: #edf7f0;
+    }
+
+    body {
+      font-family: "Pretendard", "Noto Sans KR", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--black);
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    .container {
+      width: 100%;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .page {
+      padding: 40px 0 80px;
+    }
+
+    .page-head {
+      margin-bottom: 22px;
+    }
+
+    .page-head small {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .page-head h1 {
+      font-size: 38px;
+      margin-bottom: 10px;
+    }
+
+    .page-head p {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .top-btn {
+      min-width: 160px;
+      height: 46px;
+      padding: 0 18px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .top-btn-dark {
+      background: #111;
+      color: #fff;
+    }
+
+    .top-btn-light {
+      background: var(--soft);
+      color: #111;
+    }
+
+    .admin-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.65fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+
+    .preview-sticky {
+      position: sticky;
+      top: 24px;
+    }
+
+    .section-title {
+      font-size: 24px;
+      margin-bottom: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="file"],
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 14px;
+      outline: none;
+      background: #fff;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    textarea:focus,
+    select:focus {
+      border-color: rgba(157, 134, 96, 0.8);
+      box-shadow: 0 0 0 4px rgba(157, 134, 96, 0.12);
+    }
+
+    select:disabled {
+      background: #f3f3f3;
+      color: #999;
+      cursor: not-allowed;
+    }
+
+    textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+
+    .help {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .option-wrap {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .option-btn {
+      min-width: 64px;
+      height: 46px;
+      padding: 0 18px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: #111;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 800;
+      transition: all 0.2s ease;
+    }
+
+    .option-btn:hover {
+      border-color: rgba(157, 134, 96, 0.7);
+      background: #faf8f4;
+    }
+
+    .option-btn.active {
+      background: #111;
+      color: #fff;
+      border-color: #111;
+      box-shadow: 0 8px 20px rgba(17, 17, 17, 0.12);
+    }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 52px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+    }
+
+    .check-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+    }
+
+    .preview-box {
+      margin-top: 10px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: #faf8f4;
+      border: 1px solid var(--line);
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .preview-value {
+      color: #111;
+      font-weight: 800;
+      word-break: break-all;
+    }
+
+    .preview-image-list {
+      display: grid;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .submit-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .submit-btn {
+      min-width: 180px;
+      height: 54px;
+      padding: 0 20px;
+      border: 0;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .submit-btn-dark {
+      background: #111;
+      color: #fff;
+    }
+
+    .submit-btn-light {
+      background: var(--soft);
+      color: #111;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .live-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .live-title h2 {
+      font-size: 22px;
+    }
+
+    .live-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 32px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: #111;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .product-stage {
+      padding: 18px;
+      border-radius: 22px;
+      background: linear-gradient(180deg, #f9f7f3 0%, #efe9df 100%);
+      border: 1px solid var(--line);
+    }
+
+    .product-card {
+      overflow: hidden;
+      border-radius: 24px;
+      background: #fff;
+      box-shadow: 0 16px 34px rgba(17, 17, 17, 0.08);
+    }
+
+    .product-thumb {
+      position: relative;
+      aspect-ratio: 3 / 4;
+      background: #ece8e1;
+      overflow: hidden;
+    }
+
+    .product-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .product-badge-best {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 32px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: rgba(17, 17, 17, 0.92);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+    }
+
+    .product-badge-status {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 32px;
+      padding: 0 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .product-badge-status.active {
+      background: var(--green-bg);
+      color: var(--green);
+    }
+
+    .product-badge-status.soldout {
+      background: var(--red-bg);
+      color: var(--red);
+    }
+
+    .is-hidden {
+      display: none !important;
+    }
+
+    .product-body {
+      padding: 20px;
+    }
+
+    .product-category {
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .product-name {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.28;
+      margin-bottom: 12px;
+      word-break: keep-all;
+    }
+
+    .product-price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .product-price {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .product-old-price {
+      color: #9c958b;
+      font-size: 15px;
+      text-decoration: line-through;
+      font-weight: 700;
+    }
+
+    .product-discount {
+      color: var(--red);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .product-meta {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .meta-block h3 {
+      font-size: 13px;
+      margin-bottom: 8px;
+      color: #5d564d;
+    }
+
+    .chip-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: #f6f3ed;
+      border: 1px solid rgba(17, 17, 17, 0.06);
+      color: #111;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .chip.empty {
+      color: #8e877d;
+      background: #fbfaf8;
+    }
+
+    .product-desc {
+      padding-top: 16px;
+      border-top: 1px solid rgba(17, 17, 17, 0.08);
+      color: #5d564d;
+      font-size: 14px;
+      line-height: 1.8;
+      white-space: pre-line;
+      word-break: break-word;
+      min-height: 72px;
+    }
+
+    .thumb-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .thumb-strip.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .mini-card {
+      overflow: hidden;
+      border-radius: 16px;
+      background: #fff;
+      border: 1px solid rgba(17, 17, 17, 0.06);
+    }
+
+    .mini-card .mini-label {
+      padding: 10px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #5d564d;
+      border-bottom: 1px solid rgba(17, 17, 17, 0.06);
+      background: #faf8f4;
+    }
+
+    .mini-card .mini-image {
+      aspect-ratio: 4 / 3;
+      background: #ece8e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #8e877d;
+      font-size: 12px;
+      overflow: hidden;
+    }
+
+    .mini-card .mini-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .list-box {
+      margin-top: 16px;
+      padding: 16px;
+      background: #fff;
+      border-radius: 18px;
+      border: 1px solid rgba(17, 17, 17, 0.06);
+    }
+
+    .list-box h3 {
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .empty-text {
+      color: #8e877d;
+      font-size: 13px;
+    }
+
+    @media (max-width: 1080px) {
+      .admin-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-sticky {
+        position: static;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .top-btn,
+      .submit-btn {
+        width: 100%;
+      }
+
+      .container {
+        padding: 0 16px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .page-head h1 {
+        font-size: 32px;
+      }
+
+      .thumb-strip,
+      .thumb-strip.two {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%
+    const safeIsEdit =
+      typeof isEdit !== 'undefined'
+        ? isEdit
+        : !!(typeof product !== 'undefined' && product && product._id);
+
+    const safeProduct =
+      typeof product !== 'undefined' && product
+        ? product
+        : {};
+
+    const safeFormAction =
+      typeof formAction !== 'undefined' && formAction
+        ? formAction
+        : (safeIsEdit && safeProduct._id
+            ? `/admin/products/${safeProduct._id}/edit`
+            : '/admin/products');
+
+    const safeCategories =
+      typeof categoryList !== 'undefined' && Array.isArray(categoryList)
+        ? categoryList
+        : (typeof categories !== 'undefined' && Array.isArray(categories) ? categories : []);
+
+    const rawOptions =
+      Array.isArray(safeProduct.options)
+        ? safeProduct.options.join(',')
+        : (safeProduct.options || safeProduct.option || '');
+
+    const selectedOptions = String(rawOptions)
+      .split(',')
+      .map(function (v) { return v.trim(); })
+      .filter(Boolean);
+
+    const rawColors =
+      Array.isArray(safeProduct.colors)
+        ? safeProduct.colors.join(', ')
+        : (safeProduct.colors || '');
+
+    const safeDetailImages = Array.isArray(safeProduct.detailImages)
+      ? safeProduct.detailImages
+      : [];
+
+    const safeStatus = safeProduct.status || 'active';
+
+    const safeCategoryText = (() => {
+      if (safeCategories.length > 0) {
+        const matched = safeCategories.find((category) => {
+          const value = category.slug || category.name || category;
+          return value === (safeProduct.category || '');
+        });
+        return matched ? (matched.name || matched.slug || matched) : (safeProduct.category || '');
+      }
+      return safeProduct.category || '';
+    })();
+
+    const safeSelectedCategoryObj = safeCategories.find((category) => {
+      const value = category.slug || category.name || category;
+      return value === (safeProduct.category || '');
+    });
+
+    const safeAvailableSubCategories =
+      safeSelectedCategoryObj && Array.isArray(safeSelectedCategoryObj.subCategories)
+        ? safeSelectedCategoryObj.subCategories
+        : [];
+
+    const safeSubCategoryText = safeProduct.subCategory || '';
+
+    const safeCategorySubMap = safeCategories.reduce((acc, category) => {
+      const key = category.slug || category.name || category;
+      acc[key] = Array.isArray(category.subCategories) ? category.subCategories : [];
+      return acc;
+    }, {});
+
+    const numericPrice = Number(safeProduct.price || 0);
+    const numericOldPrice = Number(safeProduct.oldPrice || 0);
+    const discountPercent = numericOldPrice > numericPrice && numericOldPrice > 0
+      ? Math.round(((numericOldPrice - numericPrice) / numericOldPrice) * 100)
+      : 0;
+
+    const colorList = rawColors
+      ? rawColors.split(',').map(function (v) { return v.trim(); }).filter(Boolean)
+      : [];
+  %>
+
+  <main class="page">
+    <div class="container">
+      <div class="page-head">
+        <small>Admin Product</small>
+        <h1><%= safeIsEdit ? '상품 수정' : '상품 등록' %></h1>
+        <p>기존 구조 유지 + 서브카테고리 자동 선택 + 옵션 버튼식 + 컬러 직접입력 + 대표/상세/추가 이미지 업로드 + 실시간 미리보기 버전입니다.</p>
+      </div>
+
+      <div class="top-actions">
+        <a href="/admin/products" class="top-btn top-btn-dark">상품 목록 가기</a>
+        <button type="button" class="top-btn top-btn-light" onclick="history.back()">뒤로가기</button>
+      </div>
+
+      <div class="admin-layout">
+        <div class="card">
+          <h2 class="section-title">상품 정보 입력</h2>
+
+          <form method="POST" action="<%= safeFormAction %>" enctype="multipart/form-data" id="productForm">
+            <% if (safeIsEdit) { %>
+              <input type="hidden" name="_method" value="PUT" />
+            <% } %>
+
+            <div class="grid">
+              <div class="form-group">
+                <label for="name">상품명</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value="<%= safeProduct.name || '' %>"
+                  placeholder="상품명을 입력해주세요"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="category">카테고리</label>
+                <% if (safeCategories.length > 0) { %>
+                  <select id="category" name="category" required>
+                    <option value="">카테고리 선택</option>
+                    <% safeCategories.forEach((category) => { %>
+                      <option
+                        value="<%= category.slug || category.name || category %>"
+                        <%= (safeProduct.category || '') === (category.slug || category.name || category) ? 'selected' : '' %>
+                      >
+                        <%= category.name || category.slug || category %>
+                      </option>
+                    <% }) %>
+                  </select>
+                <% } else { %>
+                  <input
+                    type="text"
+                    id="category"
+                    name="category"
+                    value="<%= safeProduct.category || '' %>"
+                    placeholder="카테고리를 입력해주세요"
+                    required
+                  />
+                <% } %>
+              </div>
+
+              <div class="form-group full">
+                <label for="subCategory">서브카테고리</label>
+                <select id="subCategory" name="subCategory" <%= safeAvailableSubCategories.length === 0 ? 'disabled' : '' %>>
+                  <option value="">서브카테고리 선택</option>
+                  <% safeAvailableSubCategories.forEach((sub) => { %>
+                    <option value="<%= sub %>" <%= safeProduct.subCategory === sub ? 'selected' : '' %>>
+                      <%= sub %>
+                    </option>
+                  <% }) %>
+                </select>
+
+                <div class="help">카테고리를 선택하면 해당 카테고리의 하위카테고리만 자동으로 표시됩니다.</div>
+
+                <div class="preview-box">
+                  현재 서브카테고리:
+                  <span class="preview-value" id="subCategoryPreview">
+                    <%= safeProduct.subCategory || '선택 없음' %>
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="price">가격</label>
+                <input
+                  type="number"
+                  id="price"
+                  name="price"
+                  value="<%= safeProduct.price || 0 %>"
+                  placeholder="가격을 입력해주세요"
+                  min="0"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="oldPrice">할인 전 가격</label>
+                <input
+                  type="number"
+                  id="oldPrice"
+                  name="oldPrice"
+                  value="<%= safeProduct.oldPrice || 0 %>"
+                  placeholder="없으면 0"
+                  min="0"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="stock">재고</label>
+                <input
+                  type="number"
+                  id="stock"
+                  name="stock"
+                  value="<%= safeProduct.stock || 0 %>"
+                  placeholder="재고 수량을 입력해주세요"
+                  min="0"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="tag">태그 문구</label>
+                <input
+                  type="text"
+                  id="tag"
+                  name="tag"
+                  value="<%= safeProduct.tag || '' %>"
+                  placeholder="예: new / best / limited"
+                />
+              </div>
+
+              <div class="form-group full">
+                <label for="options">사이즈 옵션</label>
+                <input
+                  type="hidden"
+                  id="options"
+                  name="options"
+                  value="<%= selectedOptions.join(',') %>"
+                />
+
+                <div class="option-wrap" id="optionWrap">
+                  <% ['S', 'M', 'L', 'XL', 'F'].forEach((size) => { %>
+                    <button
+                      type="button"
+                      class="option-btn <%= selectedOptions.includes(size) ? 'active' : '' %>"
+                      data-size="<%= size %>"
+                    >
+                      <%= size %>
+                    </button>
+                  <% }) %>
+                </div>
+
+                <div class="help">여러 개 선택 가능합니다.</div>
+
+                <div class="preview-box">
+                  현재 선택 옵션:
+                  <span class="preview-value" id="selectedOptionsPreview">
+                    <%= selectedOptions.length ? selectedOptions.join(', ') : '선택 없음' %>
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-group full">
+                <label for="colors">컬러 직접 입력</label>
+                <input
+                  type="text"
+                  id="colors"
+                  name="colors"
+                  value="<%= rawColors %>"
+                  placeholder="예: black, white, navy, beige"
+                />
+                <div class="help">쉼표(,)로 구분해서 입력하면 상품 상세페이지 컬러 선택에 그대로 노출됩니다.</div>
+
+                <div class="preview-box">
+                  현재 입력 컬러:
+                  <span class="preview-value" id="colorsPreview">
+                    <%= rawColors ? rawColors : '선택 없음' %>
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-group full">
+                <label for="image">대표 이미지 업로드</label>
+                <input
+                  type="file"
+                  id="image"
+                  name="image"
+                  accept="image/*"
+                />
+                <% if (safeProduct.image) { %>
+                  <div class="preview-box">
+                    현재 대표 이미지:
+                    <span class="preview-value"><%= safeProduct.image %></span>
+                  </div>
+                <% } %>
+              </div>
+
+              <div class="form-group full">
+                <label for="detailImage">상세 대표 이미지 업로드</label>
+                <input
+                  type="file"
+                  id="detailImage"
+                  name="detailImage"
+                  accept="image/*"
+                />
+                <% if (safeProduct.detailImage) { %>
+                  <div class="preview-box">
+                    현재 상세 대표 이미지:
+                    <span class="preview-value"><%= safeProduct.detailImage %></span>
+                  </div>
+                <% } %>
+              </div>
+
+              <div class="form-group full">
+                <label for="detailImages">설명용 추가 이미지 여러 장 업로드</label>
+                <input
+                  type="file"
+                  id="detailImages"
+                  name="detailImages"
+                  accept="image/*"
+                  multiple
+                />
+                <div class="help">여러 장 선택 가능합니다.</div>
+
+                <% if (safeDetailImages.length > 0) { %>
+                  <div class="preview-box">
+                    현재 추가 이미지:
+                    <div class="preview-image-list">
+                      <% safeDetailImages.forEach((img) => { %>
+                        <span class="preview-value"><%= img %></span>
+                      <% }) %>
+                    </div>
+                  </div>
+                <% } %>
+              </div>
+
+              <div class="form-group full">
+                <label for="description">상품 설명</label>
+                <textarea
+                  id="description"
+                  name="description"
+                  placeholder="상품 설명을 입력해주세요"
+                ><%= safeProduct.description || safeProduct.desc || '' %></textarea>
+              </div>
+
+              <div class="form-group">
+                <label>BEST 상품 여부</label>
+                <div class="check-row">
+                  <input
+                    type="checkbox"
+                    id="isBest"
+                    name="isBest"
+                    value="true"
+                    <%= safeProduct.isBest ? 'checked' : '' %>
+                  />
+                  <label for="isBest" style="margin: 0;">BEST 상품으로 노출</label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>판매 상태</label>
+                <div class="check-row">
+                  <input
+                    type="checkbox"
+                    id="isActive"
+                    name="status"
+                    value="active"
+                    <%= !safeProduct.status || safeProduct.status === 'active' ? 'checked' : '' %>
+                  />
+                  <label for="isActive" style="margin: 0;">판매중 상태로 저장</label>
+                </div>
+                <div class="help">체크 해제 시 품절 상태 미리보기로 표시됩니다.</div>
+              </div>
+            </div>
+
+            <div class="submit-row">
+              <button type="submit" class="submit-btn submit-btn-dark">
+                <%= safeIsEdit ? '상품 수정 완료' : '상품 등록하기' %>
+              </button>
+              <a href="/admin/products" class="submit-btn submit-btn-light">
+                취소하고 목록으로
+              </a>
+            </div>
+          </form>
+        </div>
+
+        <div class="preview-sticky">
+          <div class="card">
+            <div class="live-title">
+              <h2>실시간 상품 미리보기</h2>
+              <span class="live-chip">LIVE</span>
+            </div>
+
+            <div class="product-stage">
+              <div class="product-card">
+                <div class="product-thumb">
+                  <img
+                    id="liveMainImage"
+                    src="<%= safeProduct.image || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80' %>"
+                    alt="상품 대표 이미지"
+                  />
+
+                  <% if (safeProduct.isBest) { %>
+                    <div class="product-badge-best" id="liveBestBadge">BEST</div>
+                  <% } else { %>
+                    <div class="product-badge-best is-hidden" id="liveBestBadge">BEST</div>
+                  <% } %>
+
+                  <% if (safeStatus === 'active') { %>
+                    <div class="product-badge-status active" id="liveStatusBadge">판매중</div>
+                  <% } else { %>
+                    <div class="product-badge-status soldout" id="liveStatusBadge">품절</div>
+                  <% } %>
+                </div>
+
+                <div class="product-body">
+                  <div class="product-category" id="liveCategory"><%= safeCategoryText || 'CATEGORY' %></div>
+                  <div class="product-category" id="liveSubCategory" style="margin-top:-4px; letter-spacing:0.08em; color:#7f725f;"><%= safeSubCategoryText || 'SUBCATEGORY' %></div>
+                  <div class="product-name" id="liveName"><%= safeProduct.name || '상품명이 여기에 표시됩니다.' %></div>
+
+                  <div class="product-price-row">
+                    <div class="product-price" id="livePrice"><%= Number(safeProduct.price || 0).toLocaleString('ko-KR') %>원</div>
+
+                    <% if (numericOldPrice > 0) { %>
+                      <div class="product-old-price" id="liveOldPrice"><%= Number(numericOldPrice).toLocaleString('ko-KR') %>원</div>
+                    <% } else { %>
+                      <div class="product-old-price is-hidden" id="liveOldPrice"></div>
+                    <% } %>
+
+                    <% if (discountPercent > 0) { %>
+                      <div class="product-discount" id="liveDiscount"><%= discountPercent %>% OFF</div>
+                    <% } else { %>
+                      <div class="product-discount is-hidden" id="liveDiscount"></div>
+                    <% } %>
+                  </div>
+
+                  <div class="product-meta">
+                    <div class="meta-block">
+                      <h3>옵션</h3>
+                      <div class="chip-list" id="liveOptions">
+                        <% if (selectedOptions.length > 0) { %>
+                          <% selectedOptions.forEach((option) => { %>
+                            <span class="chip"><%= option %></span>
+                          <% }) %>
+                        <% } else { %>
+                          <span class="chip empty">선택 없음</span>
+                        <% } %>
+                      </div>
+                    </div>
+
+                    <div class="meta-block">
+                      <h3>컬러</h3>
+                      <div class="chip-list" id="liveColors">
+                        <% if (colorList.length > 0) { %>
+                          <% colorList.forEach((color) => { %>
+                            <span class="chip"><%= color %></span>
+                          <% }) %>
+                        <% } else { %>
+                          <span class="chip empty">선택 없음</span>
+                        <% } %>
+                      </div>
+                    </div>
+
+                    <div class="meta-block">
+                      <h3>재고 / 태그</h3>
+                      <div class="chip-list">
+                        <span class="chip" id="liveStock">재고 <%= safeProduct.stock || 0 %>개</span>
+
+                        <% if (safeProduct.tag) { %>
+                          <span class="chip" id="liveTag"><%= safeProduct.tag %></span>
+                        <% } else { %>
+                          <span class="chip empty" id="liveTag">태그 없음</span>
+                        <% } %>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="product-desc" id="liveDescription"><%= safeProduct.description || safeProduct.desc || '상품 설명이 여기에 표시됩니다.' %></div>
+                </div>
+              </div>
+
+              <div class="thumb-strip two">
+                <div class="mini-card">
+                  <div class="mini-label">상세 대표 이미지</div>
+                  <div class="mini-image">
+                    <img
+                      id="liveDetailImage"
+                      src="<%= safeProduct.detailImage || 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=900&q=80' %>"
+                      alt="상세 대표 이미지"
+                    />
+                  </div>
+                </div>
+
+                <div class="mini-card">
+                  <div class="mini-label">대표 이미지 미리보기</div>
+                  <div class="mini-image">
+                    <img
+                      id="liveMirrorMainImage"
+                      src="<%= safeProduct.image || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80' %>"
+                      alt="대표 이미지 미리보기"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="list-box">
+                <h3>추가 이미지 미리보기</h3>
+                <div class="thumb-strip" id="liveDetailImages">
+                  <% if (safeDetailImages.length > 0) { %>
+                    <% safeDetailImages.slice(0, 6).forEach((img, index) => { %>
+                      <div class="mini-card">
+                        <div class="mini-label">추가 이미지 <%= index + 1 %></div>
+                        <div class="mini-image">
+                          <img src="<%= img %>" alt="추가 이미지 <%= index + 1 %>" />
+                        </div>
+                      </div>
+                    <% }) %>
+                  <% } else { %>
+                    <div class="empty-text" id="liveDetailImagesEmpty">아직 추가 이미지가 없습니다.</div>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script id="categorySubMapData" type="application/json"><%- JSON.stringify(safeCategorySubMap) %></script>
+
+  <script>
+    (function () {
+      const optionWrap = document.getElementById('optionWrap');
+      const hiddenOptionsInput = document.getElementById('options');
+      const previewOptionsEl = document.getElementById('selectedOptionsPreview');
+
+      const colorsInput = document.getElementById('colors');
+      const colorsPreview = document.getElementById('colorsPreview');
+
+      const nameInput = document.getElementById('name');
+      const categoryInput = document.getElementById('category');
+      const subCategoryInput = document.getElementById('subCategory');
+      const subCategoryPreview = document.getElementById('subCategoryPreview');
+
+      const categorySubMapEl = document.getElementById('categorySubMapData');
+      const categorySubMap = categorySubMapEl ? JSON.parse(categorySubMapEl.textContent) : {};
+
+      const priceInput = document.getElementById('price');
+      const oldPriceInput = document.getElementById('oldPrice');
+      const stockInput = document.getElementById('stock');
+      const tagInput = document.getElementById('tag');
+      const descriptionInput = document.getElementById('description');
+      const bestInput = document.getElementById('isBest');
+      const activeInput = document.getElementById('isActive');
+
+      const imageInput = document.getElementById('image');
+      const detailImageInput = document.getElementById('detailImage');
+      const detailImagesInput = document.getElementById('detailImages');
+
+      const liveName = document.getElementById('liveName');
+      const liveCategory = document.getElementById('liveCategory');
+      const liveSubCategory = document.getElementById('liveSubCategory');
+      const livePrice = document.getElementById('livePrice');
+      const liveOldPrice = document.getElementById('liveOldPrice');
+      const liveDiscount = document.getElementById('liveDiscount');
+      const liveDescription = document.getElementById('liveDescription');
+      const liveBestBadge = document.getElementById('liveBestBadge');
+      const liveStatusBadge = document.getElementById('liveStatusBadge');
+      const liveOptions = document.getElementById('liveOptions');
+      const liveColors = document.getElementById('liveColors');
+      const liveStock = document.getElementById('liveStock');
+      const liveTag = document.getElementById('liveTag');
+
+      const liveMainImage = document.getElementById('liveMainImage');
+      const liveMirrorMainImage = document.getElementById('liveMirrorMainImage');
+      const liveDetailImage = document.getElementById('liveDetailImage');
+      const liveDetailImages = document.getElementById('liveDetailImages');
+
+      function formatWon(value) {
+        const num = Number(value || 0);
+        return num.toLocaleString('ko-KR') + '원';
+      }
+
+      function getSelectedOptions() {
+        if (!optionWrap) return [];
+        return Array.from(optionWrap.querySelectorAll('.option-btn.active')).map(function (button) {
+          return button.dataset.size;
+        });
+      }
+
+      function syncOptions() {
+        const values = getSelectedOptions();
+        hiddenOptionsInput.value = values.join(',');
+        previewOptionsEl.textContent = values.length ? values.join(', ') : '선택 없음';
+
+        if (!values.length) {
+          liveOptions.innerHTML = '<span class="chip empty">선택 없음</span>';
+          return;
+        }
+
+        liveOptions.innerHTML = values.map(function (value) {
+          return '<span class="chip">' + value + '</span>';
+        }).join('');
+      }
+
+      function getColors() {
+        return colorsInput.value
+          .split(',')
+          .map(function (value) { return value.trim(); })
+          .filter(Boolean);
+      }
+
+      function syncColorsPreview() {
+        const raw = colorsInput.value.trim();
+        const values = getColors();
+
+        colorsPreview.textContent = raw ? raw : '선택 없음';
+
+        if (!values.length) {
+          liveColors.innerHTML = '<span class="chip empty">선택 없음</span>';
+          return;
+        }
+
+        liveColors.innerHTML = values.map(function (value) {
+          return '<span class="chip">' + value + '</span>';
+        }).join('');
+      }
+
+      function syncSubCategoryOptions() {
+        const categoryValue = categoryInput.value || '';
+        const subCategories = categorySubMap[categoryValue] || [];
+        const prevValue = subCategoryInput.value || '';
+
+        subCategoryInput.innerHTML = '<option value="">서브카테고리 선택</option>';
+
+        subCategories.forEach(function (sub) {
+          const option = document.createElement('option');
+          option.value = sub;
+          option.textContent = sub;
+          if (sub === prevValue) {
+            option.selected = true;
+          }
+          subCategoryInput.appendChild(option);
+        });
+
+        if (subCategories.length === 0) {
+          subCategoryInput.disabled = true;
+          subCategoryInput.value = '';
+        } else {
+          subCategoryInput.disabled = false;
+
+          if (!subCategories.includes(prevValue)) {
+            subCategoryInput.value = '';
+          }
+        }
+
+        subCategoryPreview.textContent = subCategoryInput.value || '선택 없음';
+      }
+
+      function syncBasicPreview() {
+        liveName.textContent = nameInput.value.trim() || '상품명이 여기에 표시됩니다.';
+
+        if (categoryInput.tagName === 'SELECT') {
+          const selectedText = categoryInput.options[categoryInput.selectedIndex]
+            ? categoryInput.options[categoryInput.selectedIndex].text
+            : '';
+          liveCategory.textContent = selectedText && selectedText !== '카테고리 선택' ? selectedText : 'CATEGORY';
+        } else {
+          liveCategory.textContent = categoryInput.value.trim() || 'CATEGORY';
+        }
+
+        const subValue = subCategoryInput.value || '';
+        subCategoryPreview.textContent = subValue || '선택 없음';
+        liveSubCategory.textContent = subValue || 'SUBCATEGORY';
+
+        const priceValue = Number(priceInput.value || 0);
+        const oldPriceValue = Number(oldPriceInput.value || 0);
+
+        livePrice.textContent = formatWon(priceValue);
+
+        if (oldPriceValue > 0) {
+          liveOldPrice.classList.remove('is-hidden');
+          liveOldPrice.textContent = formatWon(oldPriceValue);
+        } else {
+          liveOldPrice.classList.add('is-hidden');
+          liveOldPrice.textContent = '';
+        }
+
+        if (oldPriceValue > priceValue && oldPriceValue > 0) {
+          const discount = Math.round(((oldPriceValue - priceValue) / oldPriceValue) * 100);
+          liveDiscount.classList.remove('is-hidden');
+          liveDiscount.textContent = discount + '% OFF';
+        } else {
+          liveDiscount.classList.add('is-hidden');
+          liveDiscount.textContent = '';
+        }
+
+        liveDescription.textContent = descriptionInput.value.trim() || '상품 설명이 여기에 표시됩니다.';
+        liveStock.textContent = '재고 ' + (stockInput.value || 0) + '개';
+
+        const tagValue = tagInput.value.trim();
+        liveTag.textContent = tagValue || '태그 없음';
+        if (tagValue) {
+          liveTag.classList.remove('empty');
+        } else {
+          liveTag.classList.add('empty');
+        }
+
+        if (bestInput.checked) {
+          liveBestBadge.classList.remove('is-hidden');
+        } else {
+          liveBestBadge.classList.add('is-hidden');
+        }
+
+        if (activeInput.checked) {
+          liveStatusBadge.textContent = '판매중';
+          liveStatusBadge.classList.remove('soldout');
+          liveStatusBadge.classList.add('active');
+        } else {
+          liveStatusBadge.textContent = '품절';
+          liveStatusBadge.classList.remove('active');
+          liveStatusBadge.classList.add('soldout');
+        }
+      }
+
+      function readFileToImage(file, callback) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          callback(event.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function syncMainImagePreview() {
+        const file = imageInput.files && imageInput.files[0];
+        if (!file) return;
+
+        readFileToImage(file, function (src) {
+          liveMainImage.src = src;
+          liveMirrorMainImage.src = src;
+        });
+      }
+
+      function syncDetailImagePreview() {
+        const file = detailImageInput.files && detailImageInput.files[0];
+        if (!file) return;
+
+        readFileToImage(file, function (src) {
+          liveDetailImage.src = src;
+        });
+      }
+
+      function syncDetailImagesPreview() {
+        const files = detailImagesInput.files ? Array.from(detailImagesInput.files) : [];
+        if (!files.length) return;
+
+        liveDetailImages.innerHTML = '';
+
+        files.slice(0, 6).forEach(function (file, index) {
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            const html = [
+              '<div class="mini-card">',
+              '<div class="mini-label">추가 이미지 ' + (index + 1) + '</div>',
+              '<div class="mini-image"><img src="' + event.target.result + '" alt="추가 이미지 ' + (index + 1) + '"></div>',
+              '</div>'
+            ].join('');
+            liveDetailImages.insertAdjacentHTML('beforeend', html);
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      if (optionWrap) {
+        optionWrap.addEventListener('click', function (event) {
+          const button = event.target.closest('.option-btn');
+          if (!button) return;
+
+          button.classList.toggle('active');
+          syncOptions();
+        });
+      }
+
+      colorsInput.addEventListener('input', syncColorsPreview);
+      nameInput.addEventListener('input', syncBasicPreview);
+
+      categoryInput.addEventListener('change', function () {
+        syncSubCategoryOptions();
+        syncBasicPreview();
+      });
+
+      if (subCategoryInput) {
+        subCategoryInput.addEventListener('change', syncBasicPreview);
+      }
+
+      priceInput.addEventListener('input', syncBasicPreview);
+      oldPriceInput.addEventListener('input', syncBasicPreview);
+      stockInput.addEventListener('input', syncBasicPreview);
+      tagInput.addEventListener('input', syncBasicPreview);
+      descriptionInput.addEventListener('input', syncBasicPreview);
+      bestInput.addEventListener('change', syncBasicPreview);
+      activeInput.addEventListener('change', syncBasicPreview);
+
+      imageInput.addEventListener('change', syncMainImagePreview);
+      detailImageInput.addEventListener('change', syncDetailImagePreview);
+      detailImagesInput.addEventListener('change', syncDetailImagesPreview);
+
+      syncOptions();
+      syncColorsPreview();
+      syncSubCategoryOptions();
+      syncBasicPreview();
+    })();
+  </script>
+</body>
+</html>

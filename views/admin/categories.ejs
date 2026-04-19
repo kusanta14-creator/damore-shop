@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>카테고리 관리</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      color: #111;
+      padding: 40px 20px;
+    }
+
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin-top: 0;
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      margin-top: 0;
+      margin-bottom: 18px;
+      font-size: 22px;
+    }
+
+    .top-links {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .top-links a {
+      text-decoration: none;
+      color: white;
+      background: #111;
+      padding: 10px 14px;
+      border-radius: 8px;
+      display: inline-block;
+    }
+
+    .box {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      margin-bottom: 20px;
+    }
+
+    form {
+      margin: 0;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+
+    input[type="file"] {
+      margin-top: 10px;
+      margin-bottom: 10px;
+      width: 100%;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 96px;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-size: 14px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    button {
+      background: #111;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+
+    .move-btn {
+      background: #444;
+    }
+
+    .delete-btn {
+      background: #d11a2a;
+    }
+
+    .save-btn {
+      background: #0d6f3c;
+    }
+
+    .muted-btn {
+      background: #666;
+    }
+
+    .inline-form {
+      display: inline-block;
+    }
+
+    .category-item {
+      display: grid;
+      grid-template-columns: 1fr 320px 340px;
+      gap: 18px;
+      padding: 24px 0;
+      border-bottom: 1px solid #eee;
+      align-items: start;
+    }
+
+    .category-item:last-child {
+      border-bottom: none;
+    }
+
+    .left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .order-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: #111;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .name {
+      font-size: 18px;
+      font-weight: bold;
+      text-transform: lowercase;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .banner-box img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 1px solid #ddd;
+      margin-bottom: 10px;
+      background: #eee;
+      display: block;
+    }
+
+    .empty-banner {
+      width: 100%;
+      height: 140px;
+      border-radius: 12px;
+      border: 1px dashed #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #888;
+      background: #fafafa;
+      margin-bottom: 10px;
+      text-align: center;
+      padding: 12px;
+    }
+
+    .empty {
+      color: #777;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .sub-box {
+      background: #fafafa;
+      border: 1px solid #ececec;
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 16px;
+    }
+
+    .sub-title {
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .sub-help {
+      font-size: 12px;
+      color: #666;
+      margin-top: -4px;
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+
+    .chip-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 32px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: #efe9df;
+      color: #111;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .chip.empty-chip {
+      background: #f1f1f1;
+      color: #777;
+      font-weight: normal;
+    }
+
+    .preview-menu {
+      margin-top: 14px;
+      background: #e8e1d8;
+      border-radius: 12px;
+      padding: 12px;
+      min-height: 150px;
+    }
+
+    .preview-menu-title {
+      font-size: 12px;
+      font-weight: bold;
+      color: #555;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .preview-menu-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 6px;
+    }
+
+    .preview-menu-list li {
+      text-align: center;
+      background: rgba(255,255,255,0.24);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 14px;
+    }
+
+    .preview-menu-list.empty-list li {
+      color: #777;
+      background: rgba(255,255,255,0.16);
+    }
+
+    @media (max-width: 1000px) {
+      .category-item {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>카테고리 관리</h1>
+
+    <div class="top-links">
+      <a href="/admin/dashboard">대시보드</a>
+      <a href="/admin/products">상품 목록</a>
+      <a href="/admin/products/new">상품 등록</a>
+      <a href="/admin/logout">로그아웃</a>
+    </div>
+
+    <div class="box">
+      <h2>카테고리 추가</h2>
+      <form method="POST" action="/admin/categories">
+        <input type="text" name="name" placeholder="예: outer / top / bottom / best" required />
+        <button type="submit">카테고리 추가</button>
+      </form>
+
+      <br />
+
+      <form method="POST" action="/admin/categories/seed">
+        <button type="submit">기본 카테고리 한번에 추가</button>
+      </form>
+    </div>
+
+    <div class="box">
+      <h2>카테고리 순서 / 배너 / 하위카테고리 관리</h2>
+
+      <% if (!categories || categories.length === 0) { %>
+        <div class="empty">등록된 카테고리가 없습니다.</div>
+      <% } else { %>
+        <% categories.forEach((category, index) => { %>
+          <div class="category-item">
+            <div>
+              <div class="left">
+                <div class="order-badge"><%= index + 1 %></div>
+                <div class="name"><%= category.name %></div>
+              </div>
+
+              <div class="actions" style="margin-top:14px;">
+                <form method="POST" action="/admin/categories/<%= category._id %>/up" class="inline-form">
+                  <button type="submit" class="move-btn">위로</button>
+                </form>
+
+                <form method="POST" action="/admin/categories/<%= category._id %>/down" class="inline-form">
+                  <button type="submit" class="move-btn">아래로</button>
+                </form>
+
+                <form method="POST" action="/admin/categories/<%= category._id %>/delete" class="inline-form" onsubmit="return confirm('이 카테고리를 삭제할까요?');">
+                  <button type="submit" class="delete-btn">삭제</button>
+                </form>
+              </div>
+
+              <div class="sub-box">
+                <div class="sub-title">현재 하위카테고리</div>
+
+                <% if (category.subCategories && category.subCategories.length > 0) { %>
+                  <div class="chip-wrap">
+                    <% category.subCategories.forEach((sub) => { %>
+                      <span class="chip"><%= sub %></span>
+                    <% }) %>
+                  </div>
+                <% } else { %>
+                  <div class="chip-wrap">
+                    <span class="chip empty-chip">등록된 하위카테고리 없음</span>
+                  </div>
+                <% } %>
+              </div>
+            </div>
+
+            <div class="banner-box">
+              <% if (category.bannerImage) { %>
+                <img src="<%= category.bannerImage %>" alt="<%= category.name %> 배너" />
+              <% } else { %>
+                <div class="empty-banner">대표 배너 없음</div>
+              <% } %>
+
+              <div class="preview-menu">
+                <div class="preview-menu-title"><%= category.name %> hover 미리보기</div>
+
+                <% if (category.subCategories && category.subCategories.length > 0) { %>
+                  <ul class="preview-menu-list">
+                    <% category.subCategories.forEach((sub) => { %>
+                      <li><%= sub %></li>
+                    <% }) %>
+                  </ul>
+                <% } else { %>
+                  <ul class="preview-menu-list empty-list">
+                    <li>하위카테고리 없음</li>
+                  </ul>
+                <% } %>
+              </div>
+            </div>
+
+            <div>
+              <form method="POST" action="/admin/categories/<%= category._id %>/banner" enctype="multipart/form-data">
+                <input type="file" name="bannerImage" accept="image/*" />
+                <button type="submit">배너 저장</button>
+              </form>
+
+              <form method="POST" action="/admin/categories/<%= category._id %>/banner/delete" style="margin-top:10px;" onsubmit="return confirm('배너를 삭제할까요?');">
+                <button type="submit" class="delete-btn">배너 삭제</button>
+              </form>
+
+              <div class="sub-box" style="margin-top:16px;">
+                <div class="sub-title">하위카테고리 수정</div>
+                <div class="sub-help">쉼표(,)로 구분해서 입력하면 됩니다. 예: 자켓, 가디건, 바람막이, 조끼</div>
+
+                <form method="POST" action="/admin/categories/<%= category._id %>/subcategories">
+                  <textarea
+                    name="subCategories"
+                    placeholder="예: 자켓, 가디건, 바람막이, 조끼"
+                  ><%= category.subCategories && category.subCategories.length ? category.subCategories.join(', ') : '' %></textarea>
+                  <button type="submit" class="save-btn">하위카테고리 저장</button>
+                </form>
+
+                <form method="POST" action="/admin/categories/<%= category._id %>/subcategories/delete" style="margin-top:10px;" onsubmit="return confirm('하위카테고리를 전부 삭제할까요?');">
+                  <button type="submit" class="delete-btn">하위카테고리 전체 삭제</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= providerLabel %> 로그인 준비중 | DAMORE</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #f5f3ef;
+      --white: #ffffff;
+      --black: #111111;
+      --text: #1f1f1f;
+      --muted: #6f6a63;
+      --line: rgba(17,17,17,0.08);
+      --gold: #9d8660;
+      --shadow: 0 18px 50px rgba(0,0,0,0.08);
+      --max: 1280px;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Pretendard", "Noto Sans KR", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: 100%;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .topbar {
+      background: var(--black);
+      color: rgba(255,255,255,0.88);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-align: center;
+      padding: 12px 16px;
+    }
+
+    header {
+      background: rgba(245, 243, 239, 0.88);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .header-inner {
+      min-height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 16px 0;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-logo {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: 0.24em;
+      color: var(--black);
+    }
+
+    .brand-sub {
+      font-size: 10px;
+      letter-spacing: 0.32em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 14px;
+      color: var(--muted);
+      flex-wrap: wrap;
+    }
+
+    .page {
+      min-height: calc(100vh - 82px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 0 70px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 680px;
+      background: var(--white);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      padding: 42px 30px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: 38px;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .info-box {
+      margin: 24px 0 26px;
+      padding: 18px 20px;
+      border-radius: 20px;
+      background: #faf8f4;
+      border: 1px solid var(--line);
+      text-align: left;
+    }
+
+    .info-box strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: var(--black);
+    }
+
+    .info-box span {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .btn {
+      min-width: 180px;
+      height: 54px;
+      padding: 0 22px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .btn-dark {
+      background: var(--black);
+      color: white;
+    }
+
+    .btn-light {
+      background: #efe9df;
+      color: var(--black);
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 0 16px;
+      }
+
+      .header-actions {
+        display: none;
+      }
+
+      .card {
+        padding: 28px 20px;
+        border-radius: 24px;
+      }
+
+      h1 {
+        font-size: 30px;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">DAMORE OFFICIAL ONLINE STORE</div>
+
+  <header>
+    <div class="container">
+      <div class="header-inner">
+        <a href="/" class="brand">
+          <span class="brand-logo">DAMORE</span>
+          <span class="brand-sub">the more, the mood</span>
+        </a>
+
+        <div class="header-actions">
+          <a href="/auth">로그인 / 회원가입</a>
+          <a href="/order/lookup">주문조회</a>
+          <a href="/cart">장바구니 <%= typeof cartCount !== 'undefined' ? cartCount : 0 %></a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="container">
+      <div class="card">
+        <div class="eyebrow">Social Login</div>
+        <h1><%= providerLabel %> 로그인은 준비중입니다</h1>
+        <p>
+          현재는 이메일 로그인 / 회원가입을 먼저 사용하고,
+          나중에 <%= providerLabel %> 소셜로그인을 실제 연동할 수 있도록 구조만 먼저 만들어둔 상태입니다.
+        </p>
+
+        <div class="info-box">
+          <strong>현재 상태</strong>
+          <span>
+            <%= providerLabel %> 버튼은 UI와 진입 라우트까지는 연결되어 있고,
+            실제 로그인 연동(API / 앱 등록 / Redirect URI / 검수)은 다음 단계에서 붙이면 됩니다.
+          </span>
+        </div>
+
+        <div class="btn-group">
+          <a href="/login" class="btn btn-dark">이메일 로그인</a>
+          <a href="/register" class="btn btn-light">이메일 회원가입</a>
+        </div>
+
+        <div class="btn-group" style="margin-top:12px;">
+          <a href="/auth" class="btn btn-light">이전으로 돌아가기</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>상품 수정 | DAMORE ADMIN</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f3ef;
+      --white: #fff;
+      --black: #111;
+      --muted: #6f6a63;
+      --line: rgba(17,17,17,0.08);
+      --gold: #9d8660;
+      --shadow: 0 18px 50px rgba(0,0,0,0.08);
+      --max: 920px;
+    }
+
+    body {
+      font-family: "Pretendard","Noto Sans KR",Arial,sans-serif;
+      background: var(--bg);
+      color: var(--black);
+    }
+
+    a { text-decoration: none; color: inherit; }
+    input, textarea, select, button { font: inherit; }
+
+    .container {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .topbar {
+      background: var(--black);
+      color: rgba(255,255,255,0.88);
+      text-align: center;
+      padding: 12px 16px;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+    }
+
+    .page {
+      padding: 40px 0 80px;
+    }
+
+    .head {
+      margin-bottom: 22px;
+    }
+
+    .head small {
+      display: inline-block;
+      margin-bottom: 8px;
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .head h1 {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    .head p {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select,
+    input[type="file"] {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      padding: 14px 16px;
+      outline: none;
+      font-size: 14px;
+    }
+
+    textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+
+    .note {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .thumb {
+      width: 180px;
+      height: 220px;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #f0ede8;
+      border: 1px solid var(--line);
+    }
+
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .thumb-empty {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .stock-box {
+      background: #faf8f4;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .stock-box strong {
+      color: var(--black);
+    }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #faf8f4;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+
+    .check-row input {
+      width: 18px;
+      height: 18px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .btn {
+      min-width: 180px;
+      height: 52px;
+      padding: 0 20px;
+      border: 0;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .btn-dark {
+      background: var(--black);
+      color: white;
+    }
+
+    .btn-light {
+      background: #efe9df;
+      color: var(--black);
+    }
+
+    @media (max-width: 700px) {
+      .container { padding: 0 16px; }
+      .row-2 { grid-template-columns: 1fr; }
+      .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">DAMORE ADMIN PANEL</div>
+
+  <main class="page">
+    <div class="container">
+      <div class="head">
+        <small>Product Edit</small>
+        <h1>상품 수정</h1>
+        <p>상품 수정에서 재고 수량을 직접 바꿀 수 있는 버전입니다.</p>
+      </div>
+
+      <div class="card">
+        <form method="POST" action="/admin/products/<%= product._id %>/edit" enctype="multipart/form-data" class="form-grid">
+          <div>
+            <label>상품명</label>
+            <input type="text" name="name" value="<%= product.name %>" required />
+          </div>
+
+          <div class="row-2">
+            <div>
+              <label>카테고리</label>
+              <select name="category" required>
+                <% categories.forEach(category => { %>
+                  <option value="<%= category.name %>" <%= product.category === category.name ? 'selected' : '' %>>
+                    <%= category.name %>
+                  </option>
+                <% }) %>
+              </select>
+            </div>
+
+            <div>
+              <label>태그</label>
+              <input type="text" name="tag" value="<%= product.tag || '' %>" />
+            </div>
+          </div>
+
+          <div class="row-2">
+            <div>
+              <label>판매가</label>
+              <input type="number" name="price" min="0" value="<%= product.price %>" required />
+            </div>
+
+            <div>
+              <label>기존가</label>
+              <input type="number" name="oldPrice" min="0" value="<%= product.oldPrice || 0 %>" />
+            </div>
+          </div>
+
+          <div class="row-2">
+            <div>
+              <label>재고 수량</label>
+              <input type="number" name="stock" min="0" value="<%= product.stock || 0 %>" required />
+              <div class="note">여기서 재고 개수를 직접 수정하면 된다.</div>
+            </div>
+
+            <div>
+              <label>현재 재고 상태</label>
+              <div class="stock-box">
+                현재 재고:
+                <strong><%= product.stock || 0 %>개</strong><br />
+                현재 상태:
+                <strong><%= (product.stock || 0) > 0 ? '판매중' : '품절' %></strong>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label>옵션</label>
+            <input
+              type="text"
+              name="options"
+              value="<%= product.options && product.options.length ? product.options.join(', ') : '' %>"
+              placeholder="예: S, M, L"
+            />
+            <div class="note">쉼표로 구분해서 입력 가능</div>
+          </div>
+
+          <div>
+            <label>상품 설명</label>
+            <textarea name="desc"><%= product.desc || '' %></textarea>
+          </div>
+
+          <div>
+            <label>현재 이미지</label>
+            <div class="thumb">
+              <% if (product.image) { %>
+                <img src="<%= product.image %>" alt="<%= product.name %>" />
+              <% } else { %>
+                <div class="thumb-empty">이미지 없음</div>
+              <% } %>
+            </div>
+          </div>
+
+          <div>
+            <label>새 이미지 업로드</label>
+            <input type="file" name="image" accept="image/*" />
+          </div>
+
+          <div class="check-row">
+            <input type="checkbox" name="isBest" id="isBest" <%= product.isBest ? 'checked' : '' %> />
+            <label for="isBest" style="margin:0;">베스트 상품으로 지정</label>
+          </div>
+
+          <div class="btn-row">
+            <button type="submit" class="btn btn-dark">상품 수정 저장</button>
+            <a href="/admin/products" class="btn btn-light">상품목록으로</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

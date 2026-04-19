@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>메인 슬라이드 관리 | 관리자</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 24px; font-family: Arial, sans-serif; background: #f6f6f6; color: #111; }
+    .wrap { max-width: 1580px; margin: 0 auto; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; gap: 12px; flex-wrap: wrap; }
+    .topbar h1 { margin: 0; font-size: 28px; }
+    .top-links { display: flex; gap: 10px; flex-wrap: wrap; }
+    .top-links a { text-decoration: none; color: white; background: #111; padding: 10px 14px; border-radius: 10px; font-size: 14px; }
+
+    .card { background: white; border-radius: 18px; padding: 22px; box-shadow: 0 10px 24px rgba(0,0,0,0.06); margin-bottom: 22px; }
+    .card h2 { margin: 0 0 18px; font-size: 22px; }
+
+    .slide-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+    .slide-head h3 { margin: 0; font-size: 20px; }
+    .slide-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .editor-layout { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(420px, 0.8fr); gap: 22px; align-items: start; }
+    .preview-side { position: sticky; top: 24px; }
+
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .full { grid-column: 1 / -1; }
+
+    label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+
+    input[type="text"], textarea, input[type="file"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      font-size: 14px;
+      background: #fff;
+    }
+
+    textarea { min-height: 110px; resize: vertical; }
+
+    .toggle-box {
+      display: flex; align-items: center; gap: 8px;
+      min-height: 46px; padding: 0 12px;
+      border: 1px solid #ddd; border-radius: 12px; background: #fafafa;
+      font-size: 13px; font-weight: 700;
+    }
+
+    .toggle-box input { width: 18px; height: 18px; accent-color: #111; }
+    .sub-box { border: 1px solid #eee; border-radius: 14px; padding: 14px; background: #fafafa; }
+    .sub-title { font-size: 13px; font-weight: 800; margin-bottom: 12px; }
+
+    .submit-box { display: flex; justify-content: flex-end; margin-top: 16px; }
+
+    button, .btn {
+      border: 0; background: #111; color: white; padding: 12px 18px;
+      border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer;
+      text-decoration: none; display: inline-flex; align-items: center; justify-content: center;
+    }
+    .btn-light { background: #ececec; color: #111; }
+    .btn-red { background: #d94b4b; color: white; }
+    .inline-form { display: inline; }
+
+    .image-preview-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 16px; }
+    .image-preview-box { background: #fafafa; border: 1px solid #eee; border-radius: 14px; padding: 12px; }
+    .image-preview-box strong { display: block; margin-bottom: 8px; font-size: 13px; }
+    .image-preview-box img { width: 100%; height: 180px; object-fit: cover; display: block; border-radius: 10px; background: #eee; margin-bottom: 10px; }
+
+    .preview-shell { background: #f5f3ef; border: 1px solid #ebe4da; border-radius: 20px; padding: 14px; }
+    .preview-title { font-size: 14px; font-weight: 800; margin-bottom: 12px; color: #5f564c; }
+
+    .hero-preview { background: #ddd; overflow: hidden; box-shadow: 0 16px 36px rgba(0,0,0,0.10); user-select: none; }
+    .hero-preview-slide { display: grid; grid-template-columns: 1fr 1fr 1fr; min-height: 500px; }
+
+    .hero-preview-panel { position: relative; overflow: hidden; background: #ddd; }
+    .hero-preview-panel img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .hero-preview-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.22), rgba(0,0,0,0.08));
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .hero-preview-panel.left::before {
+      background: linear-gradient(to top, rgba(0,0,0,0.34), rgba(0,0,0,0.10));
+    }
+
+    .hero-preview-label {
+      position: absolute;
+      z-index: 3;
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: rgba(255,255,255,0.82);
+    }
+
+    .hero-preview-title-wrap {
+      position: absolute;
+      z-index: 3;
+      color: white;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    }
+
+    .hero-preview-title-text {
+      font-size: 30px;
+      line-height: 1.06;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin-bottom: 12px;
+      white-space: pre-line;
+    }
+
+    .hero-preview-desc {
+      font-size: 13px;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.88);
+      margin-bottom: 14px;
+      white-space: pre-line;
+      max-width: 280px;
+    }
+
+    .hero-preview-benefits {
+      position: absolute;
+      z-index: 3;
+      display: grid;
+      gap: 8px;
+      max-width: 250px;
+    }
+
+    .hero-preview-benefit {
+      background: transparent;
+      color: rgba(255,255,255,0.96);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.5;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    }
+
+    .hero-preview-cta {
+      position: absolute;
+      z-index: 3;
+      background: transparent;
+      color: rgba(255,255,255,0.98);
+      font-size: 12px;
+      font-weight: 800;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    }
+
+    .hero-preview-badge {
+      position: absolute;
+      background: transparent;
+      color: rgba(255,255,255,0.96);
+      font-size: 12px;
+      font-weight: 800;
+      z-index: 3;
+      text-shadow: 0 3px 12px rgba(0,0,0,0.28);
+    }
+
+    .hero-preview-info-card {
+      position: absolute;
+      z-index: 3;
+      width: min(220px, calc(100% - 36px));
+      background: transparent;
+      padding: 0;
+    }
+
+    .hero-preview-info-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255,255,255,0.98);
+      font-size: 12px;
+      font-weight: 700;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    }
+
+    .hero-preview-info-item + .hero-preview-info-item { margin-top: 8px; }
+
+    .preview-link-box { margin-top: 12px; background: white; border: 1px solid #ece6dc; border-radius: 14px; padding: 12px; }
+    .preview-link-box h4 { margin: 0 0 10px; font-size: 13px; }
+    .preview-link { font-size: 12px; color: #7c6f61; line-height: 1.7; word-break: break-all; }
+
+    .is-hidden { display: none !important; }
+
+    .drag-item {
+      cursor: grab;
+      touch-action: none;
+      outline: 1px dashed transparent;
+      transition: outline-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .drag-item:hover {
+      outline-color: rgba(255,255,255,0.5);
+    }
+
+    .drag-item.dragging {
+      cursor: grabbing;
+      outline-color: rgba(255,255,255,0.9);
+      box-shadow: 0 0 0 9999px rgba(0,0,0,0.06) inset;
+    }
+
+    @media (max-width: 1200px) {
+      .editor-layout { grid-template-columns: 1fr; }
+      .preview-side { position: static; }
+    }
+
+    @media (max-width: 900px) {
+      .grid, .grid-2, .grid-3, .grid-4, .image-preview-grid { grid-template-columns: 1fr; }
+      .hero-preview-slide { grid-template-columns: 1fr; min-height: auto; }
+      .hero-preview-panel { min-height: 260px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <h1>메인 슬라이드 관리</h1>
+      <div class="top-links">
+        <a href="/admin/dashboard">관리자 홈</a>
+        <a href="/admin/site-content">사이트 관리</a>
+        <a href="/">사이트 보기</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>새 슬라이드 추가</h2>
+
+      <div class="editor-layout">
+        <div class="form-side">
+          <form action="/admin/hero-slides" method="POST" enctype="multipart/form-data" class="live-preview-form">
+            <div class="grid">
+              <div>
+                <label>메인 라벨 문구</label>
+                <input type="text" name="mainLabel" data-preview="mainLabel" value="DAMORE MAIN VISUAL" />
+              </div>
+              <div class="toggle-box">
+                <input type="checkbox" name="showMainLabel" checked />
+                <span>메인 라벨 표시</span>
+              </div>
+
+              <div class="full">
+                <label>슬라이드 제목</label>
+                <input type="text" name="title" data-preview="title" placeholder="예: 봄 메인 기획전&#10;신상품 모음" />
+              </div>
+
+              <div class="full">
+                <label>슬라이드 설명</label>
+                <textarea name="desc" data-preview="desc" placeholder="예: 이번 주 메인으로 노출할 상품 / 이벤트 / 카테고리를 담는 설명"></textarea>
+              </div>
+
+              <div>
+                <label>버튼 문구</label>
+                <input type="text" name="buttonText" data-preview="buttonText" placeholder="예: 지금 보러가기" />
+              </div>
+              <div class="toggle-box">
+                <input type="checkbox" name="showButton" checked />
+                <span>버튼 문구 표시</span>
+              </div>
+
+              <div>
+                <label>버튼 링크</label>
+                <input type="text" name="buttonLink" data-preview="buttonLink" placeholder="/products/상품id 또는 /about" />
+              </div>
+
+              <div>
+                <label>제목 top</label>
+                <input type="text" name="titleTop" data-pos-input="titleTop" value="58%" />
+              </div>
+
+              <div>
+                <label>제목 left</label>
+                <input type="text" name="titleLeft" data-pos-input="titleLeft" value="34px" />
+              </div>
+
+              <div>
+                <label>혜택 bottom</label>
+                <input type="text" name="benefitBottom" data-pos-input="benefitBottom" value="86px" />
+              </div>
+
+              <div>
+                <label>혜택 left</label>
+                <input type="text" name="benefitLeft" data-pos-input="benefitLeft" value="34px" />
+              </div>
+
+              <div>
+                <label>버튼 bottom</label>
+                <input type="text" name="buttonBottom" data-pos-input="buttonBottom" value="34px" />
+              </div>
+
+              <div>
+                <label>버튼 left</label>
+                <input type="text" name="buttonLeft" data-pos-input="buttonLeft" value="34px" />
+              </div>
+
+              <div>
+                <label>포인트 bottom</label>
+                <input type="text" name="pointBottom" data-pos-input="pointBottom" value="34px" />
+              </div>
+
+              <div>
+                <label>포인트 right</label>
+                <input type="text" name="pointRight" data-pos-input="pointRight" value="34px" />
+              </div>
+            </div>
+
+            <div class="sub-box" style="margin-top:16px;">
+              <div class="sub-title">배지 설정</div>
+              <div class="grid-3">
+                <div>
+                  <label>배지 1 문구</label>
+                  <input type="text" name="badge1" data-preview="badge1" placeholder="예: 신상품" />
+                  <div class="toggle-box" style="margin-top:8px;">
+                    <input type="checkbox" name="showBadge1" checked />
+                    <span>문구 표시</span>
+                  </div>
+                  <div class="grid-4" style="margin-top:8px;">
+                    <input type="text" name="badge1Top" data-badge-pos="badge1-top" placeholder="top" value="82px" />
+                    <input type="text" name="badge1Left" data-badge-pos="badge1-left" placeholder="left" value="50px" />
+                    <input type="text" name="badge1Right" data-badge-pos="badge1-right" placeholder="right" />
+                    <input type="text" name="badge1Bottom" data-badge-pos="badge1-bottom" placeholder="bottom" />
+                  </div>
+                </div>
+
+                <div>
+                  <label>배지 2 문구</label>
+                  <input type="text" name="badge2" data-preview="badge2" placeholder="예: 기획전" />
+                  <div class="toggle-box" style="margin-top:8px;">
+                    <input type="checkbox" name="showBadge2" checked />
+                    <span>문구 표시</span>
+                  </div>
+                  <div class="grid-4" style="margin-top:8px;">
+                    <input type="text" name="badge2Top" data-badge-pos="badge2-top" placeholder="top" />
+                    <input type="text" name="badge2Left" data-badge-pos="badge2-left" placeholder="left" value="70px" />
+                    <input type="text" name="badge2Right" data-badge-pos="badge2-right" placeholder="right" />
+                    <input type="text" name="badge2Bottom" data-badge-pos="badge2-bottom" placeholder="bottom" value="150px" />
+                  </div>
+                </div>
+
+                <div>
+                  <label>배지 3 문구</label>
+                  <input type="text" name="badge3" data-preview="badge3" placeholder="예: 베스트" />
+                  <div class="toggle-box" style="margin-top:8px;">
+                    <input type="checkbox" name="showBadge3" checked />
+                    <span>문구 표시</span>
+                  </div>
+                  <div class="grid-4" style="margin-top:8px;">
+                    <input type="text" name="badge3Top" data-badge-pos="badge3-top" placeholder="top" />
+                    <input type="text" name="badge3Left" data-badge-pos="badge3-left" placeholder="left" />
+                    <input type="text" name="badge3Right" data-badge-pos="badge3-right" placeholder="right" value="46px" />
+                    <input type="text" name="badge3Bottom" data-badge-pos="badge3-bottom" placeholder="bottom" value="86px" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="sub-box" style="margin-top:16px;">
+              <div class="sub-title">혜택 문구 설정</div>
+              <div class="grid-3">
+                <div>
+                  <label>혜택 1</label>
+                  <input type="text" name="benefit1" data-preview="benefit1" placeholder="예: 5만원 이상 무료배송" />
+                  <div class="toggle-box" style="margin-top:8px;">
+                    <input type="checkbox" name="showBenefit1" checked />
+                    <span>문구 표시</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label>혜택 2</label>
+                  <input type="text" name="benefit2" data-preview="benefit2" placeholder="예: 신상품 매주 업데이트" />
+                  <div class="toggle-box" style="margin-top:8px;">
+                    <input type="checkbox" name="showBenefit2" checked />
+                    <span>문구 표시</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label>혜택 3</label>
+                  <input type="text" name="benefit3" data-preview="benefit3" placeholder="예: 회원가입 없이 주문 가능" />
+                  <div class="toggle-box" style="margin-top:8px;">
+                    <input type="checkbox" name="showBenefit3" checked />
+                    <span>문구 표시</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="sub-box" style="margin-top:16px;">
+              <div class="sub-title">포인트 문구 설정</div>
+              <div class="grid-3">
+                <div>
+                  <label>포인트 1</label>
+                  <input type="text" name="point1" data-preview="point1" placeholder="예: 카테고리 바로가기" />
+                  <div class="toggle-box" style="margin-top:8px;">
+                    <input type="checkbox" name="showPoint1" checked />
+                    <span>문구 표시</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label>포인트 2</label>
+                  <input type="text" name="point2" data-preview="point2" placeholder="예: 대표 상품 이동" />
+                  <div class="toggle-box" style="margin-top:8px;">
+                    <input type="checkbox" name="showPoint2" checked />
+                    <span>문구 표시</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label>포인트 3</label>
+                  <input type="text" name="point3" data-preview="point3" placeholder="예: 이벤트 페이지 연결" />
+                  <div class="toggle-box" style="margin-top:8px;">
+                    <input type="checkbox" name="showPoint3" checked />
+                    <span>문구 표시</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="image-preview-grid">
+              <div class="image-preview-box">
+                <strong>왼쪽 이미지</strong>
+                <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1200&q=80" data-preview-image="leftImage" alt="">
+                <input type="file" name="leftImage" data-preview-file="leftImage" accept="image/*">
+              </div>
+
+              <div class="image-preview-box">
+                <strong>가운데 이미지</strong>
+                <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1200&q=80" data-preview-image="centerImage" alt="">
+                <input type="file" name="centerImage" data-preview-file="centerImage" accept="image/*">
+              </div>
+
+              <div class="image-preview-box">
+                <strong>오른쪽 이미지</strong>
+                <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1200&q=80" data-preview-image="rightImage" alt="">
+                <input type="file" name="rightImage" data-preview-file="rightImage" accept="image/*">
+              </div>
+            </div>
+
+            <div class="grid-3" style="margin-top: 18px;">
+              <div>
+                <label>왼쪽 영역 클릭 링크</label>
+                <input type="text" name="leftLink" data-preview="leftLink" placeholder="/category/top" />
+              </div>
+              <div>
+                <label>가운데 영역 클릭 링크</label>
+                <input type="text" name="centerLink" data-preview="centerLink" placeholder="/products/상품id" />
+              </div>
+              <div>
+                <label>오른쪽 영역 클릭 링크</label>
+                <input type="text" name="rightLink" data-preview="rightLink" placeholder="/about 또는 /event/slug" />
+              </div>
+            </div>
+
+            <div class="toggle-box" style="margin-top:16px;">
+              <input type="checkbox" name="isActive" checked />
+              <span>활성화</span>
+            </div>
+
+            <div class="submit-box">
+              <button type="submit">슬라이드 추가</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="preview-side">
+          <div class="preview-shell">
+            <div class="preview-title">홈페이지 표시 미리보기</div>
+
+            <div class="hero-preview">
+              <div class="hero-preview-slide">
+                <div class="hero-preview-panel left">
+                  <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1200&q=80" data-preview-target-image="leftImage" alt="">
+
+                  <div class="hero-preview-label drag-item" data-preview-target-wrap="mainLabel" data-drag-type="label">
+                    <span data-preview-target="mainLabel">DAMORE MAIN VISUAL</span>
+                  </div>
+
+                  <div class="hero-preview-title-wrap drag-item" data-pos-target="title" data-drag-type="title">
+                    <div class="hero-preview-title-text" data-preview-target="title">더 많은 가능성,
+더 깊은 스타일</div>
+                    <div class="hero-preview-desc" data-preview-target="desc">하루를 통째로 바꿔주는 분위기. 다모어는 오래 남는 무드와 실루엣을 제안합니다.</div>
+                  </div>
+
+                  <div class="hero-preview-benefits drag-item" data-pos-target="benefit" data-drag-type="benefit">
+                    <div class="hero-preview-benefit" data-preview-target-wrap="benefit1Text">
+                      <span data-preview-target="benefit1">5만원 이상 무료배송</span>
+                    </div>
+                    <div class="hero-preview-benefit" data-preview-target-wrap="benefit2Text">
+                      <span data-preview-target="benefit2">신상품 매주 업데이트</span>
+                    </div>
+                    <div class="hero-preview-benefit" data-preview-target-wrap="benefit3Text">
+                      <span data-preview-target="benefit3">회원가입 없이 주문 가능</span>
+                    </div>
+                  </div>
+
+                  <div class="hero-preview-cta drag-item" data-preview-target-wrap="buttonText" data-pos-target="button" data-drag-type="button">
+                    <span data-preview-target="buttonText">지금 보러가기</span>
+                  </div>
+                </div>
+
+                <div class="hero-preview-panel center">
+                  <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1200&q=80" data-preview-target-image="centerImage" alt="">
+
+                  <div class="hero-preview-badge drag-item" data-badge="badge1" data-drag-type="badge1">
+                    <span data-preview-target="badge1">신상품</span>
+                  </div>
+                  <div class="hero-preview-badge drag-item" data-badge="badge2" data-drag-type="badge2">
+                    <span data-preview-target="badge2">기획전</span>
+                  </div>
+                  <div class="hero-preview-badge drag-item" data-badge="badge3" data-drag-type="badge3">
+                    <span data-preview-target="badge3">베스트</span>
+                  </div>
+                </div>
+
+                <div class="hero-preview-panel right">
+                  <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1200&q=80" data-preview-target-image="rightImage" alt="">
+
+                  <div class="hero-preview-info-card drag-item" data-pos-target="point" data-drag-type="point">
+                    <div class="hero-preview-info-item" data-preview-target-wrap="point1Text">          
+                      <span data-preview-target="point1">카테고리 바로가기</span>
+                    </div>
+                    <div class="hero-preview-info-item" data-preview-target-wrap="point2Text">                  
+                      <span data-preview-target="point2">대표 상품 이동</span>
+                    </div>
+                    <div class="hero-preview-info-item" data-preview-target-wrap="point3Text">                    
+                      <span data-preview-target="point3">이벤트 페이지 연결</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="preview-link-box">
+              <h4>현재 링크 미리보기</h4>
+              <div class="preview-link">왼쪽 링크: <span data-preview-target="leftLink">/category/top</span></div>
+              <div class="preview-link">가운데 링크: <span data-preview-target="centerLink">/products/상품id</span></div>
+              <div class="preview-link">오른쪽 링크: <span data-preview-target="rightLink">/about</span></div>
+              <div class="preview-link">버튼 링크: <span data-preview-target="buttonLink">/about</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <% if (slides && slides.length > 0) { %>
+      <% slides.forEach((slide, index) => { %>
+        <div class="card">
+          <div class="slide-head">
+            <h3>슬라이드 <%= index + 1 %></h3>
+            <div class="slide-actions">
+              <form class="inline-form" action="/admin/hero-slides/<%= slide._id %>/up" method="POST">
+                <button type="submit" class="btn btn-light">위로</button>
+              </form>
+              <form class="inline-form" action="/admin/hero-slides/<%= slide._id %>/down" method="POST">
+                <button type="submit" class="btn btn-light">아래로</button>
+              </form>
+              <form class="inline-form" action="/admin/hero-slides/<%= slide._id %>/delete" method="POST" onsubmit="return confirm('이 슬라이드를 삭제할까요?');">
+                <button type="submit" class="btn btn-red">삭제</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="editor-layout">
+            <div class="form-side">
+              <form action="/admin/hero-slides/<%= slide._id %>/edit" method="POST" enctype="multipart/form-data" class="live-preview-form">
+                <div class="grid">
+                  <div>
+                    <label>메인 라벨 문구</label>
+                    <input type="text" name="mainLabel" data-preview="mainLabel" value="<%= slide.mainLabel || 'DAMORE MAIN VISUAL' %>" />
+                  </div>
+                  <div class="toggle-box">
+                    <input type="checkbox" name="showMainLabel" <%= slide.showMainLabel ? 'checked' : '' %> />
+                    <span>메인 라벨 표시</span>
+                  </div>
+
+                  <div class="full">
+                    <label>슬라이드 제목</label>
+                    <input type="text" name="title" data-preview="title" value="<%= slide.title || '' %>" />
+                  </div>
+
+                  <div class="full">
+                    <label>슬라이드 설명</label>
+                    <textarea name="desc" data-preview="desc"><%= slide.desc || '' %></textarea>
+                  </div>
+
+                  <div>
+                    <label>버튼 문구</label>
+                    <input type="text" name="buttonText" data-preview="buttonText" value="<%= slide.buttonText || '' %>" />
+                  </div>
+                  <div class="toggle-box">
+                    <input type="checkbox" name="showButton" <%= slide.showButton ? 'checked' : '' %> />
+                    <span>버튼 문구 표시</span>
+                  </div>
+
+                  <div>
+                    <label>버튼 링크</label>
+                    <input type="text" name="buttonLink" data-preview="buttonLink" value="<%= slide.buttonLink || '' %>" />
+                  </div>
+
+                  <div>
+                    <label>제목 top</label>
+                    <input type="text" name="titleTop" data-pos-input="titleTop" value="<%= slide.titleTop || '58%' %>" />
+                  </div>
+
+                  <div>
+                    <label>제목 left</label>
+                    <input type="text" name="titleLeft" data-pos-input="titleLeft" value="<%= slide.titleLeft || '34px' %>" />
+                  </div>
+
+                  <div>
+                    <label>혜택 bottom</label>
+                    <input type="text" name="benefitBottom" data-pos-input="benefitBottom" value="<%= slide.benefitBottom || '86px' %>" />
+                  </div>
+
+                  <div>
+                    <label>혜택 left</label>
+                    <input type="text" name="benefitLeft" data-pos-input="benefitLeft" value="<%= slide.benefitLeft || '34px' %>" />
+                  </div>
+
+                  <div>
+                    <label>버튼 bottom</label>
+                    <input type="text" name="buttonBottom" data-pos-input="buttonBottom" value="<%= slide.buttonBottom || '34px' %>" />
+                  </div>
+
+                  <div>
+                    <label>버튼 left</label>
+                    <input type="text" name="buttonLeft" data-pos-input="buttonLeft" value="<%= slide.buttonLeft || '34px' %>" />
+                  </div>
+
+                  <div>
+                    <label>포인트 bottom</label>
+                    <input type="text" name="pointBottom" data-pos-input="pointBottom" value="<%= slide.pointBottom || '34px' %>" />
+                  </div>
+
+                  <div>
+                    <label>포인트 right</label>
+                    <input type="text" name="pointRight" data-pos-input="pointRight" value="<%= slide.pointRight || '34px' %>" />
+                  </div>
+                </div>
+
+                <div class="sub-box" style="margin-top:16px;">
+                  <div class="sub-title">배지 설정</div>
+                  <div class="grid-3">
+                    <div>
+                      <label>배지 1 문구</label>
+                      <input type="text" name="badge1" data-preview="badge1" value="<%= slide.badge1 || '' %>" />
+                      <div class="toggle-box" style="margin-top:8px;">
+                        <input type="checkbox" name="showBadge1" <%= slide.showBadge1 ? 'checked' : '' %> />
+                        <span>문구 표시</span>
+                      </div>
+                      <div class="grid-4" style="margin-top:8px;">
+                        <input type="text" name="badge1Top" data-badge-pos="badge1-top" placeholder="top" value="<%= slide.badge1Top || '' %>" />
+                        <input type="text" name="badge1Left" data-badge-pos="badge1-left" placeholder="left" value="<%= slide.badge1Left || '' %>" />
+                        <input type="text" name="badge1Right" data-badge-pos="badge1-right" placeholder="right" value="<%= slide.badge1Right || '' %>" />
+                        <input type="text" name="badge1Bottom" data-badge-pos="badge1-bottom" placeholder="bottom" value="<%= slide.badge1Bottom || '' %>" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label>배지 2 문구</label>
+                      <input type="text" name="badge2" data-preview="badge2" value="<%= slide.badge2 || '' %>" />
+                      <div class="toggle-box" style="margin-top:8px;">
+                        <input type="checkbox" name="showBadge2" <%= slide.showBadge2 ? 'checked' : '' %> />
+                        <span>문구 표시</span>
+                      </div>
+                      <div class="grid-4" style="margin-top:8px;">
+                        <input type="text" name="badge2Top" data-badge-pos="badge2-top" placeholder="top" value="<%= slide.badge2Top || '' %>" />
+                        <input type="text" name="badge2Left" data-badge-pos="badge2-left" placeholder="left" value="<%= slide.badge2Left || '' %>" />
+                        <input type="text" name="badge2Right" data-badge-pos="badge2-right" placeholder="right" value="<%= slide.badge2Right || '' %>" />
+                        <input type="text" name="badge2Bottom" data-badge-pos="badge2-bottom" placeholder="bottom" value="<%= slide.badge2Bottom || '' %>" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label>배지 3 문구</label>
+                      <input type="text" name="badge3" data-preview="badge3" value="<%= slide.badge3 || '' %>" />
+                      <div class="toggle-box" style="margin-top:8px;">
+                        <input type="checkbox" name="showBadge3" <%= slide.showBadge3 ? 'checked' : '' %> />
+                        <span>문구 표시</span>
+                      </div>
+                      <div class="grid-4" style="margin-top:8px;">
+                        <input type="text" name="badge3Top" data-badge-pos="badge3-top" placeholder="top" value="<%= slide.badge3Top || '' %>" />
+                        <input type="text" name="badge3Left" data-badge-pos="badge3-left" placeholder="left" value="<%= slide.badge3Left || '' %>" />
+                        <input type="text" name="badge3Right" data-badge-pos="badge3-right" placeholder="right" value="<%= slide.badge3Right || '' %>" />
+                        <input type="text" name="badge3Bottom" data-badge-pos="badge3-bottom" placeholder="bottom" value="<%= slide.badge3Bottom || '' %>" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="sub-box" style="margin-top:16px;">
+                  <div class="sub-title">혜택 문구 설정</div>
+                  <div class="grid-3">
+                    <div>
+                      <label>혜택 1</label>
+                      <input type="text" name="benefit1" data-preview="benefit1" value="<%= slide.benefit1 || '' %>" />
+                      <div class="toggle-box" style="margin-top:8px;">
+                        <input type="checkbox" name="showBenefit1" <%= slide.showBenefit1 ? 'checked' : '' %> />
+                        <span>문구 표시</span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label>혜택 2</label>
+                      <input type="text" name="benefit2" data-preview="benefit2" value="<%= slide.benefit2 || '' %>" />
+                      <div class="toggle-box" style="margin-top:8px;">
+                        <input type="checkbox" name="showBenefit2" <%= slide.showBenefit2 ? 'checked' : '' %> />
+                        <span>문구 표시</span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label>혜택 3</label>
+                      <input type="text" name="benefit3" data-preview="benefit3" value="<%= slide.benefit3 || '' %>" />
+                      <div class="toggle-box" style="margin-top:8px;">
+                        <input type="checkbox" name="showBenefit3" <%= slide.showBenefit3 ? 'checked' : '' %> />
+                        <span>문구 표시</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="sub-box" style="margin-top:16px;">
+                  <div class="sub-title">포인트 문구 설정</div>
+                  <div class="grid-3">
+                    <div>
+                      <label>포인트 1</label>
+                      <input type="text" name="point1" data-preview="point1" value="<%= slide.point1 || '' %>" />
+                      <div class="toggle-box" style="margin-top:8px;">
+                        <input type="checkbox" name="showPoint1" <%= slide.showPoint1 ? 'checked' : '' %> />
+                        <span>문구 표시</span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label>포인트 2</label>
+                      <input type="text" name="point2" data-preview="point2" value="<%= slide.point2 || '' %>" />
+                      <div class="toggle-box" style="margin-top:8px;">
+                        <input type="checkbox" name="showPoint2" <%= slide.showPoint2 ? 'checked' : '' %> />
+                        <span>문구 표시</span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label>포인트 3</label>
+                      <input type="text" name="point3" data-preview="point3" value="<%= slide.point3 || '' %>" />
+                      <div class="toggle-box" style="margin-top:8px;">
+                        <input type="checkbox" name="showPoint3" <%= slide.showPoint3 ? 'checked' : '' %> />
+                        <span>문구 표시</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="image-preview-grid">
+                  <div class="image-preview-box">
+                    <strong>왼쪽 이미지</strong>
+                    <img src="<%= slide.leftImage || 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1200&q=80' %>" data-preview-image="leftImage" alt="">
+                    <input type="file" name="leftImage" data-preview-file="leftImage" accept="image/*">
+                  </div>
+
+                  <div class="image-preview-box">
+                    <strong>가운데 이미지</strong>
+                    <img src="<%= slide.centerImage || 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1200&q=80' %>" data-preview-image="centerImage" alt="">
+                    <input type="file" name="centerImage" data-preview-file="centerImage" accept="image/*">
+                  </div>
+
+                  <div class="image-preview-box">
+                    <strong>오른쪽 이미지</strong>
+                    <img src="<%= slide.rightImage || 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1200&q=80' %>" data-preview-image="rightImage" alt="">
+                    <input type="file" name="rightImage" data-preview-file="rightImage" accept="image/*">
+                  </div>
+                </div>
+
+                <div class="grid-3" style="margin-top: 18px;">
+                  <div>
+                    <label>왼쪽 클릭 링크</label>
+                    <input type="text" name="leftLink" data-preview="leftLink" value="<%= slide.leftLink || '' %>" />
+                  </div>
+                  <div>
+                    <label>가운데 클릭 링크</label>
+                    <input type="text" name="centerLink" data-preview="centerLink" value="<%= slide.centerLink || '' %>" />
+                  </div>
+                  <div>
+                    <label>오른쪽 클릭 링크</label>
+                    <input type="text" name="rightLink" data-preview="rightLink" value="<%= slide.rightLink || '' %>" />
+                  </div>
+                </div>
+
+                <div class="toggle-box" style="margin-top:16px;">
+                  <input type="checkbox" name="isActive" <%= slide.isActive ? 'checked' : '' %> />
+                  <span>활성화</span>
+                </div>
+
+                <div class="submit-box">
+                  <button type="submit">수정 저장</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="preview-side">
+              <div class="preview-shell">
+                <div class="preview-title">홈페이지 표시 미리보기</div>
+
+                <div class="hero-preview">
+                  <div class="hero-preview-slide">
+                    <div class="hero-preview-panel left">
+                      <img src="<%= slide.leftImage || 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1200&q=80' %>" data-preview-target-image="leftImage" alt="">
+
+                      <div class="hero-preview-label drag-item" data-preview-target-wrap="mainLabel" data-drag-type="label" <% if (!slide.showMainLabel) { %>style="display:none;"<% } %>>
+                        <span data-preview-target="mainLabel"><%= slide.mainLabel || 'DAMORE MAIN VISUAL' %></span>
+                      </div>
+
+                      <div class="hero-preview-title-wrap drag-item" data-pos-target="title" data-drag-type="title">
+                        <div class="hero-preview-title-text" data-preview-target="title"><%= slide.title || '더 많은 가능성,\n더 깊은 스타일' %></div>
+                        <div class="hero-preview-desc" data-preview-target="desc"><%= slide.desc || '하루를 통째로 바꿔주는 분위기. 다모어는 오래 남는 무드와 실루엣을 제안합니다.' %></div>
+                      </div>
+
+                      <div class="hero-preview-benefits drag-item" data-pos-target="benefit" data-drag-type="benefit">
+                        <div class="hero-preview-benefit" data-preview-target-wrap="benefit1Text" <% if (!slide.showBenefit1) { %>style="display:none;"<% } %>>
+                          <span data-preview-target="benefit1"><%= slide.benefit1 || '5만원 이상 무료배송' %></span>
+                        </div>
+                        <div class="hero-preview-benefit" data-preview-target-wrap="benefit2Text" <% if (!slide.showBenefit2) { %>style="display:none;"<% } %>>
+                          <span data-preview-target="benefit2"><%= slide.benefit2 || '신상품 매주 업데이트' %></span>
+                        </div>
+                        <div class="hero-preview-benefit" data-preview-target-wrap="benefit3Text" <% if (!slide.showBenefit3) { %>style="display:none;"<% } %>>
+                          <span data-preview-target="benefit3"><%= slide.benefit3 || '회원가입 없이 주문 가능' %></span>
+                        </div>
+                      </div>
+
+                      <div class="hero-preview-cta drag-item" data-preview-target-wrap="buttonText" data-pos-target="button" data-drag-type="button" <% if (!slide.showButton) { %>style="display:none;"<% } %>>
+                        <span data-preview-target="buttonText"><%= slide.buttonText || '지금 보러가기' %></span>
+                      </div>
+                    </div>
+
+                    <div class="hero-preview-panel center">
+                      <img src="<%= slide.centerImage || 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1200&q=80' %>" data-preview-target-image="centerImage" alt="">
+
+                      <div class="hero-preview-badge drag-item" data-badge="badge1" data-drag-type="badge1" <% if (!slide.showBadge1) { %>style="display:none;"<% } %>>
+                        <span data-preview-target="badge1"><%= slide.badge1 || '신상품' %></span>
+                      </div>
+
+                      <div class="hero-preview-badge drag-item" data-badge="badge2" data-drag-type="badge2" <% if (!slide.showBadge2) { %>style="display:none;"<% } %>>
+                        <span data-preview-target="badge2"><%= slide.badge2 || '기획전' %></span>
+                      </div>
+
+                      <div class="hero-preview-badge drag-item" data-badge="badge3" data-drag-type="badge3" <% if (!slide.showBadge3) { %>style="display:none;"<% } %>>
+                        <span data-preview-target="badge3"><%= slide.badge3 || '베스트' %></span>
+                      </div>
+                    </div>
+
+                    <div class="hero-preview-panel right">
+                      <img src="<%= slide.rightImage || 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1200&q=80' %>" data-preview-target-image="rightImage" alt="">
+
+                      <div class="hero-preview-info-card drag-item" data-pos-target="point" data-drag-type="point">
+ <div class="hero-preview-info-item" data-preview-target-wrap="point1Text" <% if (!slide.showPoint1) { %>style="display:none;"<% } %>>
+  <span data-preview-target="point1"><%= slide.point1 || '카테고리 바로가기' %></span>
+</div>
+
+<div class="hero-preview-info-item" data-preview-target-wrap="point2Text" <% if (!slide.showPoint2) { %>style="display:none;"<% } %>>
+  <span data-preview-target="point2"><%= slide.point2 || '대표 상품 이동' %></span>
+</div>
+
+<div class="hero-preview-info-item" data-preview-target-wrap="point3Text" <% if (!slide.showPoint3) { %>style="display:none;"<% } %>>
+  <span data-preview-target="point3"><%= slide.point3 || '이벤트 페이지 연결' %></span>
+</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="preview-link-box">
+                  <h4>현재 링크 미리보기</h4>
+                  <div class="preview-link">왼쪽 링크: <span data-preview-target="leftLink"><%= slide.leftLink || '/category/top' %></span></div>
+                  <div class="preview-link">가운데 링크: <span data-preview-target="centerLink"><%= slide.centerLink || '/products/상품id' %></span></div>
+                  <div class="preview-link">오른쪽 링크: <span data-preview-target="rightLink"><%= slide.rightLink || '/about' %></span></div>
+                  <div class="preview-link">버튼 링크: <span data-preview-target="buttonLink"><%= slide.buttonLink || '/about' %></span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <div class="card">아직 등록된 메인 슬라이드가 없습니다.</div>
+    <% } %>
+  </div>
+
+  <script>
+
+  (function () {
+    const forms = document.querySelectorAll('.live-preview-form');
+
+    function qs(root, sel) {
+      return root.querySelector(sel);
+    }
+
+    function qsa(root, sel) {
+      return Array.from(root.querySelectorAll(sel));
+    }
+
+    function setStylePos(el, pos) {
+      if (!el) return;
+      el.style.top = pos.top || '';
+      el.style.left = pos.left || '';
+      el.style.right = pos.right || '';
+      el.style.bottom = pos.bottom || '';
+    }
+
+    function setInputValue(form, name, value) {
+      const input = qs(form, '[name="' + name + '"]');
+      if (input) input.value = value;
+    }
+
+    function getInputValue(form, name, fallback) {
+      const input = qs(form, '[name="' + name + '"]');
+      return input ? input.value : fallback;
+    }
+
+    function updateText(container, name, value) {
+      qsa(container, '[data-preview-target="' + name + '"]').forEach((el) => {
+        el.textContent = value;
+      });
+    }
+
+    function updateImage(container, name, src) {
+      qsa(container, '[data-preview-target-image="' + name + '"]').forEach((el) => {
+        if (src) el.src = src;
+      });
+
+      qsa(container, '[data-preview-image="' + name + '"]').forEach((el) => {
+        if (src) el.src = src;
+      });
+    }
+
+    function updateToggle(container, wrapName, checked) {
+      qsa(container, '[data-preview-target-wrap="' + wrapName + '"]').forEach((el) => {
+        el.style.display = checked ? '' : 'none';
+      });
+    }
+
+    function refreshCommonPositions(container, form) {
+      const title = qs(container, '[data-pos-target="title"]');
+      const benefit = qs(container, '[data-pos-target="benefit"]');
+      const button = qs(container, '[data-pos-target="button"]');
+      const point = qs(container, '[data-pos-target="point"]');
+      const label = qs(container, '[data-drag-type="label"]');
+
+      setStylePos(title, {
+        top: getInputValue(form, 'titleTop', '58%'),
+        left: getInputValue(form, 'titleLeft', '34px'),
+        right: '',
+        bottom: ''
+      });
+
+      setStylePos(benefit, {
+        top: '',
+        left: getInputValue(form, 'benefitLeft', '34px'),
+        right: '',
+        bottom: getInputValue(form, 'benefitBottom', '86px')
+      });
+
+      setStylePos(button, {
+        top: '',
+        left: getInputValue(form, 'buttonLeft', '34px'),
+        right: '',
+        bottom: getInputValue(form, 'buttonBottom', '34px')
+      });
+
+      setStylePos(point, {
+        top: '',
+        left: '',
+        right: getInputValue(form, 'pointRight', '34px'),
+        bottom: getInputValue(form, 'pointBottom', '34px')
+      });
+
+      if (label) {
+        if (!label.style.top) label.style.top = '22px';
+        if (!label.style.left) label.style.left = '22px';
+      }
+    }
+
+    function refreshBadgePositions(container, form) {
+      ['1', '2', '3'].forEach((n) => {
+        const badge = qs(container, '[data-badge="badge' + n + '"]');
+        if (!badge) return;
+
+        setStylePos(badge, {
+          top: getInputValue(form, 'badge' + n + 'Top', ''),
+          left: getInputValue(form, 'badge' + n + 'Left', ''),
+          right: getInputValue(form, 'badge' + n + 'Right', ''),
+          bottom: getInputValue(form, 'badge' + n + 'Bottom', '')
+        });
+      });
+    }
+
+    function bindDrag(container, form) {
+      qsa(container, '.drag-item').forEach((item) => {
+        item.addEventListener('pointerdown', function (e) {
+          e.preventDefault();
+
+          const type = item.getAttribute('data-drag-type');
+          const panel = item.closest('.hero-preview-panel');
+          if (!panel) return;
+
+          const panelRect = panel.getBoundingClientRect();
+          const itemRect = item.getBoundingClientRect();
+
+          const startOffsetX = e.clientX - itemRect.left;
+          const startOffsetY = e.clientY - itemRect.top;
+
+          item.classList.add('dragging');
+
+          function onMove(ev) {
+            const currentRect = item.getBoundingClientRect();
+
+            let left = ev.clientX - panelRect.left - startOffsetX;
+            let top = ev.clientY - panelRect.top - startOffsetY;
+
+            const maxLeft = Math.max(panelRect.width - currentRect.width, 0);
+            const maxTop = Math.max(panelRect.height - currentRect.height, 0);
+
+            left = Math.max(0, Math.min(left, maxLeft));
+            top = Math.max(0, Math.min(top, maxTop));
+
+            if (type === 'label') {
+              item.style.left = Math.round(left) + 'px';
+              item.style.top = Math.round(top) + 'px';
+              return;
+            }
+
+            if (type === 'title') {
+              const newLeft = Math.round(left) + 'px';
+              const newTop = Math.round(top) + 'px';
+              setInputValue(form, 'titleLeft', newLeft);
+              setInputValue(form, 'titleTop', newTop);
+              setStylePos(item, {
+                left: newLeft,
+                top: newTop,
+                right: '',
+                bottom: ''
+              });
+              return;
+            }
+
+            if (type === 'benefit') {
+              const newLeft = Math.round(left) + 'px';
+              const newBottom = Math.round(panelRect.height - top - currentRect.height) + 'px';
+              setInputValue(form, 'benefitLeft', newLeft);
+              setInputValue(form, 'benefitBottom', newBottom);
+              setStylePos(item, {
+                left: newLeft,
+                bottom: newBottom,
+                top: '',
+                right: ''
+              });
+              return;
+            }
+
+            if (type === 'button') {
+              const newLeft = Math.round(left) + 'px';
+              const newBottom = Math.round(panelRect.height - top - currentRect.height) + 'px';
+              setInputValue(form, 'buttonLeft', newLeft);
+              setInputValue(form, 'buttonBottom', newBottom);
+              setStylePos(item, {
+                left: newLeft,
+                bottom: newBottom,
+                top: '',
+                right: ''
+              });
+              return;
+            }
+
+            if (type === 'point') {
+              const newRight = Math.round(panelRect.width - left - currentRect.width) + 'px';
+              const newBottom = Math.round(panelRect.height - top - currentRect.height) + 'px';
+              setInputValue(form, 'pointRight', newRight);
+              setInputValue(form, 'pointBottom', newBottom);
+              setStylePos(item, {
+                right: newRight,
+                bottom: newBottom,
+                top: '',
+                left: ''
+              });
+              return;
+            }
+
+            if (type === 'badge1' || type === 'badge2' || type === 'badge3') {
+              const n = type.replace('badge', '');
+              const newTop = Math.round(top) + 'px';
+              const newLeft = Math.round(left) + 'px';
+
+              setInputValue(form, 'badge' + n + 'Top', newTop);
+              setInputValue(form, 'badge' + n + 'Left', newLeft);
+              setInputValue(form, 'badge' + n + 'Right', '');
+              setInputValue(form, 'badge' + n + 'Bottom', '');
+
+              setStylePos(item, {
+                top: newTop,
+                left: newLeft,
+                right: '',
+                bottom: ''
+              });
+            }
+          }
+
+          function onUp() {
+            item.classList.remove('dragging');
+            window.removeEventListener('pointermove', onMove);
+            window.removeEventListener('pointerup', onUp);
+          }
+
+          window.addEventListener('pointermove', onMove);
+          window.addEventListener('pointerup', onUp);
+        });
+      });
+    }
+
+    forms.forEach((form) => {
+      const container = form.closest('.editor-layout');
+      if (!container) return;
+
+      const togglePairs = [
+        { checkbox: 'showMainLabel', wrap: 'mainLabel' },
+        { checkbox: 'showButton', wrap: 'buttonText' },
+        { checkbox: 'showBadge1', wrap: 'badge1' },
+        { checkbox: 'showBadge2', wrap: 'badge2' },
+        { checkbox: 'showBadge3', wrap: 'badge3' },
+        { checkbox: 'showBenefit1', wrap: 'benefit1Text' },
+        { checkbox: 'showBenefit2', wrap: 'benefit2Text' },
+        { checkbox: 'showBenefit3', wrap: 'benefit3Text' },
+        { checkbox: 'showPoint1', wrap: 'point1Text' },
+        { checkbox: 'showPoint2', wrap: 'point2Text' },
+        { checkbox: 'showPoint3', wrap: 'point3Text' }
+      ];
+
+      qsa(form, '[data-preview]').forEach((input) => {
+        const name = input.getAttribute('data-preview');
+        updateText(container, name, input.value);
+        input.addEventListener('input', function () {
+          updateText(container, name, input.value);
+        });
+      });
+
+      qsa(form, '[data-preview-file]').forEach((input) => {
+        const name = input.getAttribute('data-preview-file');
+        input.addEventListener('change', function (e) {
+          const file = e.target.files && e.target.files[0];
+          if (!file) return;
+
+          const reader = new FileReader();
+          reader.onload = function (ev) {
+            updateImage(container, name, ev.target.result);
+          };
+          reader.readAsDataURL(file);
+        });
+      });
+
+      qsa(form, '[data-pos-input]').forEach((input) => {
+        input.addEventListener('input', function () {
+          refreshCommonPositions(container, form);
+        });
+      });
+
+      qsa(form, '[data-badge-pos]').forEach((input) => {
+        input.addEventListener('input', function () {
+          refreshBadgePositions(container, form);
+        });
+      });
+
+      togglePairs.forEach((item) => {
+        const checkbox = qs(form, 'input[name="' + item.checkbox + '"]');
+        if (!checkbox) return;
+
+        updateToggle(container, item.wrap, checkbox.checked);
+        checkbox.addEventListener('change', function () {
+          updateToggle(container, item.wrap, checkbox.checked);
+        });
+      });
+
+      refreshCommonPositions(container, form);
+      refreshBadgePositions(container, form);
+      bindDrag(container, form);
+    });
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,409 @@
+<footer>
+  <%
+    const footerBrandName = siteContent.footerBrandName || 'DAMORE';
+    const footerDesc = siteContent.footerDesc || '더 많은 스타일, 더 많은 확장성, 그리고 오래 남는 무드를 만드는 브랜드.';
+    const footerCsLabel = siteContent.footerCsLabel || '고객센터';
+    const footerCsPhone = siteContent.footerCsPhone || '1644-4370';
+    const footerCsTime1 = siteContent.footerCsTime1 || '평일 AM 09:00 ~ PM 16:00 / 점심 PM 12:00 ~ PM 1:00';
+    const footerCsTime2 = siteContent.footerCsTime2 || '토/일요일/공휴일 휴무';
+    const footerBankTitle = siteContent.footerBankTitle || 'BANK ACCOUNT';
+    const footerBank1 = siteContent.footerBank1 || '국민은행 371137-04-009969';
+    const footerBank2 = siteContent.footerBank2 || '하나은행 112-910016-50404';
+    const footerBank3 = siteContent.footerBank3 || '우리은행 1005-204-805182';
+    const footerDepositor = siteContent.footerDepositor || '예금주 : (주)문파크';
+    const footerBankNotice = siteContent.footerBankNotice || '※ 주문자명과 입금자명이 다를 경우에 입금확인이 지연될 수 있습니다';
+    const footerBizTitle = siteContent.footerBizTitle || 'BUSINESS INFO';
+    const footerBizName = siteContent.footerBizName || '주식회사 다모어';
+    const footerBizOwner = siteContent.footerBizOwner || '홍길동';
+    const footerBizAddress = siteContent.footerBizAddress || '서울특별시 강남구 예시로 123, 5층';
+    const footerBizNumber = siteContent.footerBizNumber || '123-45-67890';
+    const footerBizOnline = siteContent.footerBizOnline || '제2026-서울강남-0000호';
+    const footerBizPrivacyManager = siteContent.footerBizPrivacyManager || '홍길동';
+    const footerCustomerTitle = siteContent.footerCustomerTitle || 'CUSTOMER';
+    const footerTermsLink = siteContent.footerTermsLink || '#';
+    const footerPrivacyLink = siteContent.footerPrivacyLink || '#';
+    const footerBizInfoLink = siteContent.footerBizInfoLink || '#';
+    const footerCopyright = siteContent.footerCopyright || '© 2026 DAMORE. All rights reserved.';
+    const footerSlogan = siteContent.footerSlogan || 'THE MORE, THE MOOD.';
+
+    const footerSns = Array.isArray(siteContent.footerSns) && siteContent.footerSns.length > 0
+      ? siteContent.footerSns
+      : [
+          { type: 'instagram', url: '#', label: 'Instagram' },
+          { type: 'kakao', url: '#', label: 'KakaoTalk' }
+        ];
+
+    const renderSnsLabel = (sns) => {
+      if (sns.label) return sns.label;
+      if (sns.type === 'instagram') return 'Instagram';
+      if (sns.type === 'kakao') return 'KakaoTalk';
+      if (sns.type === 'youtube') return 'YouTube';
+      if (sns.type === 'tiktok') return 'TikTok';
+      if (sns.type === 'facebook') return 'Facebook';
+      if (sns.type === 'apple') return 'Apple';
+      return 'SNS';
+    };
+  %>
+
+  <div class="container">
+    <div class="footer-inner">
+
+      <div class="footer-brand">
+        <h3><%= footerBrandName %></h3>
+        <p class="footer-brand-desc"><%= footerDesc %></p>
+
+        <div class="footer-cs-box">
+          <div class="footer-cs-label"><%= footerCsLabel %></div>
+          <div class="footer-cs-phone"><%= footerCsPhone %></div>
+          <div class="footer-cs-time"><%= footerCsTime1 %></div>
+          <div class="footer-cs-time"><%= footerCsTime2 %></div>
+        </div>
+
+        <div class="footer-socials">
+          <% footerSns.forEach((sns) => { %>
+            <a href="<%= sns.url || '#' %>" target="_blank" rel="noopener noreferrer" aria-label="<%= renderSnsLabel(sns) %>">
+              <% if (sns.type === 'instagram') { %>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="3" y="3" width="18" height="18" rx="5" ry="5"></rect>
+                  <circle cx="12" cy="12" r="4"></circle>
+                  <circle cx="17.5" cy="6.5" r="1"></circle>
+                </svg>
+              <% } else if (sns.type === 'kakao') { %>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 4C7.03 4 3 7.13 3 11c0 2.46 1.63 4.62 4.09 5.86L6 20l3.78-2.09c.72.12 1.46.19 2.22.19 4.97 0 9-3.13 9-7s-4.03-7-9-7z"></path>
+                </svg>
+              <% } else if (sns.type === 'youtube') { %>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M21.6 7.2a2.9 2.9 0 0 0-2-2C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.6.5a2.9 2.9 0 0 0-2 2A30.4 30.4 0 0 0 2 12a30.4 30.4 0 0 0 .4 4.8 2.9 2.9 0 0 0 2 2c1.8.5 7.6.5 7.6.5s5.8 0 7.6-.5a2.9 2.9 0 0 0 2-2A30.4 30.4 0 0 0 22 12a30.4 30.4 0 0 0-.4-4.8z"></path>
+                  <path d="M10 15.5v-7l6 3.5-6 3.5z" fill="currentColor" stroke="none"></path>
+                </svg>
+              <% } else if (sns.type === 'tiktok') { %>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M14 3v9.2a3.2 3.2 0 1 1-2.3-3.1"></path>
+                  <path d="M14 3c1 2.2 2.5 3.5 5 3.7"></path>
+                </svg>
+              <% } else if (sns.type === 'facebook') { %>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M14 8h3V4h-3c-3 0-5 2-5 5v3H6v4h3v4h4v-4h3l1-4h-4V9c0-.7.3-1 1-1z"></path>
+                </svg>
+              <% } else { %>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="12" r="8"></circle>
+                </svg>
+              <% } %>
+            </a>
+          <% }) %>
+        </div>
+      </div>
+
+      <div class="footer-bank">
+        <div class="footer-title"><%= footerBankTitle %></div>
+        <div class="footer-bank-list">
+          <p><%= footerBank1 %></p>
+          <p><%= footerBank2 %></p>
+          <p><%= footerBank3 %></p>
+          <p><%= footerDepositor %></p>
+        </div>
+        <div class="footer-bank-notice"><%= footerBankNotice %></div>
+      </div>
+
+      <div class="footer-business">
+        <div class="footer-title"><%= footerBizTitle %></div>
+        <div class="footer-business-list">
+          <p><strong>사업자명</strong><span><%= footerBizName %></span></p>
+          <p><strong>대표자명</strong><span><%= footerBizOwner %></span></p>
+          <p><strong>사업장 주소</strong><span><%= footerBizAddress %></span></p>
+          <p><strong>사업자등록번호</strong><span><%= footerBizNumber %></span></p>
+          <p><strong>통신판매업신고</strong><span><%= footerBizOnline %></span></p>
+          <p><strong>개인정보관리책임자</strong><span><%= footerBizPrivacyManager %></span></p>
+        </div>
+      </div>
+
+      <div class="footer-customer">
+        <div class="footer-title"><%= footerCustomerTitle %></div>
+        <div class="footer-links">
+          <a href="/order/lookup">주문조회</a>
+
+          <% if (currentUser) { %>
+            <a href="/my-orders">내 주문내역</a>
+            <a href="/logout">로그아웃</a>
+          <% } else { %>
+            <a href="/auth">로그인 / 회원가입</a>
+          <% } %>
+
+          <a href="/cart">장바구니</a>
+          <a href="#">FAQ</a>
+          <a href="#">공지사항</a>
+          <a href="#">교환 / 반품 안내</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-bottom-top">
+        <div class="footer-copyright"><%= footerCopyright %></div>
+
+        <div class="footer-policy">
+          <a href="<%= footerTermsLink %>">이용약관</a>
+          <a href="<%= footerPrivacyLink %>">개인정보처리방침</a>
+          <a href="<%= footerBizInfoLink %>">사업자정보확인</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom-bottom">
+        <div class="footer-slogan"><%= footerSlogan %></div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  footer {
+    margin-top: 80px;
+    background: #141311;
+    color: rgba(255,255,255,0.72);
+  }
+
+  .footer-inner {
+    padding: 56px 0 28px;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr 1.2fr 0.9fr;
+    gap: 30px;
+    align-items: start;
+  }
+
+  /* 흰색 유지 대상만 */
+  .footer-brand h3,
+  .footer-cs-label,
+  .footer-title,
+  .footer-cs-phone {
+    color: #fff;
+  }
+
+  .footer-title {
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    font-weight: 700;
+  }
+
+  .footer-brand h3 {
+    font-size: 28px;
+    letter-spacing: 0.22em;
+    margin-bottom: 14px;
+  }
+
+  /* 나머지는 전부 회색 */
+  .footer-brand-desc {
+    max-width: 230px;
+    font-size: 14px;
+    line-height: 1.85;
+    color: rgba(255,255,255,0.62);
+    margin-bottom: 20px;
+  }
+
+  .footer-cs-box {
+    margin-bottom: 18px;
+  }
+
+  .footer-cs-label {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .footer-cs-phone {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    margin-bottom: 10px;
+  }
+
+  .footer-cs-time {
+    font-size: 13px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.62);
+  }
+
+  .footer-socials {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .footer-socials a {
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.62);
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+
+  .footer-socials a:hover {
+    color: #fff;
+    transform: translateY(-1px);
+  }
+
+  .footer-socials svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .footer-bank-list {
+    display: grid;
+    gap: 5px;
+    margin-bottom: 14px;
+  }
+
+  .footer-bank-list p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.66);
+  }
+
+  .footer-bank-notice {
+    font-size: 13px;
+    line-height: 1.8;
+    color: rgba(255,255,255,0.5);
+    max-width: 260px;
+  }
+
+  .footer-business-list {
+    display: grid;
+    gap: 7px;
+  }
+
+  .footer-business-list p {
+    display: flex;
+    gap: 10px;
+    font-size: 13px;
+    line-height: 1.8;
+    color: rgba(255,255,255,0.66);
+  }
+
+  /* 사업자명/대표자명 포함 전부 회색 */
+  .footer-business-list strong {
+    min-width: 112px;
+    color: rgba(255,255,255,0.66);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .footer-business-list span {
+    color: rgba(255,255,255,0.66);
+  }
+
+  .footer-links {
+    display: grid;
+    gap: 10px;
+  }
+
+  .footer-links a {
+    font-size: 14px;
+    color: rgba(255,255,255,0.66);
+    transition: color 0.2s ease;
+  }
+
+  .footer-links a:hover {
+    color: #fff;
+  }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding: 18px 0 28px;
+    display: grid;
+    gap: 10px;
+  }
+
+  .footer-bottom-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .footer-copyright {
+    font-size: 13px;
+    color: rgba(255,255,255,0.46);
+  }
+
+  .footer-policy {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .footer-policy a {
+    font-size: 13px;
+    color: rgba(255,255,255,0.46);
+    transition: color 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .footer-policy a:hover {
+    color: #fff;
+  }
+
+  .footer-bottom-bottom {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .footer-slogan {
+    font-size: 13px;
+    color: rgba(255,255,255,0.56);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  @media (max-width: 1180px) {
+    .footer-inner {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 760px) {
+    footer {
+      margin-top: 64px;
+    }
+
+    .footer-inner {
+      grid-template-columns: 1fr;
+      gap: 26px;
+      padding: 42px 0 22px;
+    }
+
+    .footer-brand-desc,
+    .footer-bank-notice {
+      max-width: 100%;
+    }
+
+    .footer-business-list p {
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .footer-business-list strong {
+      min-width: 0;
+    }
+
+    .footer-bottom-top,
+    .footer-bottom-bottom,
+    .footer-policy {
+      justify-content: flex-start;
+      align-items: flex-start;
+    }
+  }
+</style>

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>비회원 주문조회 결과 | DAMORE</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #f5f3ef;
+      --white: #ffffff;
+      --black: #111111;
+      --muted: #6f6a63;
+      --line: rgba(17, 17, 17, 0.08);
+      --gold: #9d8660;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
+      --radius: 24px;
+      --max: 1180px;
+      --soft: #efe9df;
+      --red: #b23a2c;
+      --red-bg: #fff1ee;
+      --green: #1f7a4d;
+      --green-bg: #edf7f0;
+      --blue: #2456c5;
+      --blue-bg: #eef4ff;
+      --gray-bg: #f5f3ef;
+    }
+
+    body {
+      font-family: "Pretendard", "Noto Sans KR", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--black);
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button,
+    textarea {
+      font: inherit;
+    }
+
+    .container {
+      width: 100%;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .page {
+      padding: 44px 0 80px;
+    }
+
+    .page-head {
+      margin-bottom: 22px;
+    }
+
+    .page-head small {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .page-head h1 {
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+
+    .page-head p {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .top-btn {
+      min-width: 160px;
+      height: 48px;
+      padding: 0 18px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .top-btn-dark {
+      background: #111;
+      color: #fff;
+    }
+
+    .top-btn-light {
+      background: var(--soft);
+      color: #111;
+    }
+
+    .order-card {
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+
+    .order-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .order-id {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      word-break: break-all;
+    }
+
+    .order-date {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 96px;
+      height: 36px;
+      padding: 0 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .badge-paid,
+    .badge-delivered {
+      background: var(--green-bg);
+      color: var(--green);
+    }
+
+    .badge-shipping {
+      background: var(--blue-bg);
+      color: var(--blue);
+    }
+
+    .badge-cancelled,
+    .badge-payment_failed {
+      background: var(--red-bg);
+      color: var(--red);
+    }
+
+    .badge-pending_payment {
+      background: var(--gray-bg);
+      color: #7a7368;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .info-box {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: #faf8f4;
+      border: 1px solid var(--line);
+    }
+
+    .info-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .info-value {
+      font-size: 14px;
+      font-weight: 800;
+      word-break: break-word;
+    }
+
+    .items {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .item {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: #faf8f4;
+      border: 1px solid var(--line);
+    }
+
+    .item-name {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .item-meta {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .item-price {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .cancel-box {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    .cancel-status {
+      margin-bottom: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--red);
+    }
+
+    .cancel-form textarea {
+      width: 100%;
+      min-height: 92px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 16px;
+      outline: none;
+      background: #fff;
+      margin-bottom: 10px;
+    }
+
+    .cancel-form button {
+      height: 44px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 999px;
+      background: #111;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    @media (max-width: 900px) {
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .order-head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 0 16px;
+      }
+
+      .page-head h1 {
+        font-size: 34px;
+      }
+
+      .order-card {
+        padding: 20px;
+      }
+
+      .top-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%
+    const formatDate = (date) => {
+      if (!date) return '-';
+      const d = new Date(date);
+      if (Number.isNaN(d.getTime())) return '-';
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}.${m}.${day}`;
+    };
+
+    const statusLabel = (status) => {
+      if (status === 'paid') return '결제완료';
+      if (status === 'shipping') return '배송중';
+      if (status === 'delivered') return '배송완료';
+      if (status === 'cancelled') return '주문취소';
+      if (status === 'payment_failed') return '결제실패';
+      if (status === 'pending_payment') return '결제대기';
+      return status || '-';
+    };
+  %>
+
+  <main class="page">
+    <div class="container">
+      <div class="page-head">
+        <small>Guest Order Result</small>
+        <h1>비회원 주문조회 결과</h1>
+        <p>주문 상태와 주문 상품 정보를 아래에서 바로 확인할 수 있습니다.</p>
+      </div>
+
+      <div class="top-actions">
+        <a href="/" class="top-btn top-btn-dark">상품 목록 가기</a>
+        <a href="/order/lookup" class="top-btn top-btn-light">다시 조회하기</a>
+      </div>
+
+      <div class="order-card">
+        <div class="order-head">
+          <div>
+            <div class="order-id"><%= order._id %></div>
+            <div class="order-date">주문일: <%= formatDate(order.createdAt) %></div>
+          </div>
+
+          <div class="badge badge-<%= order.status %>">
+            <%= statusLabel(order.status) %>
+          </div>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-box">
+            <div class="info-label">주문자명</div>
+            <div class="info-value"><%= order.customerName %></div>
+          </div>
+
+          <div class="info-box">
+            <div class="info-label">연락처</div>
+            <div class="info-value"><%= order.phone %></div>
+          </div>
+
+          <div class="info-box">
+            <div class="info-label">결제수단</div>
+            <div class="info-value"><%= order.payment || '-' %></div>
+          </div>
+
+          <div class="info-box">
+            <div class="info-label">배송지 주소</div>
+            <div class="info-value"><%= order.address %></div>
+          </div>
+
+          <div class="info-box">
+            <div class="info-label">총 결제금액</div>
+            <div class="info-value"><%= Number(order.totalPrice || 0).toLocaleString() %>원</div>
+          </div>
+
+          <div class="info-box">
+            <div class="info-label">택배 송장번호</div>
+            <div class="info-value"><%= order.trackingNumber || '-' %></div>
+          </div>
+        </div>
+
+        <div class="items">
+          <% (order.items || []).forEach((item) => { %>
+            <div class="item">
+              <div class="item-name"><%= item.name %></div>
+              <div class="item-meta">
+                <% if (item.option) { %>
+                  옵션: <%= item.option %> /
+                <% } %>
+                수량: <%= item.quantity %>
+              </div>
+              <div class="item-price"><%= Number(item.price * item.quantity).toLocaleString() %>원</div>
+            </div>
+          <% }) %>
+        </div>
+
+        <% if (order.status === 'paid' || order.status === 'shipping') { %>
+          <div class="cancel-box">
+            <% if (order.cancelRequestStatus === 'requested') { %>
+              <div class="cancel-status">취소 요청이 접수되었습니다.</div>
+            <% } else if (order.cancelRequestStatus === 'rejected') { %>
+              <div class="cancel-status">취소 요청이 반려되었습니다.</div>
+            <% } else if (order.cancelRequestStatus === 'approved') { %>
+              <div class="cancel-status">취소 요청이 승인되었습니다.</div>
+            <% } else { %>
+              <form class="cancel-form" method="POST" action="/order/lookup/cancel-request">
+                <input type="hidden" name="orderId" value="<%= order._id %>" />
+                <input type="hidden" name="phone" value="<%= order.phone %>" />
+                <textarea
+                  name="reason"
+                  placeholder="취소 사유를 입력해주세요 (선택)"
+                ></textarea>
+                <button type="submit">취소 요청하기</button>
+              </form>
+            <% } %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

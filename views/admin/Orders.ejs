@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>주문관리 | DAMORE ADMIN</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #f5f3ef;
+      --white: #ffffff;
+      --black: #111111;
+      --text: #1f1f1f;
+      --muted: #6f6a63;
+      --line: rgba(17, 17, 17, 0.08);
+      --gold: #9d8660;
+      --green: #1f7a45;
+      --green-bg: #edf7f0;
+      --blue: #2457c5;
+      --blue-bg: #eef3ff;
+      --gray-bg: #f3f3f3;
+      --red: #b23a2c;
+      --red-bg: #fff1ee;
+      --orange: #b76a1d;
+      --orange-bg: #fff4e8;
+      --purple: #6d41c7;
+      --purple-bg: #f2ecff;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
+      --radius-xl: 28px;
+      --max: 1320px;
+    }
+
+    body {
+      font-family: "Pretendard", "Noto Sans KR", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      word-break: keep-all;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    button, input, select { font: inherit; }
+
+    .container {
+      width: 100%;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .topbar {
+      background: var(--black);
+      color: rgba(255,255,255,0.88);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-align: center;
+      padding: 12px 16px;
+    }
+
+    header {
+      background: rgba(245, 243, 239, 0.92);
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+    }
+
+    .header-inner {
+      min-height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 16px 0;
+    }
+
+    .brand-logo {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 0.22em;
+      color: var(--black);
+    }
+
+    .brand-sub {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .page { padding: 38px 0 80px; }
+
+    .page-head { margin-bottom: 22px; }
+
+    .page-head small {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .page-head h1 {
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+      margin-bottom: 10px;
+    }
+
+    .page-head p {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .filter-card {
+      background: var(--white);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .filter-form {
+      display: grid;
+      grid-template-columns: 220px 1fr 140px 140px;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .filter-form select,
+    .filter-form input {
+      width: 100%;
+      height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0 14px;
+      background: #fff;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .filter-btn {
+      height: 48px;
+      border: 0;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .filter-btn-dark {
+      background: var(--black);
+      color: white;
+    }
+
+    .filter-btn-light {
+      background: #efe9df;
+      color: var(--black);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .filter-summary {
+      margin-top: 12px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .order-list {
+      display: grid;
+      gap: 18px;
+    }
+
+    .order-card {
+      background: var(--white);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    .order-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .order-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      line-height: 1.3;
+      word-break: break-all;
+    }
+
+    .order-meta {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .badge-wrap {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 0 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .status-paid { background: var(--green-bg); color: var(--green); }
+    .status-shipping { background: var(--blue-bg); color: var(--blue); }
+    .status-delivered { background: var(--gray-bg); color: #444; }
+    .status-cancelled { background: var(--red-bg); color: var(--red); }
+    .status-test { background: var(--orange-bg); color: var(--orange); }
+    .status-hidden { background: var(--purple-bg); color: var(--purple); }
+    .request-badge { background: var(--orange-bg); color: var(--orange); }
+    .reject-badge { background: var(--purple-bg); color: var(--purple); }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .info-box {
+      background: #faf8f4;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .info-box small {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .info-box strong {
+      display: block;
+      font-size: 15px;
+      color: var(--black);
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
+    .items-box {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .items-head {
+      background: #faf8f4;
+      padding: 14px 18px;
+      font-size: 14px;
+      font-weight: 800;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .item-row {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .item-row:last-child { border-bottom: 0; }
+
+    .item-name {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .item-meta {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .request-box {
+      margin-bottom: 18px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: #faf8f4;
+      border: 1px solid var(--line);
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .request-box strong {
+      color: var(--black);
+    }
+
+    .admin-actions {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .action-box {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      background: #fff;
+    }
+
+    .action-box h3 {
+      font-size: 14px;
+      margin-bottom: 10px;
+      color: var(--black);
+    }
+
+    .form-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .form-stack input[type="text"],
+    .form-stack select {
+      width: 100%;
+      height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0 14px;
+      background: #fff;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .btn {
+      width: 100%;
+      min-height: 46px;
+      border: 0;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 14px;
+    }
+
+    .btn-dark { background: var(--black); color: white; }
+    .btn-light { background: #efe9df; color: var(--black); }
+    .btn-blue { background: #e8f0ff; color: var(--blue); }
+    .btn-red { background: var(--red-bg); color: var(--red); }
+    .btn-orange { background: var(--orange-bg); color: var(--orange); }
+    .btn-purple { background: var(--purple-bg); color: var(--purple); }
+
+    .empty-card {
+      background: var(--white);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 44px 24px;
+      text-align: center;
+    }
+
+    .empty-card h2 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .empty-card p {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    @media (max-width: 1100px) {
+      .filter-form {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .info-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .admin-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .container { padding: 0 16px; }
+      .header-actions { display: none; }
+      .filter-form { grid-template-columns: 1fr; }
+      .order-card { padding: 18px; }
+      .info-grid { grid-template-columns: 1fr; }
+      .order-top {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .badge-wrap {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%
+    const getStatusClass = (status) => {
+      if (status === 'paid') return 'status-paid';
+      if (status === 'shipping') return 'status-shipping';
+      if (status === 'delivered') return 'status-delivered';
+      if (status === 'cancelled') return 'status-cancelled';
+      if (status === 'test') return 'status-test';
+      return 'status-hidden';
+    };
+
+    const getStatusLabel = (status) => {
+      if (status === 'paid') return '주문완료 / 결제완료';
+      if (status === 'shipping') return '배송중';
+      if (status === 'delivered') return '배송완료';
+      if (status === 'cancelled') return '취소됨';
+      if (status === 'test') return '테스트주문';
+      return '숨김상태';
+    };
+  %>
+
+  <div class="topbar">DAMORE ADMIN PANEL</div>
+
+  <header>
+    <div class="container">
+      <div class="header-inner">
+        <div>
+          <div class="brand-logo">DAMORE</div>
+          <div class="brand-sub">admin mode</div>
+        </div>
+
+        <div class="header-actions">
+          <a href="/admin/dashboard">대시보드</a>
+          <a href="/admin/products">상품관리</a>
+          <a href="/admin/orders">주문관리</a>
+          <a href="/admin/categories">카테고리</a>
+          <a href="/admin/site-content">사이트관리</a>
+          <a href="/admin/logout">로그아웃</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="container">
+      <div class="page-head">
+        <small>Order Management</small>
+        <h1>주문관리</h1>
+        <p>취소요청 승인/반려, 상태변경, 테스트주문 삭제까지 가능한 버전입니다.</p>
+      </div>
+
+      <div class="filter-card">
+        <form method="GET" action="/admin/orders" class="filter-form">
+          <select name="status">
+            <option value="" <%= !filterStatus ? 'selected' : '' %>>전체 상태</option>
+            <option value="paid" <%= filterStatus === 'paid' ? 'selected' : '' %>>주문완료 / 결제완료</option>
+            <option value="shipping" <%= filterStatus === 'shipping' ? 'selected' : '' %>>배송중</option>
+            <option value="delivered" <%= filterStatus === 'delivered' ? 'selected' : '' %>>배송완료</option>
+            <option value="cancelled" <%= filterStatus === 'cancelled' ? 'selected' : '' %>>취소됨</option>
+            <option value="test" <%= filterStatus === 'test' ? 'selected' : '' %>>테스트주문</option>
+            <option value="hidden" <%= filterStatus === 'hidden' ? 'selected' : '' %>>숨김상태</option>
+          </select>
+
+          <input
+            type="text"
+            name="keyword"
+            placeholder="주문자명 / 연락처 / 주문번호 검색"
+            value="<%= keyword || '' %>"
+          />
+
+          <button type="submit" class="filter-btn filter-btn-dark">검색</button>
+          <a href="/admin/orders" class="filter-btn filter-btn-light">초기화</a>
+        </form>
+
+        <div class="filter-summary">
+          현재 검색 결과: <strong><%= orders ? orders.length : 0 %></strong>건
+        </div>
+      </div>
+
+      <% if (!orders || orders.length === 0) { %>
+        <div class="empty-card">
+          <h2>조건에 맞는 주문이 없습니다.</h2>
+          <p>필터 조건이나 검색어를 다시 확인해보세요.</p>
+        </div>
+      <% } else { %>
+        <div class="order-list">
+          <% orders.forEach(order => { %>
+            <div class="order-card">
+              <div class="order-top">
+                <div>
+                  <div class="order-title">주문번호 <%= order._id %></div>
+                  <div class="order-meta">
+                    주문일: <%= new Date(order.createdAt).toLocaleString('ko-KR') %><br />
+                    주문자: <%= order.customerName %><br />
+                    연락처: <%= order.phone %>
+                  </div>
+                </div>
+
+                <div class="badge-wrap">
+                  <div class="status-badge <%= getStatusClass(order.status) %>">
+                    <%= getStatusLabel(order.status) %>
+                  </div>
+
+                  <% if (order.cancelRequestStatus === 'requested') { %>
+                    <div class="status-badge request-badge">취소요청</div>
+                  <% } %>
+
+                  <% if (order.cancelRequestStatus === 'rejected') { %>
+                    <div class="status-badge reject-badge">취소반려</div>
+                  <% } %>
+                </div>
+              </div>
+
+              <div class="info-grid">
+                <div class="info-box">
+                  <small>배송지</small>
+                  <strong><%= order.address %></strong>
+                </div>
+
+                <div class="info-box">
+                  <small>결제수단</small>
+                  <strong><%= order.payment %></strong>
+                </div>
+
+                <div class="info-box">
+                  <small>송장번호</small>
+                  <strong><%= order.trackingNumber || '미입력' %></strong>
+                </div>
+
+                <div class="info-box">
+                  <small>총 결제금액</small>
+                  <strong><%= Number(order.totalPrice).toLocaleString() %>원</strong>
+                </div>
+              </div>
+
+              <% if (order.cancelRequestStatus === 'requested') { %>
+                <div class="request-box">
+                  <strong>취소 요청 사유:</strong><br />
+                  <%= order.cancelRequestReason || '사유 없음' %>
+                </div>
+              <% } %>
+
+              <div class="items-box">
+                <div class="items-head">주문 상품</div>
+                <% order.items.forEach(item => { %>
+                  <div class="item-row">
+                    <div class="item-name"><%= item.name %></div>
+                    <div class="item-meta">
+                      <% if (item.option) { %>
+                        옵션: <%= item.option %> /
+                      <% } %>
+                      수량: <%= item.quantity %> /
+                      금액: <%= Number(item.price * item.quantity).toLocaleString() %>원
+                    </div>
+                  </div>
+                <% }) %>
+              </div>
+
+              <div class="admin-actions">
+                <div class="action-box">
+                  <h3>배송 / 취소 승인</h3>
+                  <div class="form-stack">
+                    <form method="POST" action="/admin/orders/<%= order._id %>/ship">
+                      <input
+                        type="text"
+                        name="trackingNumber"
+                        placeholder="송장번호 입력"
+                        value="<%= order.trackingNumber || '' %>"
+                        required
+                      />
+                      <button type="submit" class="btn btn-blue" style="margin-top:10px;">송장입력 + 배송중 처리</button>
+                    </form>
+
+                    <% if (order.cancelRequestStatus === 'requested') { %>
+                      <form method="POST" action="/admin/orders/<%= order._id %>/cancel-approve">
+                        <button
+                          type="submit"
+                          class="btn btn-red"
+                          onclick="return confirm('취소 요청을 승인할까요? 승인 시 재고가 복구됩니다.');"
+                        >
+                          취소요청 승인
+                        </button>
+                      </form>
+
+                      <form method="POST" action="/admin/orders/<%= order._id %>/cancel-reject">
+                        <button
+                          type="submit"
+                          class="btn btn-purple"
+                          onclick="return confirm('취소 요청을 반려할까요?');"
+                        >
+                          취소요청 반려
+                        </button>
+                      </form>
+                    <% } %>
+                  </div>
+                </div>
+
+                <div class="action-box">
+                  <h3>상태 직접 변경</h3>
+                  <form method="POST" action="/admin/orders/<%= order._id %>/status" class="form-stack">
+                    <select name="status" required>
+                      <option value="paid" <%= order.status === 'paid' ? 'selected' : '' %>>주문완료 / 결제완료</option>
+                      <option value="shipping" <%= order.status === 'shipping' ? 'selected' : '' %>>배송중</option>
+                      <option value="delivered" <%= order.status === 'delivered' ? 'selected' : '' %>>배송완료</option>
+                      <option value="cancelled" <%= order.status === 'cancelled' ? 'selected' : '' %>>취소됨</option>
+                      <option value="test" <%= order.status === 'test' ? 'selected' : '' %>>테스트주문</option>
+                      <option value="hidden" <%= order.status === 'hidden' ? 'selected' : '' %>>숨김상태</option>
+                    </select>
+
+                    <input
+                      type="text"
+                      name="trackingNumber"
+                      placeholder="배송중일 때 송장번호 입력 가능"
+                      value="<%= order.trackingNumber || '' %>"
+                    />
+
+                    <button type="submit" class="btn btn-light">상태 저장</button>
+                  </form>
+                </div>
+
+                <div class="action-box">
+                  <h3>빠른 처리</h3>
+                  <div class="form-stack">
+                    <form method="POST" action="/admin/orders/<%= order._id %>/deliver">
+                      <button type="submit" class="btn btn-dark">배송완료 처리</button>
+                    </form>
+
+                    <form method="POST" action="/admin/orders/<%= order._id %>/status">
+                      <input type="hidden" name="status" value="cancelled" />
+                      <button
+                        type="submit"
+                        class="btn btn-red"
+                        onclick="return confirm('이 주문을 취소됨 상태로 변경할까요? 재고가 복구됩니다.');"
+                      >
+                        취소됨 처리
+                      </button>
+                    </form>
+
+                    <form method="POST" action="/admin/orders/<%= order._id %>/status">
+                      <input type="hidden" name="status" value="test" />
+                      <button
+                        type="submit"
+                        class="btn btn-orange"
+                        onclick="return confirm('이 주문을 테스트주문 상태로 변경할까요?');"
+                      >
+                        테스트주문 처리
+                      </button>
+                    </form>
+
+                    <form method="POST" action="/admin/orders/<%= order._id %>/status">
+                      <input type="hidden" name="status" value="hidden" />
+                      <button
+                        type="submit"
+                        class="btn btn-purple"
+                        onclick="return confirm('이 주문을 숨김상태로 변경할까요?');"
+                      >
+                        숨김상태 처리
+                      </button>
+                    </form>
+
+                    <% if (order.status === 'test') { %>
+                      <form
+                        method="POST"
+                        action="/admin/orders/<%= order._id %>/delete"
+                        onsubmit="return confirm('테스트주문을 정말 삭제할까요?');"
+                      >
+                        <button type="submit" class="btn btn-red">테스트주문 삭제</button>
+                      </form>
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+  </main>
+</body>
+</html>

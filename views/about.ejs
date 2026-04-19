@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About DAMORE</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #f5f3ef;
+      --bg-soft: #ece8e1;
+      --white: #ffffff;
+      --black: #111111;
+      --text: #1f1f1f;
+      --muted: #7a7268;
+      --line: rgba(17, 17, 17, 0.08);
+      --gold: #bfa68a;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
+      --max: 1280px;
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+    }
+
+    body {
+      font-family: "Pretendard", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      word-break: keep-all;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    img { display: block; width: 100%; }
+
+    .container {
+      width: 100%;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .topbar {
+      background: var(--black);
+      color: rgba(255,255,255,0.88);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-align: center;
+      padding: 12px 16px;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(245, 243, 239, 0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .header-inner {
+      min-height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 16px 0;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-logo {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: 0.24em;
+      color: var(--black);
+    }
+
+    .brand-sub {
+      font-size: 10px;
+      letter-spacing: 0.32em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .nav {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .nav-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      height: 48px;
+    }
+
+    .nav a,
+    .nav-link {
+      font-size: 14px;
+      color: #312d29;
+      position: relative;
+      text-transform: uppercase;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      height: 48px;
+    }
+
+    .nav a::after,
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -6px;
+      width: 0;
+      height: 1px;
+      background: var(--black);
+      transition: 0.25s ease;
+    }
+
+    .nav a:hover::after,
+    .nav a.active::after,
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      min-width: 120px;
+      padding: 14px 0;
+      background: #e8e1d8;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.18s ease, visibility 0.18s ease;
+      z-index: 999;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+    }
+
+    .dropdown-menu a {
+      display: block;
+      padding: 8px 16px;
+      text-align: center;
+      font-size: 13px;
+      color: #111;
+      text-transform: none;
+      white-space: nowrap;
+    }
+
+    .dropdown-menu a::after {
+      display: none;
+    }
+
+    .dropdown-menu a:hover,
+    .dropdown-menu a.active {
+      background: rgba(255,255,255,0.28);
+    }
+
+    .nav-item:hover .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 14px;
+      color: var(--muted);
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .user-name {
+      font-weight: 700;
+      color: var(--black);
+    }
+
+    .mobile-category-bar {
+      display: none;
+      background: rgba(245, 243, 239, 0.96);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .mobile-category-scroll {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 12px 0;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .mobile-category-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .mobile-category-link {
+      flex-shrink: 0;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--black);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .mobile-category-link.active {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+    }
+
+    .hero {
+      padding: 28px 0 90px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .hero-main {
+      min-height: 620px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      border-radius: var(--radius-xl);
+      background:
+        linear-gradient(to top, rgba(0,0,0,0.48), rgba(0,0,0,0.08)),
+        url('<%= siteContent.heroImage || "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1400&q=80" %>') center/cover no-repeat;
+    }
+
+    .hero-main-content {
+      position: absolute;
+      left: 40px;
+      right: 40px;
+      bottom: 40px;
+      color: white;
+      max-width: 560px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 14px;
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.82);
+      font-weight: 700;
+    }
+
+    .hero-main h1 {
+      font-size: clamp(38px, 5vw, 72px);
+      line-height: 1.02;
+      letter-spacing: -0.05em;
+      margin-bottom: 16px;
+      white-space: pre-line;
+    }
+
+    .hero-main p {
+      font-size: 15px;
+      color: rgba(255,255,255,0.86);
+      line-height: 1.8;
+      white-space: pre-line;
+    }
+
+    .hero-side {
+      display: grid;
+      gap: 18px;
+      grid-template-rows: 1fr 1fr;
+    }
+
+    .hero-side-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 301px;
+      box-shadow: var(--shadow);
+      border-radius: var(--radius-xl);
+    }
+
+    .hero-side-card.image {
+      background:
+        linear-gradient(to top, rgba(0,0,0,0.38), rgba(0,0,0,0.08)),
+        url('<%= siteContent.sideImage || "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1200&q=80" %>') center/cover no-repeat;
+    }
+
+    .hero-side-card.image .content {
+      position: absolute;
+      left: 28px;
+      right: 28px;
+      bottom: 28px;
+      color: white;
+    }
+
+    .hero-side-card.image h3 {
+      font-size: 28px;
+      line-height: 1.14;
+      margin-bottom: 8px;
+      white-space: pre-line;
+    }
+
+    .hero-side-card.image p {
+      color: rgba(255,255,255,0.84);
+      font-size: 14px;
+      white-space: pre-line;
+    }
+
+    .hero-side-card.text {
+      background: #efe8de;
+      padding: 34px 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hero-side-card.text small {
+      display: inline-block;
+      margin-bottom: 14px;
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .hero-side-card.text h3 {
+      font-size: 34px;
+      line-height: 1.14;
+      margin-bottom: 14px;
+      white-space: pre-line;
+    }
+
+    .hero-side-card.text p {
+      font-size: 15px;
+      color: var(--muted);
+      white-space: pre-line;
+    }
+
+    .keyword-box {
+      margin-top: 22px;
+      padding: 18px;
+      background: rgba(255,255,255,0.64);
+      border: 1px solid rgba(17,17,17,0.06);
+      border-radius: var(--radius-lg);
+    }
+
+    .keyword-box strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: var(--black);
+    }
+
+    .keyword-box span {
+      font-size: 13px;
+      color: var(--muted);
+      white-space: pre-line;
+    }
+
+    section {
+      padding: 90px 0;
+    }
+
+    .section-head {
+      margin-bottom: 30px;
+    }
+
+    .section-head small {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--gold);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .section-head h2 {
+      font-size: clamp(28px, 4vw, 52px);
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+      margin-bottom: 10px;
+      white-space: pre-line;
+    }
+
+    .section-head p {
+      max-width: 680px;
+      font-size: 15px;
+      color: var(--muted);
+      white-space: pre-line;
+    }
+
+    .identity-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .identity-card {
+      background: var(--white);
+      padding: 28px 24px;
+      box-shadow: var(--shadow);
+      border-radius: var(--radius-xl);
+    }
+
+    .identity-card strong {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: var(--black);
+      white-space: pre-line;
+    }
+
+    .identity-card p {
+      font-size: 14px;
+      color: var(--muted);
+      white-space: pre-line;
+    }
+
+    .scene-banner {
+      min-height: 520px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      border-radius: var(--radius-xl);
+      background:
+        linear-gradient(to top, rgba(0,0,0,0.52), rgba(0,0,0,0.12)),
+        url('https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat;
+    }
+
+    .scene-banner-content {
+      position: absolute;
+      left: 42px;
+      right: 42px;
+      bottom: 42px;
+      max-width: 540px;
+      color: white;
+    }
+
+    .scene-banner-content small {
+      display: inline-block;
+      margin-bottom: 12px;
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.76);
+      font-weight: 700;
+    }
+
+    .scene-banner-content h3 {
+      font-size: clamp(34px, 4vw, 58px);
+      line-height: 1.06;
+      margin-bottom: 12px;
+      white-space: pre-line;
+    }
+
+    .scene-banner-content p {
+      font-size: 15px;
+      color: rgba(255,255,255,0.84);
+      line-height: 1.8;
+      white-space: pre-line;
+    }
+
+    .editorial-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 18px;
+    }
+
+    .editorial-card {
+      min-height: 420px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      border-radius: var(--radius-xl);
+    }
+
+    .editorial-card:nth-child(1) {
+      background:
+        linear-gradient(to top, rgba(0,0,0,0.44), rgba(0,0,0,0.08)),
+        url('https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
+    }
+
+    .editorial-card:nth-child(2) {
+      background:
+        linear-gradient(to top, rgba(0,0,0,0.44), rgba(0,0,0,0.08)),
+        url('https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
+    }
+
+    .editorial-card:nth-child(3) {
+      background:
+        linear-gradient(to top, rgba(0,0,0,0.44), rgba(0,0,0,0.08)),
+        url('https://images.unsplash.com/photo-1506629905607-d9d5b5c3f9aa?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
+    }
+
+    .editorial-content {
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      bottom: 22px;
+      color: white;
+    }
+
+    .editorial-content small {
+      display: inline-block;
+      margin-bottom: 8px;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.78);
+    }
+
+    .editorial-content h4 {
+      font-size: 28px;
+      line-height: 1.12;
+      margin-bottom: 8px;
+      white-space: pre-line;
+    }
+
+    .editorial-content p {
+      font-size: 14px;
+      color: rgba(255,255,255,0.84);
+      white-space: pre-line;
+    }
+
+    @media (max-width: 1100px) {
+      .identity-grid,
+      .editorial-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-side {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: none;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .container { padding: 0 16px; }
+      .header-actions { display: none; }
+      .nav { display: none; }
+      .mobile-category-bar { display: block; }
+
+      .hero {
+        padding: 18px 0 54px;
+      }
+
+      .hero-main,
+      .hero-side-card,
+      .scene-banner,
+      .editorial-card {
+        min-height: 340px;
+      }
+
+      .hero-main-content,
+      .scene-banner-content {
+        left: 22px;
+        right: 22px;
+        bottom: 22px;
+      }
+
+      .hero-main h1,
+      .scene-banner-content h3 {
+        font-size: 34px;
+      }
+
+      .hero-side {
+        grid-template-columns: 1fr;
+      }
+
+      .identity-grid,
+      .editorial-grid {
+        grid-template-columns: 1fr;
+      }
+
+      section {
+        padding: 64px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    DAMORE OFFICIAL ONLINE STORE · 회원가입 없이도 주문 가능합니다
+  </div>
+
+  <%- include('partials/header', {
+    currentPath: '/about',
+    category: '',
+    sub: '',
+    categories,
+    currentUser,
+    cartCount
+  }) %>
+
+  <div class="mobile-category-bar">
+    <div class="container">
+      <div class="mobile-category-scroll">
+        <a href="/" class="mobile-category-link">all</a>
+        <% if (categories && categories.length > 0) { %>
+          <% categories.forEach(item => { %>
+            <a href="/category/<%= item.name %>" class="mobile-category-link"><%= item.name %></a>
+          <% }) %>
+        <% } %>
+        <a href="/about" class="mobile-category-link active">about</a>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-main">
+            <div class="hero-main-content">
+              <span class="eyebrow"><%= siteContent.aboutHeroEyebrow || 'About DAMORE' %></span>
+              <h1><%= siteContent.aboutHeroTitle || '더 많은 스타일,\n더 오래 남는 무드' %></h1>
+              <p><%= siteContent.aboutHeroDesc || '다모어는 단순히 상품을 파는 브랜드가 아니라, 먼저 기억되는 장면과 분위기를 만드는 브랜드를 지향합니다.' %></p>
+            </div>
+          </div>
+
+          <div class="hero-side">
+            <div class="hero-side-card image">
+              <div class="content">
+                <h3><%= siteContent.aboutImageBannerTitle || '상품보다 먼저 기억되는 장면' %></h3>
+                <p><%= siteContent.aboutImageBannerDesc || '브랜드를 떠올렸을 때 먼저 이미지와 공기가 생각나는 구조를 만들고 싶습니다.' %></p>
+              </div>
+            </div>
+
+            <div class="hero-side-card text">
+              <div>
+                <small><%= siteContent.aboutTextCardLabel || 'Brand Identity' %></small>
+                <h3><%= siteContent.aboutTextCardTitle || '확장 가능한 브랜드,\n오래 남는 무드' %></h3>
+                <p><%= siteContent.aboutTextCardDesc || '의류를 시작으로 더 넓은 라이프스타일 카테고리까지 확장될 수 있는 브랜드를 목표로 합니다.' %></p>
+              </div>
+
+              <div class="keyword-box">
+                <strong><%= siteContent.aboutKeywordTitle || '브랜드 핵심 키워드' %></strong>
+                <span><%= siteContent.aboutKeywordDesc || '감도 · 실루엣 · 밀도 · 무드 · 확장성' %></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <small><%= siteContent.identitySectionLabel || 'Identity' %></small>
+          <h2><%= siteContent.identitySectionTitle || '다모어가 남기고 싶은 인상' %></h2>
+          <p><%= siteContent.identitySectionDesc || '홈에서 상품보다 먼저 보이던 브랜드 문장과 아이덴티티를 이 페이지로 모았습니다.' %></p>
+        </div>
+
+        <div class="identity-grid">
+          <div class="identity-card">
+            <strong><%= siteContent.identity1Title || '절제된 고급스러움' %></strong>
+            <p><%= siteContent.identity1Desc || '과한 장식보다 소재, 핏, 비율에서 오는 인상을 더 중요하게 봅니다.' %></p>
+          </div>
+          <div class="identity-card">
+            <strong><%= siteContent.identity2Title || '브랜드형 상세페이지' %></strong>
+            <p><%= siteContent.identity2Desc || '상품 정보만 나열하기보다 무드와 스토리가 함께 보이는 구성을 지향합니다.' %></p>
+          </div>
+          <div class="identity-card">
+            <strong><%= siteContent.identity3Title || '확장 가능한 이름' %></strong>
+            <p><%= siteContent.identity3Desc || '의류에 머무르지 않고 라이프스타일까지 자연스럽게 확장될 수 있는 브랜드를 만듭니다.' %></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="scene-banner">
+          <div class="scene-banner-content">
+            <small><%= siteContent.sceneSectionLabel || 'Brand Scene' %></small>
+            <h3><%= siteContent.sceneSectionTitle || '상품보다 먼저 기억되는 장면' %></h3>
+            <p><%= siteContent.sceneSectionDesc || '다모어는 한 벌의 옷보다 먼저 공기, 빛, 질감, 분위기가 남는 브랜드를 만들고 싶습니다.\n그래서 브랜드 소개는 상품 리스트보다 먼저 기억되어야 하는 장면들로 구성합니다.' %></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <small><%= siteContent.moodSectionLabel || 'Editorial Mood' %></small>
+          <h2><%= siteContent.moodSectionTitle || '브랜드의 온도와 이미지' %></h2>
+          <p><%= siteContent.moodSectionDesc || '중간 배너와 무드 섹션 역할을 하던 영역을 브랜드 소개 전용으로 분리했습니다.' %></p>
+        </div>
+
+        <div class="editorial-grid">
+          <article class="editorial-card">
+            <div class="editorial-content">
+              <small><%= siteContent.moodCard1Label || '01' %></small>
+              <h4><%= siteContent.moodCard1Title || 'Urban Softness' %></h4>
+              <p><%= siteContent.moodCard1Desc || '도시적인 배경 위에 부드러운 실루엣을 겹쳐 만드는 균형감.' %></p>
+            </div>
+          </article>
+
+          <article class="editorial-card">
+            <div class="editorial-content">
+              <small><%= siteContent.moodCard2Label || '02' %></small>
+              <h4><%= siteContent.moodCard2Title || 'Minimal Density' %></h4>
+              <p><%= siteContent.moodCard2Desc || '단순하지만 비어 보이지 않게, 밀도로 설득하는 스타일.' %></p>
+            </div>
+          </article>
+
+          <article class="editorial-card">
+            <div class="editorial-content">
+              <small><%= siteContent.moodCard3Label || '03' %></small>
+              <h4><%= siteContent.moodCard3Title || 'Modern Balance' %></h4>
+              <p><%= siteContent.moodCard3Desc || '매일 입을 수 있지만 쉽게 흔해지지 않는 다모어만의 중간 지점.' %></p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <%- include('partials/footer', { currentUser, siteContent }) %>
+</body>
+</html>

@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>주문하기 | DAMORE</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #f5f3ef;
+      --white: #ffffff;
+      --black: #111111;
+      --muted: #6f6a63;
+      --line: rgba(17, 17, 17, 0.08);
+      --gold: #9d8660;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
+      --radius: 24px;
+      --max: 1280px;
+      --red: #b23a2c;
+      --red-bg: #fff1ee;
+      --soft: #efe9df;
+    }
+
+    body {
+      font-family: "Pretendard", "Noto Sans KR", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--black);
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    .container {
+      width: 100%;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .page {
+      padding: 44px 0 80px;
+    }
+
+    .page-head {
+      margin-bottom: 20px;
+    }
+
+    .page-head small {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .page-head h1 {
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+
+    .page-head p {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .top-btn {
+      min-width: 160px;
+      height: 48px;
+      padding: 0 18px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .top-btn-dark {
+      background: #111;
+      color: #fff;
+    }
+
+    .top-btn-light {
+      background: var(--soft);
+      color: #111;
+    }
+
+    .guide-box {
+      margin-bottom: 20px;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: #faf8f4;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .warn-box {
+      margin-bottom: 18px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: var(--red-bg);
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.7;
+    }
+
+    .wrap {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+
+    .section-title {
+      font-size: 24px;
+      margin-bottom: 18px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    input[type="text"],
+    input[type="tel"],
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 14px;
+      outline: none;
+      background: #fff;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="tel"]:focus,
+    textarea:focus {
+      border-color: rgba(157, 134, 96, 0.8);
+      box-shadow: 0 0 0 4px rgba(157, 134, 96, 0.12);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .input-help {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .error-text {
+      display: block;
+      min-height: 18px;
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    .summary-item {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .summary-item:last-child {
+      border-bottom: 0;
+    }
+
+    .summary-name {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .summary-meta {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .summary-meta-line {
+      margin-bottom: 4px;
+    }
+
+    .add-on-box {
+      margin-top: 8px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #faf8f4;
+      border: 1px solid var(--line);
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .add-on-box strong {
+      color: var(--black);
+    }
+
+    .summary-price {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .price-box {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      display: grid;
+      gap: 10px;
+    }
+
+    .price-row,
+    .price-total {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .price-row {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .price-total {
+      font-size: 19px;
+      font-weight: 800;
+    }
+
+    .order-note {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: #faf8f4;
+      border: 1px solid var(--line);
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .submit-btn {
+      width: 100%;
+      height: 58px;
+      border: 0;
+      border-radius: 999px;
+      background: #111;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 18px;
+    }
+
+    .submit-btn:disabled {
+      background: #d8d2c8;
+      color: #7d756a;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 980px) {
+      .wrap {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 0 16px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .page-head h1 {
+        font-size: 34px;
+      }
+
+      .top-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%
+    const hasStockIssue = (cart || []).some((item) => {
+      const stock = Number(item.stock || 0);
+      const qty = Number(item.quantity || 0);
+      return stock <= 0 || qty > stock;
+    });
+
+    const safeTotalPrice = Number(totalPrice || 0);
+    const defaultName =
+      typeof currentUser !== 'undefined' && currentUser ? currentUser.name : '';
+
+    const productOnlyTotal = (cart || []).reduce((sum, item) => {
+      return sum + (Number(item.price || 0) * Number(item.quantity || 0));
+    }, 0);
+
+    const addOnGrandTotal = (cart || []).reduce((sum, item) => {
+      return sum + Number(item.addOnTotal || 0);
+    }, 0);
+  %>
+
+  <main class="page">
+    <div class="container">
+      <div class="page-head">
+        <small>Checkout</small>
+        <h1>주문서 작성</h1>
+        <p>결제 연동 전 단계로, 지금은 주문서 UX를 먼저 완성하는 중입니다.</p>
+      </div>
+
+      <div class="top-actions">
+        <a href="/" class="top-btn top-btn-dark">상품 목록 가기</a>
+        <button type="button" class="top-btn top-btn-light" onclick="history.back()">뒤로가기</button>
+      </div>
+
+      <div class="guide-box">
+        현재는 결제 기능을 잠시 보류하고 주문서 화면을 먼저 마감하는 단계입니다.<br />
+        입력 UX, 주문 요약, 이동 버튼 등을 먼저 정리한 버전입니다.
+      </div>
+
+      <% if (hasStockIssue) { %>
+        <div class="warn-box">
+          재고 문제 상품이 있어 현재 주문 진행이 불가합니다. 장바구니에서 수량을 수정한 뒤 다시 시도해주세요.
+        </div>
+      <% } %>
+
+      <div class="wrap">
+        <div class="card">
+          <h2 class="section-title">배송 정보</h2>
+
+          <form id="checkoutForm">
+            <div class="form-group">
+              <label for="customerName">주문자명</label>
+              <input
+                type="text"
+                id="customerName"
+                name="name"
+                value="<%= defaultName %>"
+                placeholder="이름을 입력해주세요"
+              />
+              <small class="error-text" id="nameError"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="customerPhone">연락처</label>
+              <input
+                type="tel"
+                id="customerPhone"
+                name="phone"
+                placeholder="010-0000-0000"
+                maxlength="13"
+              />
+              <div class="input-help">숫자만 입력해도 자동으로 하이픈이 들어갑니다.</div>
+              <small class="error-text" id="phoneError"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="customerAddress">배송지 주소</label>
+              <textarea
+                id="customerAddress"
+                name="address"
+                placeholder="받으실 주소를 입력해주세요"
+              ></textarea>
+              <small class="error-text" id="addressError"></small>
+            </div>
+
+            <% if (hasStockIssue) { %>
+              <button id="payButton" type="button" class="submit-btn" disabled>
+                재고 문제 해결 후 진행 가능
+              </button>
+            <% } else { %>
+              <button id="payButton" type="submit" class="submit-btn">
+                주문서 확인하기
+              </button>
+            <% } %>
+          </form>
+
+          <div class="order-note">
+            결제 기능은 사업자 등록 이후 연동 예정입니다.<br />
+            현재는 주문서 입력 UX와 사용자 흐름을 먼저 정리하는 단계입니다.
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="section-title">주문 상품</h2>
+
+          <% cart.forEach((item) => { %>
+            <%
+              const addOnNames = Array.isArray(item.addOnNames) ? item.addOnNames : [];
+              const addOnTotal = Number(item.addOnTotal || 0);
+              const lineTotal = (Number(item.price || 0) * Number(item.quantity || 0)) + addOnTotal;
+            %>
+
+            <div class="summary-item">
+              <div class="summary-name"><%= item.name %></div>
+
+              <div class="summary-meta">
+                <% if (item.option) { %>
+                  <div class="summary-meta-line">옵션: <%= item.option %></div>
+                <% } %>
+
+                <% if (item.color) { %>
+                  <div class="summary-meta-line">컬러: <%= item.color %></div>
+                <% } %>
+
+                <div class="summary-meta-line">수량: <%= item.quantity %></div>
+
+                <% if (addOnNames.length > 0) { %>
+                  <div class="add-on-box">
+                    <strong>추가상품</strong><br />
+                    <%= addOnNames.join(', ') %>
+                    <% if (addOnTotal > 0) { %>
+                      <br />추가금액: <strong><%= addOnTotal.toLocaleString() %>원</strong>
+                    <% } %>
+                  </div>
+                <% } %>
+              </div>
+
+              <div class="summary-price">
+                <%= lineTotal.toLocaleString() %>원
+              </div>
+            </div>
+          <% }) %>
+
+          <div class="price-box">
+            <div class="price-row">
+              <span>상품 합계</span>
+              <strong><%= productOnlyTotal.toLocaleString() %>원</strong>
+            </div>
+            <div class="price-row">
+              <span>추가상품 합계</span>
+              <strong><%= addOnGrandTotal.toLocaleString() %>원</strong>
+            </div>
+            <div class="price-row">
+              <span>배송비</span>
+              <strong>0원</strong>
+            </div>
+            <div class="price-total">
+              <span>최종 금액</span>
+              <span><%= safeTotalPrice.toLocaleString() %>원</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <% if (!hasStockIssue) { %>
+    <script>
+      const form = document.getElementById('checkoutForm');
+      const nameInput = document.getElementById('customerName');
+      const phoneInput = document.getElementById('customerPhone');
+      const addressInput = document.getElementById('customerAddress');
+
+      const nameError = document.getElementById('nameError');
+      const phoneError = document.getElementById('phoneError');
+      const addressError = document.getElementById('addressError');
+
+      function clearErrors() {
+        nameError.textContent = '';
+        phoneError.textContent = '';
+        addressError.textContent = '';
+      }
+
+      function formatPhone(value) {
+        const numbers = value.replace(/[^0-9]/g, '').slice(0, 11);
+
+        if (numbers.length < 4) return numbers;
+        if (numbers.length < 8) return numbers.slice(0, 3) + '-' + numbers.slice(3);
+        return numbers.slice(0, 3) + '-' + numbers.slice(3, 7) + '-' + numbers.slice(7);
+      }
+
+      function validateForm(name, phone, address) {
+        let valid = true;
+        clearErrors();
+
+        if (!name) {
+          nameError.textContent = '주문자명을 입력해주세요.';
+          valid = false;
+        }
+
+        if (!phone) {
+          phoneError.textContent = '연락처를 입력해주세요.';
+          valid = false;
+        } else {
+          const onlyNumbers = phone.replace(/[^0-9]/g, '');
+          if (onlyNumbers.length < 10 || onlyNumbers.length > 11) {
+            phoneError.textContent = '연락처 형식을 다시 확인해주세요.';
+            valid = false;
+          }
+        }
+
+        if (!address) {
+          addressError.textContent = '배송지 주소를 입력해주세요.';
+          valid = false;
+        }
+
+        return valid;
+      }
+
+      phoneInput.addEventListener('input', function () {
+        phoneInput.value = formatPhone(phoneInput.value);
+      });
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const name = nameInput.value.trim();
+        const phone = phoneInput.value.trim();
+        const address = addressInput.value.trim();
+
+        if (!validateForm(name, phone, address)) {
+          return;
+        }
+
+        alert(
+          '주문서 입력이 확인되었습니다.\\n\\n' +
+          '결제 기능은 사업자 등록 후 연동 예정입니다.'
+        );
+      });
+    </script>
+  <% } %>
+</body>
+</html>

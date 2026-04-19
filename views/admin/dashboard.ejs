@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>관리자 대시보드</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      padding: 40px;
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin-top: 0;
+      margin-bottom: 24px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      text-decoration: none;
+      color: #111;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      transition: 0.2s ease;
+      border: 1px solid #eee;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+    }
+
+    .card strong {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      margin: 0;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    /* ⭐ 슬라이드 카드도 동일한 스타일 */
+    .card.primary {
+      background: white;
+      color: #111;
+      border: 2px solid #111; /* 살짝 강조만 */
+    }
+
+    .logout {
+      display: inline-block;
+      margin-top: 24px;
+      text-decoration: none;
+      background: #111;
+      color: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 1000px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>관리자 대시보드</h1>
+
+    <div class="grid">
+
+      <!-- 메인 슬라이드 -->
+      <a href="/admin/hero-slides" class="card primary">
+        <strong>메인 슬라이드</strong>
+        <p>홈 배너 이미지 / 링크 / 문구 관리</p>
+      </a>
+
+      <a href="/admin/products" class="card">
+        <strong>상품 목록</strong>
+        <p>등록된 상품 확인, 수정, 삭제</p>
+      </a>
+
+      <a href="/admin/products/new" class="card">
+        <strong>상품 등록</strong>
+        <p>새 상품 추가 및 이미지 업로드</p>
+      </a>
+
+      <a href="/admin/categories" class="card">
+        <strong>카테고리 관리</strong>
+        <p>카테고리 추가/삭제</p>
+      </a>
+
+      <a href="/admin/orders" class="card">
+        <strong>주문 목록</strong>
+        <p>고객 주문 내역 확인</p>
+      </a>
+
+      <a href="/admin/site-content" class="card">
+        <strong>사이트 관리</strong>
+        <p>메인 이미지, 소개글, 문구 수정</p>
+      </a>
+       
+      <a href="/admin/shorts">숏폼 관리</a>
+
+    </div>
+
+    <a href="/admin/logout" class="logout">로그아웃</a>
+  </div>
+</body>
+</html>

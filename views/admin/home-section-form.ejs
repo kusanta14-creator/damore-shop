@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= isEdit ? '홈 섹션 수정' : '홈 섹션 추가' %> | 관리자</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: Arial, sans-serif;
+      background: #f6f6f6;
+      color: #111;
+    }
+
+    .wrap {
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .top-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .top-links a {
+      text-decoration: none;
+      color: #fff;
+      background: #111;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 460px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    form {
+      display: grid;
+      gap: 20px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.06);
+    }
+
+    .card h2 {
+      margin: 0 0 16px;
+      font-size: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      font-size: 14px;
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .check-row {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      align-items: center;
+      padding-top: 8px;
+    }
+
+    .check-row label.inline {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .tabs-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .tab-item {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 10px;
+      align-items: end;
+      padding: 14px;
+      border-radius: 14px;
+      background: #faf7f3;
+      border: 1px solid #eee4d8;
+    }
+
+    .btn-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .left-btns,
+    .right-btns {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button,
+    .btn-link {
+      border: 0;
+      text-decoration: none;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: #111;
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: #ece5dc;
+      color: #111;
+    }
+
+    .btn-danger {
+      background: #f3d7d7;
+      color: #8a1f1f;
+    }
+
+    .btn-mini {
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #ece5dc;
+      color: #111;
+    }
+
+    .help {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #777;
+      line-height: 1.6;
+    }
+
+    .mode-help {
+      margin-top: 8px;
+      padding: 12px 14px;
+      background: #faf7f3;
+      border: 1px solid #eee4d8;
+      border-radius: 12px;
+      font-size: 12px;
+      color: #666;
+      line-height: 1.7;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .manual-search-wrap {
+      display: grid;
+      gap: 14px;
+    }
+
+    .manual-search-bar {
+      display: grid;
+      grid-template-columns: 1fr 180px;
+      gap: 10px;
+    }
+
+    .manual-product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      max-height: 420px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .manual-product-card {
+      border: 1px solid #e7e2da;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #fff;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .manual-product-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.06);
+    }
+
+    .manual-product-card.selected {
+      border-color: #111;
+      box-shadow: inset 0 0 0 2px #111;
+    }
+
+    .manual-product-thumb {
+      aspect-ratio: 4 / 5;
+      background: #eee7de;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .manual-product-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .manual-product-empty {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: #8f877d;
+    }
+
+    .manual-product-body {
+      padding: 10px;
+    }
+
+    .manual-product-name {
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.45;
+      margin-bottom: 4px;
+      color: #111;
+      min-height: 38px;
+    }
+
+    .manual-product-meta {
+      font-size: 11px;
+      color: #777;
+      line-height: 1.5;
+      margin-bottom: 6px;
+    }
+
+    .manual-product-price {
+      font-size: 12px;
+      font-weight: 800;
+      color: #111;
+    }
+
+    .manual-selected-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .manual-selected-item {
+      display: grid;
+      grid-template-columns: 36px 62px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      border-radius: 12px;
+      background: #faf7f3;
+      border: 1px solid #eee4d8;
+    }
+
+    .manual-order-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #111;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .manual-selected-thumb {
+      width: 62px;
+      height: 78px;
+      background: #eee7de;
+      overflow: hidden;
+    }
+
+    .manual-selected-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .manual-selected-name {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    .manual-selected-meta {
+      font-size: 11px;
+      color: #777;
+      line-height: 1.5;
+    }
+
+    .manual-selected-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .preview-card {
+      position: sticky;
+      top: 24px;
+      background: #fff;
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.06);
+    }
+
+    .preview-card h2 {
+      margin: 0 0 14px;
+      font-size: 20px;
+    }
+
+    .preview-box {
+      background: #f5f3ef;
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid #ece6dd;
+      min-height: 760px;
+    }
+
+    .preview-banner {
+      background: linear-gradient(135deg, #181715, #2a2722);
+      color: #fff;
+      border-radius: 16px;
+      padding: 28px 24px;
+      min-height: 560px;
+    }
+
+    .preview-eyebrow {
+      display: inline-block;
+      color: #bfa68a;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      margin-bottom: 10px;
+    }
+
+    .preview-title {
+      font-size: 32px;
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+      font-weight: 800;
+      color: #111;
+      white-space: pre-line;
+      max-width: 340px;
+      margin-bottom: 12px;
+    }
+
+    .preview-banner .preview-title {
+      color: #fff;
+    }
+
+    .preview-desc {
+      color: #7a7268;
+      font-size: 14px;
+      line-height: 1.7;
+      white-space: pre-line;
+      max-width: 340px;
+      margin-bottom: 18px;
+    }
+
+    .preview-banner .preview-desc {
+      color: rgba(255,255,255,0.76);
+    }
+
+    .preview-more {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      border-radius: 999px;
+      background: #111;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 18px;
+      text-decoration: none;
+    }
+
+    .preview-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .preview-tab {
+      min-height: 38px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(17,17,17,0.08);
+      background: #fff;
+      color: #111;
+      display: inline-flex;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .preview-tab.active {
+      background: #111;
+      color: #fff;
+      border-color: #111;
+    }
+
+    .preview-products {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .preview-products.rank {
+      grid-template-columns: 1fr;
+    }
+
+    .preview-products.slider {
+      display: flex;
+      gap: 12px;
+      overflow: hidden;
+    }
+
+    .preview-product {
+      min-width: 0;
+    }
+
+    .preview-products.slider .preview-product {
+      flex: 0 0 calc(50% - 6px);
+    }
+
+    .preview-thumb {
+      aspect-ratio: 4 / 5;
+      background: linear-gradient(135deg, #ddd6cb, #e8e3db);
+      margin-bottom: 8px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 4px;
+    }
+
+    .preview-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .preview-rank-badge {
+      position: absolute;
+      left: 8px;
+      top: 8px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #111;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .preview-product-title {
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.45;
+      color: #111;
+      margin-bottom: 4px;
+    }
+
+    .preview-product-desc {
+      font-size: 11px;
+      color: #8f877d;
+      margin-bottom: 6px;
+    }
+
+    .preview-price {
+      font-size: 12px;
+      font-weight: 800;
+      color: #111;
+    }
+
+    .preview-meta {
+      margin-top: 14px;
+      font-size: 12px;
+      color: #777;
+      line-height: 1.7;
+      background: #faf7f3;
+      border: 1px solid #eee4d8;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    @media (max-width: 1200px) {
+      .manual-product-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-card {
+        position: static;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .tab-item {
+        grid-template-columns: 1fr;
+      }
+
+      .manual-search-bar {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      body { padding: 14px; }
+      .grid { grid-template-columns: 1fr; }
+      .preview-products { grid-template-columns: 1fr; }
+      .preview-products.slider .preview-product { flex: 0 0 100%; }
+      .manual-product-grid { grid-template-columns: 1fr; }
+      .manual-selected-item {
+        grid-template-columns: 36px 56px 1fr;
+      }
+      .manual-selected-actions {
+        grid-column: 1 / -1;
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%
+    const safeProducts = Array.isArray(products) ? products : [];
+    const selectedManualIds = Array.isArray(homeSection.manualProductIds)
+      ? homeSection.manualProductIds.map(v => String(v))
+      : [];
+  %>
+
+  <div class="wrap">
+    <div class="topbar">
+      <h1><%= isEdit ? '홈 섹션 수정' : '홈 섹션 추가' %></h1>
+      <div class="top-links">
+        <a href="/admin/home-sections">목록으로</a>
+      </div>
+    </div>
+
+    <div class="layout">
+      <form action="<%= formAction %>" method="POST">
+        <input type="hidden" name="manualProductIds" id="manualProductIds" value="<%= selectedManualIds.join(',') %>">
+
+        <div class="card">
+          <h2>기본 정보</h2>
+          <div class="grid">
+            <div>
+              <label>섹션 키</label>
+              <input type="text" name="sectionKey" value="<%= homeSection.sectionKey || '' %>" placeholder="today-best">
+            </div>
+
+            <div>
+              <label>섹션 타입</label>
+              <select name="sectionType" id="sectionType">
+                <option value="product-grid" <%= homeSection.sectionType === 'product-grid' ? 'selected' : '' %>>일반 상품 그리드</option>
+                <option value="product-rank" <%= homeSection.sectionType === 'product-rank' ? 'selected' : '' %>>베스트 순위형</option>
+                <option value="product-slider" <%= homeSection.sectionType === 'product-slider' ? 'selected' : '' %>>가로 슬라이더형</option>
+                <option value="text-banner" <%= homeSection.sectionType === 'text-banner' ? 'selected' : '' %>>텍스트 배너형</option>
+              </select>
+            </div>
+
+            <div>
+              <label>섹션 라벨</label>
+              <input type="text" name="titleLabel" id="titleLabelInput" value="<%= homeSection.titleLabel || '' %>" placeholder="TODAY BEST">
+            </div>
+
+            <div>
+              <label>섹션 제목</label>
+              <input type="text" name="title" id="titleInput" value="<%= homeSection.title || '' %>" placeholder="지금 가장 반응 좋은 상품">
+            </div>
+
+            <div class="full">
+              <label>섹션 설명</label>
+              <textarea name="description" id="descriptionInput" placeholder="설명 문구를 입력하세요"><%= homeSection.description || '' %></textarea>
+            </div>
+
+            <div>
+              <label>더보기 텍스트</label>
+              <input type="text" name="moreText" id="moreTextInput" value="<%= homeSection.moreText || '' %>" placeholder="전체 상품 보기">
+            </div>
+
+            <div>
+              <label>더보기 링크</label>
+              <input type="text" name="moreLink" value="<%= homeSection.moreLink || '' %>" placeholder="/category/top">
+            </div>
+
+            <div class="full">
+              <div class="check-row">
+                <label class="inline">
+                  <input type="checkbox" name="isVisible" <%= homeSection.isVisible ? 'checked' : '' %>>
+                  노출하기
+                </label>
+
+                <label class="inline">
+                  <input type="checkbox" name="autoRotate" <%= homeSection.autoRotate ? 'checked' : '' %>>
+                  자동 전환 사용
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label>자동 전환 초</label>
+              <input type="number" name="rotateSeconds" min="1" value="<%= homeSection.rotateSeconds || 4 %>">
+            </div>
+
+            <div>
+              <label>상품 개수</label>
+              <input type="number" name="productLimit" id="productLimitInput" min="1" value="<%= homeSection.productLimit || 8 %>">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>상품 연결 방식</h2>
+          <div class="grid">
+            <div class="full">
+              <label>상품 가져오는 방식</label>
+              <select name="productSource" id="productSource">
+                <option value="latest" <%= homeSection.productSource === 'latest' ? 'selected' : '' %>>최신 상품 자동</option>
+                <option value="best" <%= homeSection.productSource === 'best' ? 'selected' : '' %>>베스트 상품 자동</option>
+                <option value="category" <%= homeSection.productSource === 'category' ? 'selected' : '' %>>카테고리별 자동</option>
+                <option value="manual" <%= homeSection.productSource === 'manual' ? 'selected' : '' %>>내가 직접 선택</option>
+              </select>
+              <div class="mode-help" id="modeHelp"></div>
+            </div>
+
+            <div id="categoryField">
+              <label>카테고리 선택</label>
+              <select name="category" id="categoryInput">
+                <option value="">선택 안함</option>
+                <% categories.forEach(item => { %>
+                  <option value="<%= item.name %>" <%= homeSection.category === item.name ? 'selected' : '' %>><%= item.name %></option>
+                <% }) %>
+              </select>
+            </div>
+
+            <div id="subCategoryField">
+              <label>서브카테고리</label>
+              <input type="text" name="subCategory" id="subCategoryInput" value="<%= homeSection.subCategory || '' %>" placeholder="선택사항">
+            </div>
+
+            <div class="full hidden" id="manualField">
+              <label>직접 선택 상품</label>
+
+              <div class="manual-search-wrap">
+                <div class="manual-search-bar">
+                  <input type="text" id="manualSearchInput" placeholder="상품명, 카테고리로 검색">
+                  <select id="manualSearchCategory">
+                    <option value="">전체 카테고리</option>
+                    <% categories.forEach(item => { %>
+                      <option value="<%= item.name %>"><%= item.name %></option>
+                    <% }) %>
+                  </select>
+                </div>
+
+                <div class="help">
+                  상품 카드 클릭으로 선택. 아래 선택된 상품 목록에서 위/아래로 순서 변경 가능.
+                </div>
+
+                <div class="manual-product-grid" id="manualProductGrid">
+                  <% safeProducts.forEach(product => { %>
+                    <div
+                      class="manual-product-card <%= selectedManualIds.includes(String(product._id)) ? 'selected' : '' %>"
+                      data-product-id="<%= product._id %>"
+                      data-product-name="<%= product.name || '' %>"
+                      data-product-category="<%= product.category || '' %>"
+                      data-product-subcategory="<%= product.subCategory || '' %>"
+                      data-product-price="<%= Number(product.price || 0) %>"
+                      data-product-image="<%= product.image || '' %>"
+                      onclick="toggleManualProduct('<%= product._id %>')"
+                    >
+                      <div class="manual-product-thumb">
+                        <% if (product.image) { %>
+                          <img src="<%= product.image %>" alt="<%= product.name %>">
+                        <% } else { %>
+                          <div class="manual-product-empty">이미지 없음</div>
+                        <% } %>
+                      </div>
+                      <div class="manual-product-body">
+                        <div class="manual-product-name"><%= product.name %></div>
+                        <div class="manual-product-meta">
+                          <%= product.category || '-' %>
+                          <% if (product.subCategory) { %>
+                            · <%= product.subCategory %>
+                          <% } %>
+                        </div>
+                        <div class="manual-product-price"><%= Number(product.price || 0).toLocaleString() %>원</div>
+                      </div>
+                    </div>
+                  <% }) %>
+                </div>
+
+                <div>
+                  <label style="margin-bottom:10px;">선택된 상품</label>
+                  <div class="manual-selected-list" id="manualSelectedList"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>탭 설정</h2>
+          <div class="help" style="margin-bottom: 14px;">
+            탭 이름만 추가해도 미리보기에 바로 표시됨.
+          </div>
+
+          <div id="tabsList" class="tabs-list">
+            <% const tabs = Array.isArray(homeSection.tabs) ? homeSection.tabs : []; %>
+            <% if (tabs.length > 0) { %>
+              <% tabs.forEach(tab => { %>
+                <div class="tab-item">
+                  <div>
+                    <label>탭 이름</label>
+                    <input type="text" name="tabLabel" value="<%= tab.label || '' %>" placeholder="TOP" oninput="refreshPreview()">
+                  </div>
+
+                  <div>
+                    <label>카테고리</label>
+                    <select name="tabCategory" oninput="refreshPreview()">
+                      <option value="">선택 안함</option>
+                      <% categories.forEach(item => { %>
+                        <option value="<%= item.name %>" <%= tab.category === item.name ? 'selected' : '' %>><%= item.name %></option>
+                      <% }) %>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label>서브카테고리</label>
+                    <input type="text" name="tabSubCategory" value="<%= tab.subCategory || '' %>" placeholder="선택사항" oninput="refreshPreview()">
+                  </div>
+
+                  <button type="button" class="btn-danger" onclick="removeTabRow(this)">삭제</button>
+                </div>
+              <% }) %>
+            <% } %>
+          </div>
+
+          <div class="btn-row" style="margin-top:14px;">
+            <div class="left-btns">
+              <button type="button" class="btn-secondary" onclick="addTabRow()">탭 추가</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <div class="left-btns">
+            <a href="/admin/home-sections" class="btn-link btn-secondary">목록으로</a>
+          </div>
+          <div class="right-btns">
+            <button type="submit" class="btn-primary"><%= isEdit ? '수정 저장' : '등록하기' %></button>
+          </div>
+        </div>
+      </form>
+
+      <aside class="preview-card">
+        <h2>실시간 미리보기</h2>
+
+        <div id="previewBox" class="preview-box">
+          <div id="previewEyebrow" class="preview-eyebrow">TODAY BEST</div>
+          <div id="previewTitle" class="preview-title">섹션 제목</div>
+          <div id="previewDesc" class="preview-desc">섹션 설명</div>
+          <a href="#" class="preview-more" id="previewMore">더보기</a>
+          <div class="preview-tabs" id="previewTabs"></div>
+          <div class="preview-products" id="previewProducts"></div>
+        </div>
+
+        <div class="preview-meta">
+          타입: <span id="previewMetaType">product-grid</span><br>
+          방식: <span id="previewMetaSource">latest</span><br>
+          카테고리: <span id="previewMetaCategory">-</span><br>
+          서브카테고리: <span id="previewMetaSubCategory">-</span><br>
+          상품개수: <span id="previewMetaLimit">8</span>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <template id="tabTemplate">
+    <div class="tab-item">
+      <div>
+        <label>탭 이름</label>
+        <input type="text" name="tabLabel" value="" placeholder="TOP" oninput="refreshPreview()">
+      </div>
+
+      <div>
+        <label>카테고리</label>
+        <select name="tabCategory" oninput="refreshPreview()">
+          <option value="">선택 안함</option>
+          <% categories.forEach(item => { %>
+            <option value="<%= item.name %>"><%= item.name %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div>
+        <label>서브카테고리</label>
+        <input type="text" name="tabSubCategory" value="" placeholder="선택사항" oninput="refreshPreview()">
+      </div>
+
+      <button type="button" class="btn-danger" onclick="removeTabRow(this)">삭제</button>
+    </div>
+  </template>
+
+  <script>
+    const selectedManualProducts = [];
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function addTabRow() {
+      const template = document.getElementById('tabTemplate');
+      const list = document.getElementById('tabsList');
+      list.insertAdjacentHTML('beforeend', template.innerHTML);
+      refreshPreview();
+    }
+
+    function removeTabRow(button) {
+      const row = button.closest('.tab-item');
+      if (!row) return;
+      row.remove();
+      refreshPreview();
+    }
+
+    function getInputValue(id, fallback = '') {
+      const el = document.getElementById(id);
+      return el ? String(el.value || '').trim() : fallback;
+    }
+
+    function getTabLabels() {
+      return Array.from(document.querySelectorAll('input[name="tabLabel"]'))
+        .map(el => String(el.value || '').trim())
+        .filter(Boolean);
+    }
+
+    function updateSourceUI() {
+      const source = getInputValue('productSource', 'latest');
+      const categoryField = document.getElementById('categoryField');
+      const subCategoryField = document.getElementById('subCategoryField');
+      const manualField = document.getElementById('manualField');
+      const modeHelp = document.getElementById('modeHelp');
+
+      categoryField.classList.remove('hidden');
+      subCategoryField.classList.remove('hidden');
+      manualField.classList.add('hidden');
+
+      if (source === 'latest') {
+        modeHelp.textContent = '최신 등록 상품 자동 노출';
+      } else if (source === 'best') {
+        modeHelp.textContent = '베스트 상품 자동 노출';
+      } else if (source === 'category') {
+        modeHelp.textContent = '선택한 카테고리 상품 자동 노출';
+      } else if (source === 'manual') {
+        modeHelp.textContent = '내가 직접 선택한 상품만 노출';
+        categoryField.classList.add('hidden');
+        subCategoryField.classList.add('hidden');
+        manualField.classList.remove('hidden');
+      }
+    }
+
+    function getProductCard(id) {
+      return document.querySelector(`.manual-product-card[data-product-id="${id}"]`);
+    }
+
+    function getProductDataFromCard(card) {
+      return {
+        id: card.dataset.productId,
+        name: card.dataset.productName || '',
+        category: card.dataset.productCategory || '',
+        subCategory: card.dataset.productSubcategory || '',
+        price: Number(card.dataset.productPrice || 0),
+        image: card.dataset.productImage || ''
+      };
+    }
+
+    function syncManualInput() {
+      document.getElementById('manualProductIds').value = selectedManualProducts.map(item => item.id).join(',');
+    }
+
+    function renderSelectedManualList() {
+      const list = document.getElementById('manualSelectedList');
+
+      if (!selectedManualProducts.length) {
+        list.innerHTML = '<div class="help">선택된 상품이 없습니다.</div>';
+        return;
+      }
+
+      list.innerHTML = selectedManualProducts.map((item, index) => `
+        <div class="manual-selected-item">
+          <div class="manual-order-badge">${index + 1}</div>
+          <div class="manual-selected-thumb">
+            ${item.image ? `<img src="${item.image}" alt="${escapeHtml(item.name)}">` : ''}
+          </div>
+          <div>
+            <div class="manual-selected-name">${escapeHtml(item.name)}</div>
+            <div class="manual-selected-meta">
+              ${escapeHtml(item.category || '-')}
+              ${item.subCategory ? ' · ' + escapeHtml(item.subCategory) : ''}
+              <br>
+              ${Number(item.price || 0).toLocaleString()}원
+            </div>
+          </div>
+          <div class="manual-selected-actions">
+            <button type="button" class="btn-mini" onclick="moveManualProductUp('${item.id}')">위로</button>
+            <button type="button" class="btn-mini" onclick="moveManualProductDown('${item.id}')">아래로</button>
+            <button type="button" class="btn-danger" onclick="removeManualProduct('${item.id}')">삭제</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleManualProduct(id) {
+      const card = getProductCard(id);
+      if (!card) return;
+
+      const index = selectedManualProducts.findIndex(item => item.id === id);
+
+      if (index >= 0) {
+        selectedManualProducts.splice(index, 1);
+        card.classList.remove('selected');
+      } else {
+        selectedManualProducts.push(getProductDataFromCard(card));
+        card.classList.add('selected');
+      }
+
+      syncManualInput();
+      renderSelectedManualList();
+      refreshPreview();
+    }
+
+    function removeManualProduct(id) {
+      const index = selectedManualProducts.findIndex(item => item.id === id);
+      if (index < 0) return;
+
+      selectedManualProducts.splice(index, 1);
+      const card = getProductCard(id);
+      if (card) card.classList.remove('selected');
+
+      syncManualInput();
+      renderSelectedManualList();
+      refreshPreview();
+    }
+
+    function moveManualProductUp(id) {
+      const index = selectedManualProducts.findIndex(item => item.id === id);
+      if (index <= 0) return;
+
+      const temp = selectedManualProducts[index - 1];
+      selectedManualProducts[index - 1] = selectedManualProducts[index];
+      selectedManualProducts[index] = temp;
+
+      syncManualInput();
+      renderSelectedManualList();
+      refreshPreview();
+    }
+
+    function moveManualProductDown(id) {
+      const index = selectedManualProducts.findIndex(item => item.id === id);
+      if (index < 0 || index >= selectedManualProducts.length - 1) return;
+
+      const temp = selectedManualProducts[index + 1];
+      selectedManualProducts[index + 1] = selectedManualProducts[index];
+      selectedManualProducts[index] = temp;
+
+      syncManualInput();
+      renderSelectedManualList();
+      refreshPreview();
+    }
+
+    function initializeManualProducts() {
+      const initialIds = getInputValue('manualProductIds', '')
+        .split(',')
+        .map(v => v.trim())
+        .filter(Boolean);
+
+      initialIds.forEach(id => {
+        const card = getProductCard(id);
+        if (!card) return;
+
+        card.classList.add('selected');
+
+        if (!selectedManualProducts.find(item => item.id === id)) {
+          selectedManualProducts.push(getProductDataFromCard(card));
+        }
+      });
+
+      syncManualInput();
+      renderSelectedManualList();
+    }
+
+    function filterManualProducts() {
+      const keyword = String(document.getElementById('manualSearchInput').value || '').trim().toLowerCase();
+      const category = String(document.getElementById('manualSearchCategory').value || '').trim().toLowerCase();
+      const cards = Array.from(document.querySelectorAll('.manual-product-card'));
+
+      cards.forEach(card => {
+        const name = String(card.dataset.productName || '').toLowerCase();
+        const itemCategory = String(card.dataset.productCategory || '').toLowerCase();
+        const keywordMatch = !keyword || name.includes(keyword) || itemCategory.includes(keyword);
+        const categoryMatch = !category || itemCategory === category;
+
+        card.style.display = keywordMatch && categoryMatch ? '' : 'none';
+      });
+    }
+
+    function renderPreviewProducts(sectionType, productSource, category, subCategory, productLimit) {
+      const wrap = document.getElementById('previewProducts');
+      wrap.innerHTML = '';
+      wrap.className = 'preview-products';
+
+      if (sectionType === 'product-rank') {
+        wrap.classList.add('rank');
+      } else if (sectionType === 'product-slider') {
+        wrap.classList.add('slider');
+      }
+
+      let previewItems = [];
+
+      if (productSource === 'manual' && selectedManualProducts.length > 0) {
+        previewItems = selectedManualProducts.slice(0, productLimit);
+      } else {
+        const count = sectionType === 'product-rank'
+          ? Math.min(productLimit, 5)
+          : Math.min(productLimit, 4);
+
+        for (let i = 0; i < count; i += 1) {
+          previewItems.push({
+            id: `sample-${i + 1}`,
+            name: `샘플 상품 ${i + 1}`,
+            category: category || 'damore',
+            subCategory: subCategory || '',
+            price: 39000 + i * 5000,
+            image: ''
+          });
+        }
+      }
+
+      previewItems.forEach((item, index) => {
+        const box = document.createElement('div');
+        box.className = 'preview-product';
+        box.innerHTML = `
+          <div class="preview-thumb">
+            ${item.image ? `<img src="${item.image}" alt="${escapeHtml(item.name)}">` : ''}
+            ${sectionType === 'product-rank' ? `<div class="preview-rank-badge">${index + 1}</div>` : ''}
+          </div>
+          <div class="preview-product-title">${escapeHtml(item.name)}</div>
+          <div class="preview-product-desc">
+            ${escapeHtml(item.category || 'damore')}
+            ${item.subCategory ? ' · ' + escapeHtml(item.subCategory) : ''}
+          </div>
+          <div class="preview-price">${Number(item.price || 0).toLocaleString()}원</div>
+        `;
+        wrap.appendChild(box);
+      });
+    }
+
+    function refreshPreview() {
+      updateSourceUI();
+
+      const sectionType = getInputValue('sectionType', 'product-grid');
+      const productSource = getInputValue('productSource', 'latest');
+      const titleLabel = getInputValue('titleLabelInput', 'SECTION LABEL');
+      const title = getInputValue('titleInput', '섹션 제목');
+      const description = getInputValue('descriptionInput', '섹션 설명');
+      const moreText = getInputValue('moreTextInput', '더보기');
+      const category = getInputValue('categoryInput', '');
+      const subCategory = getInputValue('subCategoryInput', '');
+      const productLimit = Math.max(Number(getInputValue('productLimitInput', '8')) || 8, 1);
+
+      const previewBox = document.getElementById('previewBox');
+      previewBox.className = sectionType === 'text-banner' ? 'preview-banner' : 'preview-box';
+
+      document.getElementById('previewEyebrow').textContent = titleLabel || 'SECTION LABEL';
+      document.getElementById('previewTitle').textContent = title || '섹션 제목';
+      document.getElementById('previewDesc').textContent = description || '섹션 설명';
+
+      const more = document.getElementById('previewMore');
+      more.textContent = moreText || '더보기';
+      more.style.display = moreText ? 'inline-flex' : 'none';
+
+      document.getElementById('previewMetaType').textContent = sectionType;
+      document.getElementById('previewMetaSource').textContent = productSource;
+      document.getElementById('previewMetaCategory').textContent = category || '-';
+      document.getElementById('previewMetaSubCategory').textContent = subCategory || '-';
+      document.getElementById('previewMetaLimit').textContent = String(productLimit);
+
+      const previewTabs = document.getElementById('previewTabs');
+      previewTabs.innerHTML = '';
+
+      const tabLabels = getTabLabels();
+      if (tabLabels.length > 0 && sectionType !== 'text-banner') {
+        tabLabels.forEach((label, index) => {
+          const tab = document.createElement('span');
+          tab.className = 'preview-tab' + (index === 0 ? ' active' : '');
+          tab.textContent = label;
+          previewTabs.appendChild(tab);
+        });
+        previewTabs.style.display = 'flex';
+      } else {
+        previewTabs.style.display = 'none';
+      }
+
+      if (sectionType === 'text-banner') {
+        document.getElementById('previewProducts').innerHTML = '';
+        previewTabs.style.display = 'none';
+        return;
+      }
+
+      renderPreviewProducts(sectionType, productSource, category, subCategory, productLimit);
+    }
+
+    document.addEventListener('input', function (e) {
+      if (e.target && (e.target.id === 'manualSearchInput' || e.target.id === 'manualSearchCategory')) {
+        filterManualProducts();
+        return;
+      }
+      refreshPreview();
+    });
+
+    document.addEventListener('change', function (e) {
+      if (e.target && (e.target.id === 'manualSearchInput' || e.target.id === 'manualSearchCategory')) {
+        filterManualProducts();
+        return;
+      }
+      refreshPreview();
+    });
+
+    initializeManualProducts();
+    filterManualProducts();
+    refreshPreview();
+  </script>
+</body>
+</html>

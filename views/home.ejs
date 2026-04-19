@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DAMORE | 더 많은 스타일, 더 깊은 무드</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #f5f3ef;
+      --bg-soft: #ece8e1;
+      --white: #ffffff;
+      --black: #111111;
+      --text: #1f1f1f;
+      --muted: #7a7268;
+      --line: rgba(17, 17, 17, 0.08);
+      --gold: #bfa68a;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
+      --max: 1280px;
+    }
+    body {
+      font-family: "Pretendard", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      word-break: keep-all;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    img {
+      display: block;
+      width: 100%;
+    }
+    .container {
+      width: 100%;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .topbar {
+      background: var(--black);
+      color: rgba(255,255,255,0.88);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-align: center;
+      padding: 12px 16px;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(245, 243, 239, 0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+    }
+    .header-inner {
+      min-height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 16px 0;
+    }
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .brand-logo {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: 0.24em;
+      color: var(--black);
+    }
+    .brand-sub {
+      font-size: 10px;
+      letter-spacing: 0.32em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .nav {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .nav-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      height: 48px;
+      padding-bottom: 10px;
+      margin-bottom: -10px;
+    }
+    .nav a,
+    .nav-link {
+      font-size: 14px;
+      color: #312d29;
+      position: relative;
+      text-transform: uppercase;
+    }
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      height: 48px;
+    }
+    .nav a::after,
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -6px;
+      width: 0;
+      height: 1px;
+      background: var(--black);
+      transition: 0.25s ease;
+    }
+    .nav a:hover::after,
+    .nav a.active::after,
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      min-width: 120px;
+      padding: 14px 0;
+      background: #e8e1d8;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.18s ease, visibility 0.18s ease;
+      z-index: 999;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+    }
+    .dropdown-menu a {
+      display: block;
+      padding: 8px 16px;
+      text-align: center;
+      font-size: 13px;
+      color: #111;
+      text-transform: none;
+      white-space: nowrap;
+    }
+    .dropdown-menu a::after {
+      display: none;
+    }
+    .dropdown-menu a:hover {
+      background: rgba(255,255,255,0.28);
+    }
+    .nav-item:hover .dropdown-menu,
+    .nav-item:focus-within .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 14px;
+      color: var(--muted);
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .user-name {
+      font-weight: 700;
+      color: var(--black);
+    }
+    .mobile-category-bar {
+      display: none;
+      background: rgba(245, 243, 239, 0.96);
+      border-bottom: 1px solid var(--line);
+    }
+    .mobile-category-scroll {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 12px 0;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .mobile-category-scroll::-webkit-scrollbar {
+      display: none;
+    }
+    .mobile-category-link {
+      flex-shrink: 0;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--black);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .mobile-category-link.active {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+    }
+    .hero {
+      padding: 26px 0 70px;
+    }
+    .hero-slider {
+      position: relative;
+      overflow: hidden;
+      background: #ddd;
+      box-shadow: var(--shadow);
+    }
+    .hero-track {
+      display: flex;
+      width: 100%;
+      transition: transform 0.45s ease;
+      will-change: transform;
+    }
+    .hero-slide {
+      flex: 0 0 100%;
+      min-width: 100%;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      min-height: 710px;
+    }
+    .hero-panel {
+      position: relative;
+      overflow: hidden;
+      background: #ddd;
+    }
+    .hero-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.22), rgba(0,0,0,0.08));
+      z-index: 1;
+      pointer-events: none;
+    }
+    .hero-panel.left::before {
+      background: linear-gradient(to top, rgba(0,0,0,0.34), rgba(0,0,0,0.10));
+    }
+    .hero-panel.left img,
+    .hero-panel.center img,
+    .hero-panel.right img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .hero-panel-link {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      display: block;
+    }
+    .hero-panel-content {
+      position: absolute;
+      left: 34px;
+      right: 34px;
+      bottom: 34px;
+      z-index: 5;
+      color: white;
+    }
+    .hero-panel-label {
+      display: inline-block;
+      margin-bottom: 14px;
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: rgba(255,255,255,0.82);
+    }
+    .hero-main-title {
+      font-size: clamp(34px, 4.5vw, 66px);
+      line-height: 1.04;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      margin-bottom: 16px;
+      white-space: pre-line;
+    }
+    .hero-main-desc {
+      font-size: 15px;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.86);
+      max-width: 420px;
+      margin-bottom: 20px;
+      white-space: pre-line;
+    }
+    .hero-floating-title {
+      position: absolute;
+      z-index: 6;
+      color: white;
+    }
+    .hero-benefits {
+      position: absolute;
+      z-index: 6;
+      display: grid;
+      gap: 8px;
+      max-width: 300px;
+    }
+    .hero-benefit {
+      display: block;
+      color: rgba(255,255,255,0.96);
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.5;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    }
+    .hero-cta {
+      position: absolute;
+      z-index: 6;
+      display: inline-block;
+      color: rgba(255,255,255,0.98);
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.4;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    }
+    .hero-center-badge {
+      position: absolute;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.96);
+      font-size: 16px;
+      font-weight: 900;
+      z-index: 6;
+      text-shadow: 0 3px 12px rgba(0,0,0,0.28);
+    }
+    .hero-info-card {
+      position: absolute;
+      z-index: 6;
+      width: auto;
+      max-width: calc(100% - 48px);
+    }
+    .hero-info-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: rgba(255,255,255,0.98);
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.5;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    }
+    .hero-info-check {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.95);
+      color: rgba(255,255,255,0.95);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      flex-shrink: 0;
+      background: transparent;
+    }
+    .hero-info-item + .hero-info-item {
+      margin-top: 10px;
+    }
+    .hero-arrow-wrap {
+      position: absolute;
+      top: 50%;
+      left: 18px;
+      right: 18px;
+      transform: translateY(-50%);
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+      z-index: 8;
+    }
+    .hero-arrow {
+      width: 50px;
+      height: 50px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.88);
+      color: #111;
+      font-size: 28px;
+      font-weight: 700;
+      cursor: pointer;
+      pointer-events: auto;
+      box-shadow: 0 10px 22px rgba(0,0,0,0.12);
+    }
+    .hero-dots {
+      position: absolute;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      z-index: 8;
+    }
+    .hero-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 0;
+      background: rgba(255,255,255,0.48);
+      cursor: pointer;
+    }
+    .hero-dot.active {
+      background: white;
+    }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 24px;
+      margin-bottom: 26px;
+      flex-wrap: wrap;
+    }
+    .section-head-left small {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--gold);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .section-head-left h2 {
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+      margin-bottom: 8px;
+      white-space: pre-line;
+    }
+    .section-head-left p {
+      color: var(--muted);
+      max-width: 560px;
+      font-size: 14px;
+      white-space: pre-line;
+    }
+    .section-link {
+      font-size: 13px;
+      color: var(--black);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .filter-bar {
+      margin-top: -10px;
+      margin-bottom: 24px;
+      background: var(--white);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      display: grid;
+      grid-template-columns: 1fr 220px 140px;
+      gap: 12px;
+      align-items: center;
+    }
+    .filter-bar input,
+    .filter-bar select,
+    .filter-bar button {
+      height: 48px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      font-size: 14px;
+    }
+    .filter-bar input,
+    .filter-bar select {
+      padding: 0 14px;
+      background: #fff;
+      outline: none;
+    }
+    .filter-bar button {
+      background: var(--black);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+    }
+    .search-summary {
+      margin-bottom: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .best-section,
+    .dynamic-home-section,
+    .shorts-section {
+      padding: 78px 0;
+    }
+    .collection-grid,
+    .best-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .product-card,
+    .best-card {
+      display: block;
+      background: transparent;
+      overflow: hidden;
+    }
+    .product-image-wrap,
+    .best-image {
+      position: relative;
+      overflow: hidden;
+      background: #e8e3db;
+      aspect-ratio: 4 / 5;
+      margin-bottom: 10px;
+    }
+    .product-image {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    .product-image img,
+    .best-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.35s ease;
+    }
+    .product-card:hover .product-image img,
+    .best-card:hover .best-image img {
+      transform: scale(1.03);
+    }
+    .product-no-image {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #a39a8e;
+      font-size: 13px;
+      background: #e8e3db;
+    }
+    .product-body,
+    .best-info {
+      padding: 0 0 16px;
+    }
+    .product-name,
+    .best-name {
+      font-size: 13px;
+      color: #111;
+      line-height: 1.45;
+      margin-bottom: 6px;
+      font-weight: 700;
+      min-height: 38px;
+    }
+    .product-desc,
+    .best-desc {
+      font-size: 11px;
+      color: #9b9b9b;
+      line-height: 1.55;
+      min-height: 30px;
+      margin-bottom: 8px;
+    }
+    .price-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+    .price,
+    .best-price {
+      font-size: 13px;
+      font-weight: 800;
+      color: #111;
+    }
+    .old-price {
+      font-size: 11px;
+      color: #a0a0a0;
+      text-decoration: line-through;
+    }
+    .showcase-discount-text {
+      font-size: 12px;
+      font-weight: 800;
+      color: #d25757;
+    }
+    .showcase-review {
+      font-size: 10px;
+      color: #9b9b9b;
+      margin-bottom: 6px;
+    }
+    .showcase-review strong {
+      color: #111;
+    }
+    .status-line,
+    .product-category {
+      font-size: 10px;
+      color: #9b9b9b;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .product-tag,
+    .best-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 20px;
+      padding: 0 8px;
+      background: #ceb79f;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+    .soldout-badge {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      z-index: 2;
+      min-height: 22px;
+      padding: 0 8px;
+      background: rgba(17,17,17,0.85);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+    }
+    .home-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+    .home-tab-btn {
+      min-height: 38px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      color: var(--black);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .home-tab-btn.active {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+    }
+    .home-tab-panel {
+      display: none;
+    }
+    .home-tab-panel.active {
+      display: block;
+    }
+    .section-slider {
+      position: relative;
+      overflow: hidden;
+    }
+    .section-slider-viewport {
+      overflow: hidden;
+      width: 100%;
+    }
+    .section-slider-track {
+      display: flex;
+      transition: transform 0.45s ease;
+      will-change: transform;
+    }
+    .section-slide {
+      flex: 0 0 100%;
+      min-width: 100%;
+    }
+    .section-slide-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .section-slider-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 18px;
+    }
+    .section-slider-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 0;
+      background: rgba(17,17,17,0.18);
+      cursor: pointer;
+    }
+    .section-slider-dot.active {
+      background: var(--black);
+    }
+    .rank-thumb-wrap {
+      position: relative;
+    }
+    .rank-badge {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      z-index: 3;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(17,17,17,0.9);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .text-banner-box {
+      background: linear-gradient(135deg, #181715, #2a2722);
+      color: #fff;
+      padding: 40px 34px;
+      box-shadow: var(--shadow);
+    }
+    .text-banner-box small {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: rgba(255,255,255,0.68);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .text-banner-box h3 {
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1.08;
+      margin-bottom: 12px;
+      letter-spacing: -0.04em;
+      white-space: pre-line;
+    }
+    .text-banner-box p {
+      color: rgba(255,255,255,0.74);
+      max-width: 640px;
+      font-size: 14px;
+      line-height: 1.7;
+      white-space: pre-line;
+      margin-bottom: 18px;
+    }
+    .text-banner-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0 16px;
+      background: #f4ede1;
+      color: #111;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .pagination {
+      margin-top: 28px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .pagination a,
+    .pagination span {
+      min-width: 38px;
+      height: 38px;
+      padding: 0 12px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--white);
+      color: var(--black);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.05);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .pagination .active {
+      background: var(--black);
+      color: white;
+    }
+
+    /* shorts */
+    .shorts-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 24px;
+      margin-bottom: 26px;
+      flex-wrap: wrap;
+    }
+    .shorts-head-left small {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--gold);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .shorts-head-left h2 {
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+      margin: 0;
+    }
+    .shorts-more {
+      font-size: 13px;
+      color: var(--black);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .shorts-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+    .shorts-card {
+      position: relative;
+      border-radius: 26px;
+      overflow: hidden;
+      background: #d8d0c6;
+      aspect-ratio: 9 / 16;
+      box-shadow: var(--shadow);
+    }
+    .shorts-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      background: #d8d0c6;
+    }
+    .shorts-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.38), rgba(0,0,0,0.02));
+      pointer-events: none;
+    }
+    .shorts-top-badge {
+      position: absolute;
+      left: 16px;
+      top: 16px;
+      z-index: 2;
+      color: white;
+      font-size: 15px;
+      font-weight: 800;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.24);
+      pointer-events: none;
+    }
+    .shorts-product-box {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 14px;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 14px;
+      color: #111;
+      text-decoration: none;
+    }
+    .shorts-product-thumb {
+      width: 56px;
+      height: 56px;
+      border-radius: 10px;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: #eee;
+    }
+    .shorts-product-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .shorts-product-info {
+      min-width: 0;
+    }
+    .shorts-product-title {
+      font-size: 13px;
+      line-height: 1.35;
+      font-weight: 700;
+      color: #222;
+      display: -webkit-box;
+      line-clamp: 2;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+    .shorts-product-price {
+      font-size: 14px;
+      font-weight: 800;
+      color: #111;
+    }
+
+    @media (max-width: 1100px) {
+      .hero-slide {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+      .hero-panel {
+        min-height: 440px;
+      }
+      .hero-main-title {
+        font-size: 42px;
+      }
+      .collection-grid,
+      .best-grid,
+      .section-slide-grid,
+      .shorts-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .filter-bar {
+        grid-template-columns: 1fr 1fr;
+      }
+      .filter-bar button {
+        grid-column: 1 / -1;
+      }
+    }
+    @media (max-width: 760px) {
+      .container { padding: 0 16px; }
+      .header-actions { display: none; }
+      .nav { display: none; }
+      .mobile-category-bar { display: block; }
+      .hero {
+        padding: 18px 0 44px;
+      }
+      .hero-panel {
+        min-height: 360px;
+      }
+      .hero-panel-content {
+        left: 20px;
+        right: 20px;
+        bottom: 20px;
+      }
+      .hero-main-title {
+        font-size: 34px;
+      }
+      .hero-main-desc {
+        font-size: 14px;
+      }
+      .hero-arrow {
+        width: 42px;
+        height: 42px;
+        font-size: 24px;
+      }
+      .collection-grid,
+      .best-grid,
+      .section-slide-grid,
+      .shorts-grid {
+        grid-template-columns: 1fr;
+      }
+      .filter-bar {
+        grid-template-columns: 1fr;
+      }
+      .best-section,
+      .dynamic-home-section,
+      .shorts-section {
+        padding: 58px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%
+    const buildPageLink = (pageNum) => {
+      const params = [];
+      if (category) params.push(`category=${encodeURIComponent(category)}`);
+      if (keyword) params.push(`keyword=${encodeURIComponent(keyword)}`);
+      if (sort) params.push(`sort=${encodeURIComponent(sort)}`);
+      params.push(`page=${pageNum}`);
+      return `/?${params.join('&')}`;
+    };
+
+    const safeHeroSlides =
+      typeof heroSlides !== 'undefined' && Array.isArray(heroSlides)
+        ? heroSlides
+        : [];
+
+    const safeHomeSections =
+      typeof homeSections !== 'undefined' && Array.isArray(homeSections)
+        ? homeSections
+        : [];
+
+    const safeHomeSectionProductsMap =
+      typeof homeSectionProductsMap !== 'undefined' && homeSectionProductsMap
+        ? homeSectionProductsMap
+        : {};
+
+    const safeSiteContent =
+      typeof siteContent !== 'undefined' && siteContent
+        ? siteContent
+        : {};
+
+    const safeShortsItems =
+      typeof shortsItems !== 'undefined' && Array.isArray(shortsItems)
+        ? shortsItems
+        : [];
+
+    const fallbackHeroSlides = [
+      {
+        title: safeSiteContent.heroTitle || '더 많은 가능성,\n더 깊은 스타일',
+        desc: safeSiteContent.heroDesc || '하루를 통째로 바꿔주는 분위기. 다모어는 오래 남는 무드와 실루엣을 제안합니다.',
+        mainLabel: 'DAMORE MAIN VISUAL',
+        showMainLabel: true,
+        buttonText: '지금 보러가기',
+        buttonLink: '/about',
+        showButton: true,
+        leftImage: safeSiteContent.heroImage || 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1400&q=80',
+        centerImage: safeSiteContent.sideImage || 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1400&q=80',
+        rightImage: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1400&q=80',
+        leftLink: '/category/top',
+        centerLink: '/about',
+        rightLink: '/about',
+        badge1: '신상품',
+        badge2: '기획전',
+        badge3: '베스트',
+        showBadge1: true,
+        showBadge2: true,
+        showBadge3: true,
+        badge1Top: '82px',
+        badge1Left: '50px',
+        badge2Left: '70px',
+        badge2Bottom: '150px',
+        badge3Right: '46px',
+        badge3Bottom: '86px',
+        benefit1: '5만원 이상 무료배송',
+        benefit2: '신상품 매주 업데이트',
+        benefit3: '회원가입 없이 주문 가능',
+        showBenefit1: true,
+        showBenefit2: true,
+        showBenefit3: true,
+        point1: '카테고리 바로가기',
+        point2: '브랜드 소개 이동',
+        point3: '대표 배너 운영 가능',
+        showPoint1: true,
+        showPoint2: true,
+        showPoint3: true,
+        titleTop: '60%',
+        titleLeft: '34px',
+        benefitBottom: '80px',
+        benefitLeft: '34px',
+        buttonBottom: '30px',
+        buttonLeft: '34px',
+        pointBottom: '40px',
+        pointRight: '40px'
+      }
+    ];
+
+    const fallbackShortsItems = [
+      {
+        title: 'SHORTS 01',
+        brandLabel: 'DAMORE SHORTS',
+        video: '/videos/short1.mp4',
+        link: '/about',
+        productTitle: '숏폼 연결 상품 1',
+        productPrice: '₩26,900',
+        productThumb: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=400&q=80'
+      },
+      {
+        title: 'SHORTS 02',
+        brandLabel: 'DAMORE SHORTS',
+        video: '/videos/short2.mp4',
+        link: '/about',
+        productTitle: '숏폼 연결 상품 2',
+        productPrice: '₩46,900',
+        productThumb: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=400&q=80'
+      },
+      {
+        title: 'SHORTS 03',
+        brandLabel: 'DAMORE SHORTS',
+        video: '/videos/short3.mp4',
+        link: '/about',
+        productTitle: '숏폼 연결 상품 3',
+        productPrice: '₩22,900',
+        productThumb: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=400&q=80'
+      },
+      {
+        title: 'SHORTS 04',
+        brandLabel: 'DAMORE SHORTS',
+        video: '/videos/short4.mp4',
+        link: '/about',
+        productTitle: '숏폼 연결 상품 4',
+        productPrice: '₩32,900',
+        productThumb: 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=400&q=80'
+      }
+    ];
+
+    const renderedHeroSlides = safeHeroSlides.length > 0 ? safeHeroSlides : fallbackHeroSlides;
+    const renderedShortsItems = safeShortsItems.length > 0 ? safeShortsItems : fallbackShortsItems;
+
+    const makeChunks = (arr, size) => {
+      const result = [];
+      if (!Array.isArray(arr) || !arr.length || size <= 0) return result;
+      for (let i = 0; i < arr.length; i += size) {
+        result.push(arr.slice(i, i + size));
+      }
+      return result;
+    };
+  %>
+
+  <div class="topbar">
+    DAMORE OFFICIAL ONLINE STORE · 회원가입 없이도 주문 가능합니다
+  </div>
+
+  <%- include('partials/header', {
+    currentPath: '/',
+    category: category || '',
+    sub: '',
+    categories,
+    currentUser,
+    cartCount
+  }) %>
+
+  <div class="mobile-category-bar">
+    <div class="container">
+      <div class="mobile-category-scroll">
+        <a href="/" class="mobile-category-link <%= !category ? 'active' : '' %>">all</a>
+        <% if (categories && categories.length > 0) { %>
+          <% categories.forEach(item => { %>
+            <a href="/category/<%= item.name %>" class="mobile-category-link <%= category === item.name ? 'active' : '' %>">
+              <%= item.name %>
+            </a>
+          <% }) %>
+        <% } %>
+        <a href="/about" class="mobile-category-link">about</a>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="hero-slider" id="heroSlider">
+          <div class="hero-track" id="heroTrack">
+            <% renderedHeroSlides.forEach((slide, index) => { %>
+              <div class="hero-slide">
+                <div class="hero-panel left">
+                  <% if (slide.leftLink) { %>
+                    <a href="<%= slide.leftLink %>" class="hero-panel-link" aria-label="왼쪽 배너 이동"></a>
+                  <% } %>
+                  <% if (slide.leftImage) { %>
+                    <img src="<%= slide.leftImage %>" alt="왼쪽 배너 이미지 <%= index + 1 %>">
+                  <% } %>
+                  <div class="hero-panel-content">
+                    <% if (slide.showMainLabel && slide.mainLabel) { %>
+                      <div class="hero-panel-label"><%= slide.mainLabel %></div>
+                    <% } %>
+                  </div>
+                  <div
+                    class="hero-floating-title"
+                    data-pos
+                    data-top="<%= slide.titleTop || '60%' %>"
+                    data-left="<%= slide.titleLeft || '34px' %>">
+                    <div class="hero-main-title"><%= slide.title || '' %></div>
+                    <div class="hero-main-desc"><%= slide.desc || '' %></div>
+                  </div>
+                  <div
+                    class="hero-benefits"
+                    data-pos
+                    data-bottom="<%= slide.benefitBottom || '80px' %>"
+                    data-left="<%= slide.benefitLeft || '34px' %>">
+                    <% if (slide.showBenefit1 && slide.benefit1) { %>
+                      <div class="hero-benefit"><%= slide.benefit1 %></div>
+                    <% } %>
+                    <% if (slide.showBenefit2 && slide.benefit2) { %>
+                      <div class="hero-benefit"><%= slide.benefit2 %></div>
+                    <% } %>
+                    <% if (slide.showBenefit3 && slide.benefit3) { %>
+                      <div class="hero-benefit"><%= slide.benefit3 %></div>
+                    <% } %>
+                  </div>
+                  <% if (slide.showButton && slide.buttonText) { %>
+                    <a
+                      href="<%= slide.buttonLink || '#' %>"
+                      class="hero-cta"
+                      data-pos
+                      data-bottom="<%= slide.buttonBottom || '30px' %>"
+                      data-left="<%= slide.buttonLeft || '34px' %>">
+                      <span><%= slide.buttonText %></span>
+                    </a>
+                  <% } %>
+                </div>
+
+                <div class="hero-panel center">
+                  <% if (slide.centerLink) { %>
+                    <a href="<%= slide.centerLink %>" class="hero-panel-link" aria-label="가운데 배너 이동"></a>
+                  <% } %>
+                  <% if (slide.centerImage) { %>
+                    <img src="<%= slide.centerImage %>" alt="가운데 배너 이미지 <%= index + 1 %>">
+                  <% } %>
+                  <% if (slide.showBadge1 && slide.badge1) { %>
+                    <div
+                      class="hero-center-badge"
+                      data-pos
+                      data-top="<%= slide.badge1Top || '40px' %>"
+                      data-left="<%= slide.badge1Left || '40px' %>">
+                      <span><%= slide.badge1 %></span>
+                    </div>
+                  <% } %>
+                  <% if (slide.showBadge2 && slide.badge2) { %>
+                    <div
+                      class="hero-center-badge"
+                      data-pos
+                      data-bottom="<%= slide.badge2Bottom || '80px' %>"
+                      data-left="<%= slide.badge2Left || '40px' %>">
+                      <span><%= slide.badge2 %></span>
+                    </div>
+                  <% } %>
+                  <% if (slide.showBadge3 && slide.badge3) { %>
+                    <div
+                      class="hero-center-badge"
+                      data-pos
+                      data-bottom="<%= slide.badge3Bottom || '40px' %>"
+                      data-right="<%= slide.badge3Right || '40px' %>">
+                      <span><%= slide.badge3 %></span>
+                    </div>
+                  <% } %>
+                </div>
+
+                <div class="hero-panel right">
+                  <% if (slide.rightLink) { %>
+                    <a href="<%= slide.rightLink %>" class="hero-panel-link" aria-label="오른쪽 배너 이동"></a>
+                  <% } %>
+                  <% if (slide.rightImage) { %>
+                    <img src="<%= slide.rightImage %>" alt="오른쪽 배너 이미지 <%= index + 1 %>">
+                  <% } %>
+                  <%
+                    const hasPoint1 = slide.showPoint1 && slide.point1;
+                    const hasPoint2 = slide.showPoint2 && slide.point2;
+                    const hasPoint3 = slide.showPoint3 && slide.point3;
+                    const hasAnyPoint = hasPoint1 || hasPoint2 || hasPoint3;
+                  %>
+                  <% if (hasAnyPoint) { %>
+                    <div
+                      class="hero-info-card"
+                      data-pos
+                      data-bottom="<%= slide.pointBottom || '40px' %>"
+                      data-right="<%= slide.pointRight || '40px' %>">
+                      <% if (hasPoint1) { %>
+                        <div class="hero-info-item">
+                          <span class="hero-info-check">✓</span>
+                          <span><%= slide.point1 %></span>
+                        </div>
+                      <% } %>
+                      <% if (hasPoint2) { %>
+                        <div class="hero-info-item">
+                          <span class="hero-info-check">✓</span>
+                          <span><%= slide.point2 %></span>
+                        </div>
+                      <% } %>
+                      <% if (hasPoint3) { %>
+                        <div class="hero-info-item">
+                          <span class="hero-info-check">✓</span>
+                          <span><%= slide.point3 %></span>
+                        </div>
+                      <% } %>
+                    </div>
+                  <% } %>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+
+          <% if (renderedHeroSlides.length > 1) { %>
+            <div class="hero-arrow-wrap">
+              <button type="button" class="hero-arrow" id="heroPrev">‹</button>
+              <button type="button" class="hero-arrow" id="heroNext">›</button>
+            </div>
+          <% } %>
+
+          <div class="hero-dots" id="heroDots">
+            <% renderedHeroSlides.forEach((_, index) => { %>
+              <button type="button" class="hero-dot <%= index === 0 ? 'active' : '' %>" data-slide="<%= index %>"></button>
+            <% }) %>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding-top: 0; padding-bottom: 20px;">
+      <div class="container">
+        <form method="GET" action="/" class="filter-bar">
+          <input type="text" name="keyword" value="<%= keyword || '' %>" placeholder="상품명을 검색하세요" />
+          <select name="sort">
+            <option value="latest" <%= sort === 'latest' ? 'selected' : '' %>>최신순</option>
+            <option value="price_asc" <%= sort === 'price_asc' ? 'selected' : '' %>>가격 낮은순</option>
+            <option value="price_desc" <%= sort === 'price_desc' ? 'selected' : '' %>>가격 높은순</option>
+            <option value="name_asc" <%= sort === 'name_asc' ? 'selected' : '' %>>이름순</option>
+          </select>
+          <% if (category) { %>
+            <input type="hidden" name="category" value="<%= category %>" />
+          <% } %>
+          <button type="submit">적용</button>
+        </form>
+        <div class="search-summary">
+          <div>
+            <% if (keyword) { %>
+              '<strong><%= keyword %></strong>' 검색 결과
+            <% } %>
+          </div>
+          <div>총 <strong><%= totalProducts %></strong>개 상품</div>
+        </div>
+      </div>
+    </section>
+
+    <% if (!category && safeHomeSections.length > 0) { %>
+      <% safeHomeSections.forEach((section, sectionIndex) => { %>
+        <%
+          const sectionId = `home-section-${sectionIndex}`;
+          const rawMapValue = safeHomeSectionProductsMap[String(section._id)];
+          const hasTabs = Array.isArray(section.tabs) && section.tabs.length > 0;
+          const panels = hasTabs
+            ? section.tabs.map((tab, tabIndex) => ({
+                label: tab.label || `TAB ${tabIndex + 1}`,
+                products: Array.isArray(rawMapValue?.[tabIndex]) ? rawMapValue[tabIndex] : []
+              }))
+            : [{
+                label: 'ALL',
+                products: Array.isArray(rawMapValue) ? rawMapValue : []
+              }];
+        %>
+
+        <section class="dynamic-home-section" id="<%= section.sectionKey || sectionId %>">
+          <div class="container">
+            <% if (section.sectionType === 'text-banner') { %>
+              <div class="text-banner-box">
+                <% if (section.titleLabel) { %>
+                  <small><%= section.titleLabel %></small>
+                <% } %>
+                <h3><%= section.title || '' %></h3>
+                <p><%= section.description || '' %></p>
+                <% if (section.moreText) { %>
+                  <a href="<%= section.moreLink || '#' %>" class="text-banner-link">
+                    <%= section.moreText %>
+                  </a>
+                <% } %>
+              </div>
+            <% } else { %>
+              <div class="section-head">
+                <div class="section-head-left">
+                  <% if (section.titleLabel) { %>
+                    <small><%= section.titleLabel %></small>
+                  <% } %>
+                  <% if (section.title) { %>
+                    <h2><%= section.title %></h2>
+                  <% } %>
+                  <% if (section.description) { %>
+                    <p><%= section.description %></p>
+                  <% } %>
+                </div>
+                <% if (section.moreText) { %>
+                  <a href="<%= section.moreLink || '#' %>" class="section-link"><%= section.moreText %> →</a>
+                <% } %>
+              </div>
+
+              <% if (hasTabs && panels.length > 0) { %>
+                <div class="home-tabs">
+                  <% panels.forEach((panel, tabIndex) => { %>
+                    <button
+                      type="button"
+                      class="home-tab-btn <%= tabIndex === 0 ? 'active' : '' %>"
+                      data-home-tab-btn
+                      data-section="<%= sectionId %>"
+                      data-tab="<%= tabIndex %>">
+                      <%= panel.label %>
+                    </button>
+                  <% }) %>
+                </div>
+              <% } %>
+
+              <% panels.forEach((panel, panelIndex) => { %>
+                <div
+                  class="home-tab-panel <%= panelIndex === 0 ? 'active' : '' %>"
+                  data-home-tab-panel
+                  data-section="<%= sectionId %>"
+                  data-tab="<%= panelIndex %>">
+                  <% if (!panel.products || panel.products.length === 0) { %>
+                    <div style="background: white; padding: 40px; text-align: center; box-shadow: var(--shadow);">
+                      <h3 style="font-size: 24px; margin-bottom: 10px;">노출할 상품이 없습니다.</h3>
+                      <p style="color: var(--muted); font-size: 14px;">관리자에서 상품 연결 방식을 다시 확인해주세요.</p>
+                    </div>
+                  <% } else if (section.sectionType === 'product-slider') { %>
+                    <%
+                      const sliderChunks = makeChunks(panel.products, 4);
+                      const sliderKey = `${sectionId}-${panelIndex}`;
+                    %>
+                    <div
+                      class="section-slider"
+                      data-section-slider
+                      data-slider-id="<%= sliderKey %>"
+                      data-total="<%= sliderChunks.length %>">
+                      <div class="section-slider-viewport">
+                        <div class="section-slider-track" data-slider-track>
+                          <% sliderChunks.forEach((chunk) => { %>
+                            <div class="section-slide">
+                              <div class="section-slide-grid">
+                                <% chunk.forEach((product) => { %>
+                                  <%
+                                    const hasDiscount = Number(product.oldPrice || 0) > Number(product.price || 0);
+                                    const discountPercent = hasDiscount
+                                      ? Math.round((1 - (Number(product.price || 0) / Number(product.oldPrice || 0))) * 100)
+                                      : 0;
+                                    const hasReview = Number(product.reviewCount || 0) > 0;
+                                  %>
+                                  <a href="/products/<%= product._id %>" class="product-card">
+                                    <div class="product-image-wrap">
+                                      <div class="product-image">
+                                        <% if (product.image) { %>
+                                          <img src="<%= product.image %>" alt="<%= product.name %>" />
+                                        <% } else { %>
+                                          <div class="product-no-image">이미지 없음</div>
+                                        <% } %>
+                                      </div>
+                                      <% if (product.status === 'soldout') { %>
+                                        <div class="soldout-badge">품절</div>
+                                      <% } %>
+                                    </div>
+                                    <div class="product-body">
+                                      <div class="product-name"><%= product.name %></div>
+                                      <div class="product-desc">
+                                        <%= product.desc ? product.desc.substring(0, 42) : '상품 설명이 없습니다.' %><%= product.desc && product.desc.length > 42 ? '...' : '' %>
+                                      </div>
+                                      <div class="price-row">
+                                        <% if (hasDiscount) { %>
+                                          <span class="showcase-discount-text"><%= discountPercent %>%</span>
+                                        <% } %>
+                                        <span class="price"><%= Number(product.price || 0).toLocaleString() %>원</span>
+                                        <% if (Number(product.oldPrice || 0) > 0) { %>
+                                          <span class="old-price"><%= Number(product.oldPrice || 0).toLocaleString() %>원</span>
+                                        <% } %>
+                                      </div>
+                                      <% if (hasReview) { %>
+                                        <div class="showcase-review">
+                                          리뷰 <strong><%= Number(product.reviewCount || 0).toLocaleString() %></strong>
+                                        </div>
+                                      <% } %>
+                                      <div class="status-line">
+                                        <span><%= product.category || 'DAMORE' %></span>
+                                      </div>
+                                      <% if (product.tag) { %>
+                                        <div class="product-tag"><%= product.tag %></div>
+                                      <% } %>
+                                    </div>
+                                  </a>
+                                <% }) %>
+                              </div>
+                            </div>
+                          <% }) %>
+                        </div>
+                      </div>
+                      
+                  <% } else { %>
+                    <div class="<%= section.sectionType === 'product-rank' ? 'best-grid' : 'collection-grid' %>">
+                      <% panel.products.forEach((product, productIndex) => { %>
+                        <%
+                          const hasDiscount = Number(product.oldPrice || 0) > Number(product.price || 0);
+                          const discountPercent = hasDiscount
+                            ? Math.round((1 - (Number(product.price || 0) / Number(product.oldPrice || 0))) * 100)
+                            : 0;
+                          const hasReview = Number(product.reviewCount || 0) > 0;
+                        %>
+                        <a href="/products/<%= product._id %>" class="product-card">
+                          <div class="product-image-wrap rank-thumb-wrap">
+                            <div class="product-image">
+                              <% if (product.image) { %>
+                                <img src="<%= product.image %>" alt="<%= product.name %>" />
+                              <% } else { %>
+                                <div class="product-no-image">이미지 없음</div>
+                              <% } %>
+                            </div>
+                            <% if (section.sectionType === 'product-rank') { %>
+                              <div class="rank-badge"><%= productIndex + 1 %></div>
+                            <% } %>
+                            <% if (product.status === 'soldout') { %>
+                              <div class="soldout-badge">품절</div>
+                            <% } %>
+                          </div>
+                          <div class="product-body">
+                            <div class="product-name"><%= product.name %></div>
+                            <div class="product-desc">
+                              <%= product.desc ? product.desc.substring(0, 42) : '상품 설명이 없습니다.' %><%= product.desc && product.desc.length > 42 ? '...' : '' %>
+                            </div>
+                            <div class="price-row">
+                              <% if (hasDiscount) { %>
+                                <span class="showcase-discount-text"><%= discountPercent %>%</span>
+                              <% } %>
+                              <span class="price"><%= Number(product.price || 0).toLocaleString() %>원</span>
+                              <% if (Number(product.oldPrice || 0) > 0) { %>
+                                <span class="old-price"><%= Number(product.oldPrice || 0).toLocaleString() %>원</span>
+                              <% } %>
+                            </div>
+                            <% if (hasReview) { %>
+                              <div class="showcase-review">
+                                리뷰 <strong><%= Number(product.reviewCount || 0).toLocaleString() %></strong>
+                              </div>
+                            <% } %>
+                            <div class="status-line">
+                              <span><%= product.category || 'DAMORE' %></span>
+                            </div>
+                            <% if (product.tag) { %>
+                              <div class="product-tag"><%= product.tag %></div>
+                            <% } %>
+                          </div>
+                        </a>
+                      <% }) %>
+                    </div>
+                  <% } %>
+                </div>
+              <% }) %>
+            <% } %>
+          </div>
+        </section>
+      <% }) %>
+    <% } %>
+
+    <% if (!category && renderedShortsItems.length > 0) { %>
+      <section class="shorts-section" id="shorts">
+        <div class="container">
+          <div class="shorts-head">
+            <div class="shorts-head-left">
+              <small>Video Content</small>
+              <h2>SHORTS VIDEO</h2>
+            </div>
+            <a href="/about" class="shorts-more">더보기</a>
+          </div>
+
+          <div class="shorts-grid">
+            <% renderedShortsItems.slice(0, 4).forEach((item, index) => { %>
+              <div class="shorts-card">
+                <div class="shorts-top-badge"><%= item.brandLabel || 'DAMORE SHORTS' %></div>
+
+                <video
+                  class="shorts-video"
+                  autoplay
+                  muted
+                  loop
+                  playsinline
+                  controls
+                  preload="metadata"
+                  poster="<%= item.poster || item.productThumb || '' %>">
+                  <source src="<%= item.video || '' %>" type="video/mp4" />
+                </video>
+
+                <a href="<%= item.link || '/about' %>" class="shorts-product-box">
+                  <div class="shorts-product-thumb">
+                    <% if (item.productThumb) { %>
+                      <img src="<%= item.productThumb %>" alt="<%= item.productTitle || `숏폼 상품 ${index + 1}` %>">
+                    <% } %>
+                  </div>
+                  <div class="shorts-product-info">
+                    <div class="shorts-product-title"><%= item.productTitle || `숏폼 연결 상품 ${index + 1}` %></div>
+                    <div class="shorts-product-price"><%= item.productPrice || '' %></div>
+                  </div>
+                </a>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+      </section>
+    <% } %>
+
+    <% if (category && bestProducts && bestProducts.length > 0 && currentPage === 1) { %>
+      <section class="best-section">
+        <div class="container">
+          <div class="section-head">
+            <div class="section-head-left">
+              <small>Best Item</small>
+              <h2><%= category %> best item</h2>
+              <p>관리자에서 직접 지정한 베스트 상품입니다.</p>
+            </div>
+          </div>
+          <div class="best-grid">
+            <% bestProducts.forEach((product) => { %>
+              <%
+                const hasDiscount = Number(product.oldPrice || 0) > Number(product.price || 0);
+                const discountPercent = hasDiscount
+                  ? Math.round((1 - (Number(product.price || 0) / Number(product.oldPrice || 0))) * 100)
+                  : 0;
+                const hasReview = Number(product.reviewCount || 0) > 0;
+              %>
+              <a href="/products/<%= product._id %>" class="best-card">
+                <div class="best-image">
+                  <% if (product.image) { %>
+                    <img src="<%= product.image %>" alt="<%= product.name %>" />
+                  <% } else { %>
+                    <div class="product-no-image">이미지 없음</div>
+                  <% } %>
+                  <% if (product.status === 'soldout') { %>
+                    <div class="soldout-badge">품절</div>
+                  <% } %>
+                </div>
+                <div class="best-info">
+                  <div class="best-name"><%= product.name %></div>
+                  <div class="best-desc">
+                    <%= product.desc ? product.desc.substring(0, 42) : '상품 설명이 없습니다.' %><%= product.desc && product.desc.length > 42 ? '...' : '' %>
+                  </div>
+                  <div class="price-row">
+                    <% if (hasDiscount) { %>
+                      <span class="showcase-discount-text"><%= discountPercent %>%</span>
+                    <% } %>
+                    <span class="best-price"><%= Number(product.price || 0).toLocaleString() %>원</span>
+                    <% if (Number(product.oldPrice || 0) > 0) { %>
+                      <span class="old-price"><%= Number(product.oldPrice || 0).toLocaleString() %>원</span>
+                    <% } %>
+                  </div>
+                  <% if (hasReview) { %>
+                    <div class="showcase-review">
+                      리뷰 <strong><%= Number(product.reviewCount || 0).toLocaleString() %></strong>
+                    </div>
+                  <% } %>
+                  <div class="product-category"><%= product.category || 'DAMORE' %></div>
+                  <% if (product.tag) { %>
+                    <div class="best-tag"><%= product.tag %></div>
+                  <% } %>
+                </div>
+              </a>
+            <% }) %>
+          </div>
+        </div>
+      </section>
+    <% } %>
+  </main>
+
+  <%- include('partials/footer', {
+    currentUser,
+    siteContent: safeSiteContent,
+    categories
+  }) %>
+
+  <script>
+    (function () {
+      const track = document.getElementById('heroTrack');
+      const dotsWrap = document.getElementById('heroDots');
+      const prevBtn = document.getElementById('heroPrev');
+      const nextBtn = document.getElementById('heroNext');
+      if (!track || !dotsWrap) return;
+
+      const slides = Array.from(track.querySelectorAll('.hero-slide'));
+      const dots = Array.from(dotsWrap.querySelectorAll('.hero-dot'));
+      const slideCount = slides.length;
+      let current = 0;
+      let autoTimer = null;
+
+      if (!slideCount) return;
+
+      track.style.width = `${slideCount * 100}%`;
+      slides.forEach((slide) => {
+        slide.style.width = `${100 / slideCount}%`;
+        slide.style.minWidth = `${100 / slideCount}%`;
+        slide.style.flex = `0 0 ${100 / slideCount}%`;
+      });
+
+      function renderSlider(index) {
+        current = index;
+        track.style.transform = `translateX(-${(100 / slideCount) * current}%)`;
+        dots.forEach((dot, i) => {
+          dot.classList.toggle('active', i === current);
+        });
+      }
+
+      function nextSlide() {
+        if (slideCount <= 1) return;
+        renderSlider((current + 1) % slideCount);
+      }
+
+      function prevSlide() {
+        if (slideCount <= 1) return;
+        renderSlider((current - 1 + slideCount) % slideCount);
+      }
+
+      function stopAuto() {
+        if (autoTimer) {
+          clearInterval(autoTimer);
+          autoTimer = null;
+        }
+      }
+
+      function startAuto() {
+        stopAuto();
+        if (slideCount <= 1) return;
+        autoTimer = setInterval(nextSlide, 4000);
+      }
+
+      if (prevBtn) {
+        prevBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          prevSlide();
+          startAuto();
+        });
+      }
+
+      if (nextBtn) {
+        nextBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          nextSlide();
+          startAuto();
+        });
+      }
+
+      dots.forEach((dot, index) => {
+        dot.addEventListener('click', function (e) {
+          e.preventDefault();
+          renderSlider(index);
+          startAuto();
+        });
+      });
+
+      track.addEventListener('mouseenter', stopAuto);
+      track.addEventListener('mouseleave', startAuto);
+
+      renderSlider(0);
+      startAuto();
+    })();
+
+    (function () {
+      const items = document.querySelectorAll('[data-pos]');
+      items.forEach((el) => {
+        const top = el.dataset.top || '';
+        const left = el.dataset.left || '';
+        const right = el.dataset.right || '';
+        const bottom = el.dataset.bottom || '';
+        if (top) el.style.top = top;
+        if (left) el.style.left = left;
+        if (right) el.style.right = right;
+        if (bottom) el.style.bottom = bottom;
+      });
+    })();
+
+    (function () {
+      const tabButtons = document.querySelectorAll('[data-home-tab-btn]');
+      const tabPanels = document.querySelectorAll('[data-home-tab-panel]');
+      if (!tabButtons.length) return;
+
+      tabButtons.forEach((button) => {
+        button.addEventListener('click', function () {
+          const sectionId = button.dataset.section;
+          const tabIndex = button.dataset.tab;
+
+          tabButtons.forEach((btn) => {
+            if (btn.dataset.section === sectionId) {
+              btn.classList.toggle('active', btn.dataset.tab === tabIndex);
+            }
+          });
+
+          tabPanels.forEach((panel) => {
+            if (panel.dataset.section === sectionId) {
+              panel.classList.toggle('active', panel.dataset.tab === tabIndex);
+            }
+          });
+        });
+      });
+    })();
+
+    (function () {
+      const sliders = document.querySelectorAll('[data-section-slider]');
+      sliders.forEach((slider) => {
+        const track = slider.querySelector('[data-slider-track]');
+        const dots = Array.from(slider.querySelectorAll('[data-slider-dot]'));
+        const total = Number(slider.dataset.total || 0);
+
+        if (!track || total <= 1) return;
+
+        let current = 0;
+        let timer = null;
+
+        function render(index) {
+          current = index;
+          track.style.transform = `translateX(-${current * 100}%)`;
+          dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === current);
+          });
+        }
+
+        function next() {
+          render((current + 1) % total);
+        }
+
+        function stop() {
+          if (timer) {
+            clearInterval(timer);
+            timer = null;
+          }
+        }
+
+        function start() {
+          stop();
+          timer = setInterval(next, 3500);
+        }
+
+        dots.forEach((dot, index) => {
+          dot.addEventListener('click', function () {
+            render(index);
+            start();
+          });
+        });
+
+        slider.addEventListener('mouseenter', stop);
+        slider.addEventListener('mouseleave', start);
+
+        render(0);
+        start();
+      });
+    })();
+  </script>
+</body>
+</html>
