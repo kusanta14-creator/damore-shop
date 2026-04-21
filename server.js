@@ -27,10 +27,11 @@ const ShortsItem = require('./models/ShortsItem');
 connectDB();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = Number(process.env.PORT) || 5000;
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 const TOSS_CLIENT_KEY = process.env.TOSS_CLIENT_KEY || '';
 const TOSS_SECRET_KEY = process.env.TOSS_SECRET_KEY || '';
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -53,7 +54,7 @@ app.use(
       maxAge: 1000 * 60 * 60 * 24,
       httpOnly: true,
       sameSite: 'lax',
-      secure: false
+      secure: IS_PRODUCTION
     }
   })
 );
@@ -66,17 +67,17 @@ app.use(async (req, res, next) => {
     res.locals.tossClientKey = TOSS_CLIENT_KEY;
     res.locals.currentPath = req.path;
 
-    if (req.session && req.session.adminId) {
+    if (req.session?.adminId) {
       const admin = await Admin.findById(req.session.adminId).select('username');
       if (admin) {
-        res.locals.adminId = admin._id.toString();
+        res.locals.adminId = String(admin._id);
         res.locals.isAdmin = true;
       } else {
         req.session.adminId = null;
       }
     }
 
-    if (req.session && req.session.userId) {
+    if (req.session?.userId) {
       const user = await User.findById(req.session.userId).select('name email');
       if (user) {
         res.locals.currentUser = user;
@@ -85,7 +86,7 @@ app.use(async (req, res, next) => {
       }
     }
 
-    res.locals.cartCount = req.session && req.session.cart
+    res.locals.cartCount = Array.isArray(req.session?.cart)
       ? req.session.cart.reduce((sum, item) => sum + Number(item.quantity || 0), 0)
       : 0;
 
@@ -99,10 +100,16 @@ app.use(async (req, res, next) => {
 function normalizeProductStatus(product) {
   if (!product) return product;
 
+  if (product.status === 'hidden') {
+    return product;
+  }
+
   if (Number(product.stock || 0) <= 0) {
     product.stock = 0;
     product.status = 'soldout';
-  } else {
+  } else if (product.status === 'soldout' || product.status === 'onsale') {
+    product.status = 'active';
+  } else if (!product.status) {
     product.status = 'active';
   }
 
@@ -129,12 +136,12 @@ function createOrderName(items) {
 function parseSelectedAddOns(body) {
   const ids = String(body.selectedAddOnIds || '')
     .split(',')
-    .map(v => v.trim())
+    .map((v) => v.trim())
     .filter(Boolean);
 
   const names = String(body.selectedAddOnNames || '')
     .split(',')
-    .map(v => v.trim())
+    .map((v) => v.trim())
     .filter(Boolean);
 
   const total = Math.max(Number(body.selectedAddOnTotal) || 0, 0);
@@ -167,6 +174,7 @@ function getNormalizedSelections(body) {
 
 function isSameCartItem(item, productId, option, color, addOnIds) {
   const currentAddOnIds = Array.isArray(item.addOnIds) ? item.addOnIds : [];
+
   return (
     item.productId === productId &&
     String(item.option || '') === String(option || '') &&
@@ -227,7 +235,7 @@ function sortProductsForSection(products, source) {
 
 async function getProductsByManualIds(manualIds, limit) {
   const ids = Array.isArray(manualIds)
-    ? manualIds.map(v => String(v).trim()).filter(Boolean)
+    ? manualIds.map((v) => String(v).trim()).filter(Boolean)
     : [];
 
   if (!ids.length) return [];
@@ -236,9 +244,9 @@ async function getProductsByManualIds(manualIds, limit) {
     _id: { $in: ids }
   });
 
-  const map = new Map(products.map(product => [String(product._id), product]));
+  const map = new Map(products.map((product) => [String(product._id), product]));
   const ordered = ids
-    .map(id => map.get(id))
+    .map((id) => map.get(id))
     .filter(Boolean)
     .slice(0, limit);
 
@@ -250,13 +258,11 @@ async function getProductsForSection(section, tab = null) {
   const source = String(section.productSource || 'latest').trim();
   const limit = Math.max(Number(section.productLimit || 8), 1);
 
-  const targetCategory = String(
-    tab?.category || section.category || ''
-  ).trim().toLowerCase();
+  const targetCategory = String(tab?.category || section.category || '')
+    .trim()
+    .toLowerCase();
 
-  const targetSubCategory = String(
-    tab?.subCategory || section.subCategory || ''
-  ).trim();
+  const targetSubCategory = String(tab?.subCategory || section.subCategory || '').trim();
 
   if (source === 'manual') {
     return getProductsByManualIds(section.manualProductIds, limit);
@@ -277,7 +283,6 @@ async function getProductsForSection(section, tab = null) {
   }
 
   let products = await Product.find(filter);
-
   products.forEach(normalizeProductStatus);
   products = sortProductsForSection(products, source);
 
@@ -317,9 +322,9 @@ app.use('/', authRoutes);
 // 메인 페이지
 app.get('/', async (req, res) => {
   try {
-    const category = (req.query.category || '').trim().toLowerCase();
-    const keyword = (req.query.keyword || '').trim();
-    const sort = (req.query.sort || 'latest').trim();
+    const category = String(req.query.category || '').trim().toLowerCase();
+    const keyword = String(req.query.keyword || '').trim();
+    const sort = String(req.query.sort || 'latest').trim();
     const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
     const limit = 8;
 
@@ -372,10 +377,7 @@ app.get('/', async (req, res) => {
     let shortsItems = [];
 
     if (!category) {
-      homeSections = await HomeSection.find({
-        isVisible: true
-      }).sort({ order: 1, createdAt: 1 });
-
+      homeSections = await HomeSection.find({ isVisible: true }).sort({ order: 1, createdAt: 1 });
       homeSectionProductsMap = await buildHomeSectionProductsMap(homeSections);
 
       const shortsDocs = await ShortsItem.find({ isVisible: true })
@@ -393,9 +395,7 @@ app.get('/', async (req, res) => {
           video: item.video || '',
           poster: item.poster || '',
           link: product ? `/products/${product._id}` : (item.link || '/about'),
-          productTitle: product
-            ? (product.name || '')
-            : (item.productTitle || ''),
+          productTitle: product ? (product.name || '') : (item.productTitle || ''),
           productPrice: product
             ? `₩${Number(product.price || 0).toLocaleString()}`
             : (item.productPrice || ''),
@@ -524,12 +524,26 @@ app.get('/products/:id', async (req, res) => {
 
     normalizeProductStatus(product);
 
-    const addOnProducts = await Product.find({
-      _id: { $ne: product._id },
-      stock: { $gt: 0 }
-    })
-      .sort({ createdAt: -1 })
-      .limit(4);
+    const additionalIds = Array.isArray(product.additionalProducts)
+      ? product.additionalProducts.filter(Boolean)
+      : [];
+
+    let addOnProducts = [];
+
+    if (additionalIds.length > 0) {
+      addOnProducts = await Product.find({
+        _id: { $in: additionalIds },
+        _id: { $ne: product._id }
+      }).limit(8);
+    } else {
+      addOnProducts = await Product.find({
+        _id: { $ne: product._id },
+        stock: { $gt: 0 },
+        status: { $ne: 'hidden' }
+      })
+        .sort({ createdAt: -1 })
+        .limit(4);
+    }
 
     addOnProducts.forEach(normalizeProductStatus);
 
@@ -565,7 +579,7 @@ app.post('/cart/add', async (req, res) => {
 
     if (!req.session.cart) req.session.cart = [];
 
-    const existingItem = req.session.cart.find(item => {
+    const existingItem = req.session.cart.find((item) => {
       return isSameCartItem(item, productId, option, color, addOns.ids);
     });
 
@@ -580,7 +594,7 @@ app.post('/cart/add', async (req, res) => {
       existingItem.quantity = nextQty;
     } else {
       req.session.cart.push({
-        productId: product._id.toString(),
+        productId: String(product._id),
         name: product.name,
         price: product.price,
         image: product.image,
@@ -608,6 +622,7 @@ app.get('/cart', async (req, res) => {
 
     for (const item of cart) {
       const product = await Product.findById(item.productId);
+
       if (product) {
         normalizeProductStatus(product);
         item.stock = product.stock;
@@ -653,7 +668,7 @@ app.post('/cart/update', async (req, res) => {
       return res.status(400).send(`재고가 부족합니다. 현재 재고: ${product.stock}개`);
     }
 
-    req.session.cart = req.session.cart.map(item => {
+    req.session.cart = req.session.cart.map((item) => {
       if (isSameCartItem(item, productId, option, color, addOns.ids)) {
         return { ...item, quantity: newQuantity };
       }
@@ -672,6 +687,7 @@ app.post('/cart/increase', async (req, res) => {
   try {
     const { productId } = req.body;
     const { option, color, addOns } = getNormalizedSelections(req.body);
+
     if (!req.session.cart) return res.redirect('/cart');
 
     const product = await Product.findById(productId);
@@ -679,12 +695,12 @@ app.post('/cart/increase', async (req, res) => {
 
     normalizeProductStatus(product);
 
-    req.session.cart = req.session.cart.map(item => {
+    req.session.cart = req.session.cart.map((item) => {
       if (isSameCartItem(item, productId, option, color, addOns.ids)) {
-        if (Number(item.quantity) + 1 > Number(product.stock)) {
+        if (Number(item.quantity || 0) + 1 > Number(product.stock || 0)) {
           throw new Error(`재고가 부족합니다. 현재 재고: ${product.stock}개`);
         }
-        return { ...item, quantity: Number(item.quantity) + 1 };
+        return { ...item, quantity: Number(item.quantity || 0) + 1 };
       }
       return item;
     });
@@ -701,11 +717,12 @@ app.post('/cart/decrease', (req, res) => {
   try {
     const { productId } = req.body;
     const { option, color, addOns } = getNormalizedSelections(req.body);
+
     if (!req.session.cart) return res.redirect('/cart');
 
-    req.session.cart = req.session.cart.map(item => {
+    req.session.cart = req.session.cart.map((item) => {
       if (isSameCartItem(item, productId, option, color, addOns.ids)) {
-        return { ...item, quantity: Math.max(Number(item.quantity) - 1, 1) };
+        return { ...item, quantity: Math.max(Number(item.quantity || 0) - 1, 1) };
       }
       return item;
     });
@@ -722,9 +739,10 @@ app.post('/cart/remove', (req, res) => {
   try {
     const { productId } = req.body;
     const { option, color, addOns } = getNormalizedSelections(req.body);
+
     if (!req.session.cart) return res.redirect('/cart');
 
-    req.session.cart = req.session.cart.filter(item => {
+    req.session.cart = req.session.cart.filter((item) => {
       return !isSameCartItem(item, productId, option, color, addOns.ids);
     });
 
@@ -757,7 +775,7 @@ app.post('/buy-now', async (req, res) => {
 
     req.session.buyNow = [
       {
-        productId: product._id.toString(),
+        productId: String(product._id),
         name: product.name,
         price: product.price,
         image: product.image,
@@ -792,6 +810,7 @@ app.get('/order', async (req, res) => {
 
     for (const item of orderItems) {
       const product = await Product.findById(item.productId);
+
       if (!product) {
         return res.status(400).send('존재하지 않는 상품이 포함되어 있습니다.');
       }
@@ -881,7 +900,7 @@ app.post('/order/create-pending', async (req, res) => {
       failReason: ''
     });
 
-    req.session.pendingOrderId = order._id.toString();
+    req.session.pendingOrderId = String(order._id);
 
     return res.json({
       ok: true,
@@ -922,7 +941,7 @@ app.get('/payment/toss/success', async (req, res) => {
     }
 
     if (order.status === 'paid') {
-      req.session.lastOrderId = order._id.toString();
+      req.session.lastOrderId = String(order._id);
       return res.render('payment-success', { order });
     }
 
@@ -963,7 +982,7 @@ app.get('/payment/toss/success', async (req, res) => {
 
     await order.save();
 
-    req.session.lastOrderId = order._id.toString();
+    req.session.lastOrderId = String(order._id);
     req.session.pendingOrderId = null;
     req.session.cart = [];
     req.session.buyNow = null;
@@ -1057,7 +1076,7 @@ app.post('/my-orders/:id/cancel-request', async (req, res) => {
       return res.redirect('/auth');
     }
 
-    const reason = (req.body.reason || '').trim();
+    const reason = String(req.body.reason || '').trim();
 
     const order = await Order.findOne({
       _id: req.params.id,
@@ -1091,8 +1110,8 @@ app.get('/order/lookup', (req, res) => {
 
 app.post('/order/lookup', async (req, res) => {
   try {
-    const orderId = (req.body.orderId || '').trim();
-    const phone = (req.body.phone || '').trim();
+    const orderId = String(req.body.orderId || '').trim();
+    const phone = String(req.body.phone || '').trim();
 
     if (!orderId || !phone) {
       return res.render('order-lookup', {
@@ -1121,8 +1140,8 @@ app.post('/order/lookup', async (req, res) => {
     console.error(error);
     return res.render('order-lookup', {
       error: '주문번호 형식이 올바르지 않거나 조회 중 오류가 발생했습니다.',
-      orderId: (req.body.orderId || '').trim(),
-      phone: (req.body.phone || '').trim()
+      orderId: String(req.body.orderId || '').trim(),
+      phone: String(req.body.phone || '').trim()
     });
   }
 });
@@ -1130,9 +1149,9 @@ app.post('/order/lookup', async (req, res) => {
 // 비회원 취소 요청
 app.post('/order/lookup/cancel-request', async (req, res) => {
   try {
-    const orderId = (req.body.orderId || '').trim();
-    const phone = (req.body.phone || '').trim();
-    const reason = (req.body.reason || '').trim();
+    const orderId = String(req.body.orderId || '').trim();
+    const phone = String(req.body.phone || '').trim();
+    const reason = String(req.body.reason || '').trim();
 
     const order = await Order.findOne({
       _id: orderId,
