@@ -8,19 +8,19 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --bg: #f5f3ee;
+      --bg: #f5f3ef;
       --white: #ffffff;
       --text: #1f1f1f;
-      --muted: #7a7369;
-      --line: #e4ded4;
-      --soft: #f7f4ef;
-      --soft-2: #faf8f4;
-      --brown: #8d7860;
-      --brown-dark: #6d5943;
+      --muted: #7c766d;
+      --line: #e6dfd4;
+      --soft: #faf7f2;
+      --soft-2: #f3eee7;
+      --brown: #8f775d;
+      --brown-dark: #6f5a43;
       --green: #03c75a;
-      --danger: #e15b4f;
-      --wish: #f0ece5;
-      --shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+      --danger: #df5a4f;
+      --wish: #efebe4;
+      --shadow: 0 10px 24px rgba(0, 0, 0, 0.04);
       --max: 1220px;
     }
 
@@ -52,7 +52,7 @@
     .page {
       max-width: var(--max);
       margin: 0 auto;
-      padding: 18px 16px 70px;
+      padding: 18px 16px 72px;
     }
 
     .breadcrumb {
@@ -93,14 +93,14 @@
 
     .thumbs {
       display: flex;
-      gap: 6px;
       flex-wrap: wrap;
+      gap: 6px;
     }
 
     .thumb-btn {
       width: 54px;
       height: 54px;
-      border: 1px solid #d9d2c6;
+      border: 1px solid #d8d1c6;
       background: #fff;
       padding: 0;
       cursor: pointer;
@@ -129,40 +129,38 @@
       padding: 0;
     }
 
-    .top-badge {
+    .interest-bubble {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      font-size: 10px;
-      color: #666;
+      gap: 6px;
+      font-size: 11px;
+      padding: 6px 12px;
+      background: #f6f3ee;
+      border: 1px solid #e2dbcf;
+      border-radius: 999px;
+      color: #5f574c;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .brand {
+      font-size: 11px;
+      color: #8f887d;
+      letter-spacing: 0.12em;
       margin-bottom: 6px;
     }
 
     .title {
-      font-size: 19px;
+      font-size: 20px;
       line-height: 1.42;
       font-weight: 700;
       word-break: keep-all;
-      margin-bottom: 6px;
-    }
-
-    .summary {
-      font-size: 11px;
-      color: var(--muted);
       margin-bottom: 8px;
-      white-space: pre-line;
-      word-break: keep-all;
-    }
-
-    .product-code {
-      font-size: 10px;
-      color: #999;
-      margin-bottom: 10px;
     }
 
     .price-row {
       display: flex;
-      align-items: center;
+      align-items: flex-end;
       gap: 8px;
       flex-wrap: wrap;
       margin-bottom: 8px;
@@ -175,15 +173,23 @@
     }
 
     .main-price {
-      font-size: 18px;
+      font-size: 22px;
       font-weight: 800;
       line-height: 1;
     }
 
     .old-price {
-      font-size: 11px;
+      font-size: 12px;
       color: #999;
       text-decoration: line-through;
+    }
+
+    .summary {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 10px;
+      white-space: pre-line;
+      word-break: keep-all;
     }
 
     .top-util {
@@ -194,13 +200,13 @@
       margin-bottom: 10px;
     }
 
-    .interest-text {
+    .top-util-text {
       font-size: 10px;
       color: var(--muted);
     }
 
     .coupon-btn {
-      height: 24px;
+      height: 26px;
       padding: 0 10px;
       border: 0;
       background: var(--brown);
@@ -218,10 +224,10 @@
     }
 
     .info-card {
-      background: var(--soft-2);
+      background: var(--soft);
       border: 1px solid var(--line);
-      padding: 9px 10px;
-      min-height: 62px;
+      padding: 10px;
+      min-height: 68px;
     }
 
     .info-card-label {
@@ -232,10 +238,10 @@
 
     .info-card-value {
       font-size: 11px;
+      line-height: 1.45;
       font-weight: 700;
-      line-height: 1.4;
-      word-break: keep-all;
       color: #222;
+      word-break: keep-all;
     }
 
     .form-group {
@@ -244,19 +250,27 @@
 
     .select-box {
       width: 100%;
-      height: 30px;
-      border: 1px solid #cfc7ba;
-      padding: 0 8px;
+      height: 34px;
+      border: 1px solid #cec6b8;
+      padding: 0 10px;
       background: #fff;
-      font-size: 10px;
+      font-size: 11px;
       outline: none;
+    }
+
+    .error-text {
+      min-height: 14px;
+      margin-top: 3px;
+      color: var(--danger);
+      font-size: 10px;
+      font-weight: 700;
     }
 
     .upsell-box {
       margin: 10px 0;
       padding: 10px;
       border: 1px solid var(--line);
-      background: var(--soft-2);
+      background: var(--soft);
     }
 
     .upsell-title {
@@ -271,7 +285,7 @@
       margin-bottom: 8px;
     }
 
-    .upsell-slider {
+    .upsell-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 8px;
@@ -299,7 +313,7 @@
       left: 0;
       width: 18px;
       height: 18px;
-      background: rgba(0,0,0,0.65);
+      background: rgba(0, 0, 0, 0.68);
       color: #fff;
       font-size: 10px;
       font-weight: 700;
@@ -320,9 +334,9 @@
       line-height: 1.35;
       min-height: 28px;
       padding: 0 6px;
-      word-break: keep-all;
       color: #333;
       margin-bottom: 4px;
+      word-break: keep-all;
     }
 
     .upsell-price {
@@ -335,7 +349,7 @@
     .upsell-select-btn {
       margin: 0 6px;
       width: calc(100% - 12px);
-      height: 20px;
+      height: 22px;
       border: 0;
       background: #ff6b63;
       color: #fff;
@@ -352,9 +366,9 @@
     }
 
     .selected-box {
-      background: var(--soft-2);
+      background: var(--soft);
       border: 1px solid var(--line);
-      padding: 8px;
+      padding: 9px;
     }
 
     .selected-name {
@@ -384,12 +398,12 @@
       width: fit-content;
       border: 1px solid #d4ccbf;
       background: #fff;
-      height: 28px;
+      height: 30px;
     }
 
     .qty-btn {
-      width: 28px;
-      height: 28px;
+      width: 30px;
+      height: 30px;
       border: 0;
       background: #fff;
       cursor: pointer;
@@ -398,12 +412,12 @@
     }
 
     .qty-input {
-      width: 36px;
-      height: 28px;
+      width: 40px;
+      height: 30px;
       border: 0;
       outline: none;
       text-align: center;
-      font-size: 10px;
+      font-size: 11px;
       background: #fff;
     }
 
@@ -420,14 +434,6 @@
       font-weight: 800;
     }
 
-    .error-text {
-      min-height: 14px;
-      margin-top: 3px;
-      color: var(--danger);
-      font-size: 10px;
-      font-weight: 700;
-    }
-
     .btn-grid-main {
       display: grid;
       grid-template-columns: 1fr 1fr 64px;
@@ -437,13 +443,13 @@
 
     .btn-grid-sub {
       display: grid;
-      grid-template-columns: 1fr 64px;
+      grid-template-columns: 1fr;
       gap: 4px;
       margin-top: 4px;
     }
 
     .action-btn {
-      height: 30px;
+      height: 32px;
       border: 0;
       cursor: pointer;
       font-size: 10px;
@@ -469,12 +475,6 @@
     .btn-npay {
       background: var(--green);
       color: #fff;
-    }
-
-    .btn-like {
-      background: var(--wish);
-      color: #111;
-      border: 1px solid #d8d0c3;
     }
 
     .section {
@@ -541,7 +541,7 @@
 
     .review-score-box {
       padding: 18px;
-      background: var(--soft-2);
+      background: var(--soft);
       border: 1px solid var(--line);
       text-align: center;
     }
@@ -575,7 +575,7 @@
     .review-item,
     .inquiry-item {
       border: 1px solid var(--line);
-      background: var(--soft-2);
+      background: var(--soft);
       padding: 14px;
     }
 
@@ -660,7 +660,7 @@
         position: static;
       }
 
-      .upsell-slider,
+      .upsell-grid,
       .info-cards {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
@@ -676,11 +676,10 @@
       }
 
       .main-price {
-        font-size: 16px;
+        font-size: 18px;
       }
 
       .btn-grid-main,
-      .btn-grid-sub,
       .info-cards {
         grid-template-columns: 1fr;
       }
@@ -698,7 +697,7 @@
         height: 50px;
       }
 
-      .upsell-slider {
+      .upsell-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
@@ -735,7 +734,7 @@
         : 0;
 
     const rewardPoint = Math.floor(Number(product.price || 0) * 0.01);
-    const interestCount = Math.max(Number(product.likeCount || 0), 138);
+    const interestCount = Math.max(Number(product.likeCount || 0), 238);
 
     const reviewSamples = [
       {
@@ -821,20 +820,10 @@
 
       <div class="purchase-col">
         <div class="purchase-box">
-          <div class="top-badge">🔥 <span><%= interestCount.toLocaleString() %>명이 이 상품을 관심상품에 담았어요.</span></div>
+          <div class="interest-bubble">🔔 <%= interestCount.toLocaleString() %>명이 이 옷을 관심상품에 담아두었어요</div>
 
+          <div class="brand">DAMORE</div>
           <div class="title"><%= product.name %></div>
-
-          <% if (safeSummary) { %>
-            <div class="summary"><%= safeSummary %></div>
-          <% } %>
-
-          <div class="product-code">DAMORE ITEM</div>
-
-          <div class="top-util">
-            <div class="interest-text">관심/찜 많은 상품</div>
-            <button type="button" class="coupon-btn" onclick="alert('쿠폰 다운로드 기능은 다음 단계에서 연결')">쿠폰 받기</button>
-          </div>
 
           <div class="price-row">
             <% if (discountRate > 0) { %>
@@ -846,9 +835,18 @@
             <% } %>
           </div>
 
+          <% if (safeSummary) { %>
+            <div class="summary"><%= safeSummary %></div>
+          <% } %>
+
+          <div class="top-util">
+            <div class="top-util-text">관심/찜 많은 상품</div>
+            <button type="button" class="coupon-btn" onclick="alert('쿠폰 다운로드 기능은 다음 단계에서 연결')">할인쿠폰 다운로드</button>
+          </div>
+
           <div class="info-cards">
             <div class="info-card">
-              <div class="info-card-label">상품요약정보</div>
+              <div class="info-card-label">상품 간략설명</div>
               <div class="info-card-value"><%= safeSummary || product.name %></div>
             </div>
 
@@ -859,7 +857,7 @@
 
             <div class="info-card">
               <div class="info-card-label">배송비</div>
-              <div class="info-card-value"><%= product.shippingFeeText || '70,000원 이상 무료배송' %></div>
+              <div class="info-card-value"><%= product.shippingFeeText || 'KRW 2,500 (KRW 70,000 이상 구매 시 무료)' %></div>
             </div>
           </div>
 
@@ -906,7 +904,7 @@
                 <div class="upsell-title">Weekly Best</div>
                 <div class="upsell-sub">모델이 같이 착용한 아이템 / 이 제품이랑 잘 어울려요</div>
 
-                <div class="upsell-slider">
+                <div class="upsell-grid">
                   <% safeAddOnProducts.slice(0, 4).forEach((item, index) => { %>
                     <div class="upsell-card">
                       <div class="upsell-thumb-wrap">
@@ -999,14 +997,6 @@
                 <%= isSoldOut ? 'disabled' : '' %>
               >
                 N pay 구매
-              </button>
-
-              <button
-                type="button"
-                class="action-btn btn-like"
-                onclick="alert('관심상품 기능은 다음 단계에서 연결')"
-              >
-                찜
               </button>
             </div>
           </form>
