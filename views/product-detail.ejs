@@ -11,15 +11,15 @@
       --bg: #f4f1eb;
       --white: #ffffff;
       --text: #222222;
-      --muted: #7b766f;
+      --muted: #7a746c;
       --line: #ddd6cb;
       --soft: #f8f5f0;
-      --soft-2: #f1ece5;
-      --brown: #9a836c;
-      --brown-dark: #856f58;
+      --soft-2: #f2ede6;
+      --brown: #9d856c;
+      --brown-dark: #876f57;
       --green: #03c75a;
       --danger: #ef625d;
-      --icon: #f3efe8;
+      --icon: #f3eee7;
       --max: 1180px;
     }
 
@@ -30,9 +30,23 @@
       line-height: 1.6;
     }
 
-    a { color: inherit; text-decoration: none; }
-    button, input, select, textarea { font: inherit; }
-    img, video { display: block; max-width: 100%; }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    img,
+    video {
+      display: block;
+      max-width: 100%;
+    }
 
     .site-header {
       background: var(--white);
@@ -66,7 +80,7 @@
     .page {
       max-width: var(--max);
       margin: 0 auto;
-      padding: 18px 18px 70px;
+      padding: 20px 18px 70px;
     }
 
     .layout {
@@ -189,7 +203,9 @@
       font-size: 12px;
     }
 
-    .price-line:last-child { border-bottom: 0; }
+    .price-line:last-child {
+      border-bottom: 0;
+    }
 
     .price-label {
       color: #70685f;
@@ -284,7 +300,9 @@
       font-size: 12px;
     }
 
-    .benefit-line:last-child { border-bottom: 0; }
+    .benefit-line:last-child {
+      border-bottom: 0;
+    }
 
     .benefit-label,
     .benefit-value {
@@ -300,21 +318,57 @@
       color: #5f574c;
     }
 
-    .form-group { margin-bottom: 6px; }
+    .option-wrap {
+      margin-bottom: 10px;
+    }
 
-    .select-box {
-      width: 100%;
-      height: 36px;
-      border: 1px solid #cbc3b7;
-      padding: 0 10px;
-      background: #fff;
+    .option-group {
+      margin-bottom: 10px;
+    }
+
+    .option-title {
       font-size: 12px;
-      outline: none;
+      font-weight: 600;
+      color: #6f675d;
+      margin-bottom: 6px;
+    }
+
+    .option-values {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .option-chip {
+      min-width: 34px;
+      height: 28px;
+      padding: 0 10px;
+      border: 1px solid #d2cabf;
+      background: #fff;
+      color: #444;
+      font-size: 11px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .option-chip.active {
+      background: #111;
+      color: #fff;
+      border-color: #111;
+    }
+
+    .option-chip.soldout {
+      opacity: 0.45;
+      cursor: not-allowed;
+      text-decoration: line-through;
     }
 
     .error-text {
       min-height: 14px;
-      margin-top: 3px;
+      margin-top: 4px;
       color: var(--danger);
       font-size: 10px;
       font-weight: 700;
@@ -497,8 +551,8 @@
     .qty-btn {
       width: 24px;
       height: 24px;
-      border: 1px solid #cfc7bc;
-      background: var(--soft);
+      border: 0;
+      background: var(--soft-2);
       font-size: 12px;
       cursor: pointer;
       color: #555;
@@ -507,10 +561,8 @@
     .qty-input {
       width: 28px;
       height: 24px;
-      border: 1px solid #cfc7bc;
-      border-left: 0;
-      border-right: 0;
-      background: var(--soft);
+      border: 0;
+      background: var(--soft-2);
       text-align: center;
       outline: none;
       font-size: 11px;
@@ -555,7 +607,7 @@
     .btn-buy {
       background: var(--brown);
       color: #fff;
-      height: 44px;
+      height: 48px;
     }
 
     .btn-cart-icon,
@@ -567,7 +619,7 @@
       align-items: center;
       justify-content: center;
       font-size: 18px;
-      height: 44px;
+      height: 48px;
     }
 
     .btn-npay {
@@ -603,7 +655,9 @@
       flex-shrink: 0;
     }
 
-    .tab-btn:last-child { border-right: 0; }
+    .tab-btn:last-child {
+      border-right: 0;
+    }
 
     .tab-btn.active {
       background: #111;
@@ -615,7 +669,9 @@
       padding: 24px;
     }
 
-    .tab-panel.active { display: block; }
+    .tab-panel.active {
+      display: block;
+    }
 
     .detail-images {
       display: grid;
@@ -704,7 +760,6 @@
 
     const rewardPoint = Math.floor(Number(product.price || 0) * 0.01);
     const interestCount = Math.max(Number(product.likeCount || 0), 238);
-
     const safeAddOnProducts = Array.isArray(addOnProducts) ? addOnProducts : [];
   %>
 
@@ -851,33 +906,45 @@
             <input type="hidden" name="selectedAddOnNames" id="selectedAddOnNamesInput" value="">
             <input type="hidden" name="selectedAddOnTotal" id="selectedAddOnTotalInput" value="0">
 
-            <% if (colorGroup && Array.isArray(colorGroup.values) && colorGroup.values.length > 0) { %>
-              <div class="form-group">
-                <select id="colorSelect" class="select-box">
-                  <option value="">색상</option>
-                  <% colorGroup.values.forEach((item) => { %>
-                    <option value="<%= item.value %>" <%= item.isSoldOut ? 'disabled' : '' %>>
-                      <%= item.value %><%= item.isSoldOut ? ' (품절)' : '' %>
-                    </option>
-                  <% }) %>
-                </select>
-                <div class="error-text" id="colorError"></div>
-              </div>
-            <% } %>
+            <div class="option-wrap">
+              <% if (colorGroup && Array.isArray(colorGroup.values) && colorGroup.values.length > 0) { %>
+                <div class="option-group">
+                  <div class="option-title">색상</div>
+                  <div class="option-values" id="colorWrap">
+                    <% colorGroup.values.forEach((item) => { %>
+                      <button
+                        type="button"
+                        class="option-chip <%= item.isSoldOut ? 'soldout' : '' %>"
+                        data-color="<%= item.value %>"
+                        data-soldout="<%= item.isSoldOut ? 'true' : 'false' %>"
+                      >
+                        <%= item.value %>
+                      </button>
+                    <% }) %>
+                  </div>
+                  <div class="error-text" id="colorError"></div>
+                </div>
+              <% } %>
 
-            <% if (sizeGroup && Array.isArray(sizeGroup.values) && sizeGroup.values.length > 0) { %>
-              <div class="form-group">
-                <select id="sizeSelect" class="select-box">
-                  <option value="">사이즈</option>
-                  <% sizeGroup.values.forEach((item) => { %>
-                    <option value="<%= item.value %>" <%= item.isSoldOut ? 'disabled' : '' %>>
-                      <%= item.value %><%= item.isSoldOut ? ' (품절)' : '' %>
-                    </option>
-                  <% }) %>
-                </select>
-                <div class="error-text" id="optionError"></div>
-              </div>
-            <% } %>
+              <% if (sizeGroup && Array.isArray(sizeGroup.values) && sizeGroup.values.length > 0) { %>
+                <div class="option-group">
+                  <div class="option-title">사이즈</div>
+                  <div class="option-values" id="sizeWrap">
+                    <% sizeGroup.values.forEach((item) => { %>
+                      <button
+                        type="button"
+                        class="option-chip <%= item.isSoldOut ? 'soldout' : '' %>"
+                        data-size="<%= item.value %>"
+                        data-soldout="<%= item.isSoldOut ? 'true' : 'false' %>"
+                      >
+                        <%= item.value %>
+                      </button>
+                    <% }) %>
+                  </div>
+                  <div class="error-text" id="optionError"></div>
+                </div>
+              <% } %>
+            </div>
 
             <% if (safeAddOnProducts.length > 0) { %>
               <div class="with-section">
@@ -1057,8 +1124,10 @@
     const hasColor = productDataEl?.dataset.hasColor === 'true';
     const hasSize = productDataEl?.dataset.hasSize === 'true';
 
-    const colorSelect = document.getElementById('colorSelect');
-    const sizeSelect = document.getElementById('sizeSelect');
+    const colorWrap = document.getElementById('colorWrap');
+    const sizeWrap = document.getElementById('sizeWrap');
+    const colorButtons = colorWrap ? colorWrap.querySelectorAll('.option-chip') : [];
+    const sizeButtons = sizeWrap ? sizeWrap.querySelectorAll('.option-chip') : [];
 
     const selectedOptionInput = document.getElementById('selectedOptionInput');
     const legacyOptionInput = document.getElementById('legacyOptionInput');
@@ -1095,12 +1164,8 @@
     let withIndex = 0;
 
     function syncSelections() {
-      const colorValue = colorSelect ? colorSelect.value : '';
-      const sizeValue = sizeSelect ? sizeSelect.value : '';
-
-      if (selectedColorInput) selectedColorInput.value = colorValue;
-      if (selectedOptionInput) selectedOptionInput.value = sizeValue;
-      if (legacyOptionInput) legacyOptionInput.value = sizeValue;
+      const colorValue = selectedColorInput ? selectedColorInput.value : '';
+      const sizeValue = selectedOptionInput ? selectedOptionInput.value : '';
 
       const metaParts = [];
       if (colorValue) metaParts.push(`색상: ${colorValue}`);
@@ -1138,12 +1203,39 @@
       const addOnTotal = syncAddOnInputs();
       const finalTotal = (price * qty) + addOnTotal;
 
-      if (totalPrice) {
-        totalPrice.textContent = finalTotal.toLocaleString();
-      }
+      if (totalPrice) totalPrice.textContent = finalTotal.toLocaleString();
 
       syncSelections();
     }
+
+    colorButtons.forEach((button) => {
+      button.addEventListener('click', function () {
+        if (button.dataset.soldout === 'true') return;
+
+        colorButtons.forEach((btn) => btn.classList.remove('active'));
+        button.classList.add('active');
+
+        if (selectedColorInput) selectedColorInput.value = button.dataset.color || '';
+        if (colorError) colorError.textContent = '';
+
+        syncSelections();
+      });
+    });
+
+    sizeButtons.forEach((button) => {
+      button.addEventListener('click', function () {
+        if (button.dataset.soldout === 'true') return;
+
+        sizeButtons.forEach((btn) => btn.classList.remove('active'));
+        button.classList.add('active');
+
+        if (selectedOptionInput) selectedOptionInput.value = button.dataset.size || '';
+        if (legacyOptionInput) legacyOptionInput.value = button.dataset.size || '';
+        if (optionError) optionError.textContent = '';
+
+        syncSelections();
+      });
+    });
 
     addOnSelectButtons.forEach((button) => {
       button.addEventListener('click', function () {
@@ -1167,20 +1259,6 @@
       });
     });
 
-    if (colorSelect) {
-      colorSelect.addEventListener('change', function () {
-        if (colorError) colorError.textContent = '';
-        syncSelections();
-      });
-    }
-
-    if (sizeSelect) {
-      sizeSelect.addEventListener('change', function () {
-        if (optionError) optionError.textContent = '';
-        syncSelections();
-      });
-    }
-
     if (minusBtn) {
       minusBtn.addEventListener('click', function () {
         qtyInput.value = Math.max(Number(qtyInput.value || 1) - 1, 1);
@@ -1196,9 +1274,7 @@
       });
     }
 
-    if (qtyInput) {
-      qtyInput.addEventListener('input', updateTotal);
-    }
+    if (qtyInput) qtyInput.addEventListener('input', updateTotal);
 
     function validateForm() {
       syncSelections();
