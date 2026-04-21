@@ -1,18 +1,11 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>
-    <%= product.name %> | DAMORE
-  </title>
+  <title><%= (product && product.name) ? product.name : '상품상세' %> | DAMORE</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
       --bg: #f4f1eb;
@@ -23,7 +16,6 @@
       --soft: #f8f5f0;
       --soft-2: #f2ede6;
       --brown: #9d856c;
-      --brown-dark: #876f57;
       --green: #03c75a;
       --danger: #ef625d;
       --icon: #f3eee7;
@@ -37,23 +29,9 @@
       line-height: 1.6;
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    button,
-    input,
-    select,
-    textarea {
-      font: inherit;
-    }
-
-    img,
-    video {
-      display: block;
-      max-width: 100%;
-    }
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font: inherit; }
+    img, video { display: block; max-width: 100%; }
 
     .site-header {
       background: var(--white);
@@ -274,6 +252,8 @@
       letter-spacing: 0.02em;
       display: flex;
       align-items: center;
+      word-break: keep-all;
+      white-space: pre-line;
     }
 
     .coupon-row {
@@ -739,636 +719,649 @@
     }
   </style>
 </head>
-
 <body>
-  <% const safeSubImages=Array.isArray(product.subImages) ? product.subImages.filter(Boolean) : []; const
-    safeDetailImages=Array.isArray(product.detailImages) ? product.detailImages.filter(Boolean) : []; const
-    safeDesc=product.desc || product.description || '' ; const safeSummary=product.summary || '' ; const
-    isSoldOut=product.status==='soldout' || Number(product.stock || 0) <=0; const
-    safeOptionGroups=Array.isArray(product.optionGroups) ? product.optionGroups.filter(Boolean) : []; let
-    colorGroup=null; let sizeGroup=null; if (safeOptionGroups.length>= 1) colorGroup = safeOptionGroups[0];
+  <%
+    const safeProduct = product || {};
+    const safeSubImages = Array.isArray(safeProduct.subImages) ? safeProduct.subImages.filter(Boolean) : [];
+    const safeDetailImages = Array.isArray(safeProduct.detailImages) ? safeProduct.detailImages.filter(Boolean) : [];
+    const safeDesc = safeProduct.desc || safeProduct.description || '';
+    const safeSummary = safeProduct.summary || '';
+    const safeName = safeProduct.name || '상품명';
+    const safePrice = Number(safeProduct.price || 0);
+    const safeOldPrice = Number(safeProduct.oldPrice || safeProduct.price || 0);
+    const safeStock = Number(safeProduct.stock || 0);
+    const safeShipping = safeProduct.shippingFeeText || '무료배송';
+    const isSoldOut = safeProduct.status === 'soldout' || (safeStock > 0 ? safeStock <= 0 : false);
+
+    const safeOptionGroups = Array.isArray(safeProduct.optionGroups) ? safeProduct.optionGroups.filter(Boolean) : [];
+    let colorGroup = null;
+    let sizeGroup = null;
+
+    if (safeOptionGroups.length >= 1) colorGroup = safeOptionGroups[0];
     if (safeOptionGroups.length >= 2) sizeGroup = safeOptionGroups[1];
 
+    const colorValues = colorGroup && Array.isArray(colorGroup.values) ? colorGroup.values.filter(Boolean) : [];
+    const sizeValues = sizeGroup && Array.isArray(sizeGroup.values) ? sizeGroup.values.filter(Boolean) : [];
+
     const galleryItems = [];
-    if (product.image) galleryItems.push({ type: 'image', src: product.image });
-    if (product.video) galleryItems.push({ type: 'video', src: product.video });
+    if (safeProduct.image) galleryItems.push({ type: 'image', src: safeProduct.image });
+    if (safeProduct.video) galleryItems.push({ type: 'video', src: safeProduct.video });
     safeSubImages.forEach((img) => {
-    if (!galleryItems.find((item) => item.src === img)) {
-    galleryItems.push({ type: 'image', src: img });
-    }
+      if (!galleryItems.find((item) => item.src === img)) {
+        galleryItems.push({ type: 'image', src: img });
+      }
     });
 
     const discountRate =
-    Number(product.oldPrice || 0) > Number(product.price || 0)
-    ? Math.round((1 - Number(product.price || 0) / Number(product.oldPrice || 0)) * 100)
-    : 0;
+      safeOldPrice > safePrice && safeOldPrice > 0
+        ? Math.round((1 - safePrice / safeOldPrice) * 100)
+        : 0;
 
-    const rewardPoint = Math.floor(Number(product.price || 0) * 0.01);
-    const interestCount = Math.max(Number(product.likeCount || 0), 238);
-    const safeAddOnProducts = Array.isArray(addOnProducts) ? addOnProducts : [];
-    %>
+    const rewardPoint = Math.floor(safePrice * 0.01);
+    const interestCount = Math.max(Number(safeProduct.likeCount || 0), 238);
+    const safeAddOnProducts = Array.isArray(addOnProducts) ? addOnProducts.filter(Boolean) : [];
+  %>
 
-    <header class="site-header">
-      <div class="site-header-inner">
-        <a href="/" class="logo">DAMORE</a>
-        <nav class="gnb">
-          <a href="/">HOME</a>
-          <a href="/category/outer">OUTER</a>
-          <a href="/category/top">TOP</a>
-          <a href="/category/bottom">BOTTOM</a>
-          <a href="/category/dress">DRESS</a>
-          <a href="/category/acc">ACC</a>
-        </nav>
-      </div>
-    </header>
-
-    <div id="productData" data-price="<%= Number(product.price || 0) %>" data-stock="<%= Number(product.stock || 0) %>"
-      data-has-color="<%= colorGroup && Array.isArray(colorGroup.values) && colorGroup.values.length > 0 ? 'true' : 'false' %>"
-      data-has-size="<%= sizeGroup && Array.isArray(sizeGroup.values) && sizeGroup.values.length > 0 ? 'true' : 'false' %>">
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a href="/" class="logo">DAMORE</a>
+      <nav class="gnb">
+        <a href="/">HOME</a>
+        <a href="/category/outer">OUTER</a>
+        <a href="/category/top">TOP</a>
+        <a href="/category/bottom">BOTTOM</a>
+        <a href="/category/dress">DRESS</a>
+        <a href="/category/acc">ACC</a>
+      </nav>
     </div>
+  </header>
 
-    <div class="page">
-      <div class="layout">
-        <div class="gallery-col">
-          <div class="gallery-main" id="galleryStage">
-            <% if (galleryItems.length> 0) { %>
-              <% if (galleryItems[0].type==='video' ) { %>
-                <video src="<%= galleryItems[0].src %>" controls playsinline preload="metadata"></video>
-                <% } else { %>
-                  <img src="<%= galleryItems[0].src %>" alt="<%= product.name %>">
-                  <% } %>
-                    <% } %>
-          </div>
+  <div
+    id="productData"
+    data-price="<%= safePrice %>"
+    data-stock="<%= safeStock %>"
+    data-has-color="<%= colorValues.length > 0 ? 'true' : 'false' %>"
+    data-has-size="<%= sizeValues.length > 0 ? 'true' : 'false' %>"
+  ></div>
 
-          <% if (galleryItems.length> 1) { %>
-            <div class="thumbs" id="thumbs">
-              <% galleryItems.forEach((item, index)=> { %>
-                <button type="button" class="thumb-btn <%= index === 0 ? 'active' : '' %>" data-type="<%= item.type %>"
-                  data-src="<%= item.src %>">
-                  <% if (item.type==='video' ) { %>
-                    <video src="<%= item.src %>" muted playsinline preload="metadata"></video>
-                    <% } else { %>
-                      <img src="<%= item.src %>" alt="썸네일">
-                      <% } %>
-                </button>
-                <% }) %>
-            </div>
+  <div class="page">
+    <div class="layout">
+      <div class="gallery-col">
+        <div class="gallery-main" id="galleryStage">
+          <% if (galleryItems.length > 0) { %>
+            <% if (galleryItems[0].type === 'video') { %>
+              <video src="<%= galleryItems[0].src %>" controls playsinline preload="metadata"></video>
+            <% } else { %>
+              <img src="<%= galleryItems[0].src %>" alt="<%= safeName %>">
             <% } %>
+          <% } else { %>
+            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#999;">이미지 없음</div>
+          <% } %>
         </div>
 
-        <div class="purchase-col">
-          <div class="purchase-box">
-            <div class="interest-bubble">🔔 <%= interestCount.toLocaleString() %>명이 이 옷을 관심상품에 담아두었어요.</div>
+        <% if (galleryItems.length > 1) { %>
+          <div class="thumbs" id="thumbs">
+            <% galleryItems.forEach((item, index) => { %>
+              <button
+                type="button"
+                class="thumb-btn <%= index === 0 ? 'active' : '' %>"
+                data-type="<%= item.type %>"
+                data-src="<%= item.src %>"
+              >
+                <% if (item.type === 'video') { %>
+                  <video src="<%= item.src %>" muted playsinline preload="metadata"></video>
+                <% } else { %>
+                  <img src="<%= item.src %>" alt="썸네일">
+                <% } %>
+              </button>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
 
-            <div class="title-row">
-              <div class="title">
-                <%= product.name %>
+      <div class="purchase-col">
+        <div class="purchase-box">
+          <div class="interest-bubble">🔔 <%= interestCount.toLocaleString() %>명이 이 옷을 관심상품에 담아두었어요.</div>
+
+          <div class="title-row">
+            <div class="title"><%= safeName %></div>
+            <div class="new-badge">NEW</div>
+          </div>
+
+          <% if (safeSummary) { %>
+            <div class="summary-top"><%= safeSummary %></div>
+          <% } %>
+
+          <div class="price-lines">
+            <div class="price-line">
+              <div class="price-label">소비자가</div>
+              <div>
+                <span class="price-old"><%= safeOldPrice.toLocaleString() %>원</span>
               </div>
-              <div class="new-badge">NEW</div>
             </div>
 
-            <% if (safeSummary) { %>
-              <div class="summary-top">
-                <%= safeSummary %>
+            <div class="price-line">
+              <div class="price-label">회원판매가</div>
+              <div>
+                <span class="price-main">KRW <%= safePrice.toLocaleString() %></span>
+                <% if (discountRate > 0) { %>
+                  <span class="price-discount">(<%= discountRate %>% off)</span>
+                <% } %>
               </div>
+            </div>
+          </div>
+
+          <div class="toggle-bar">자세히 보기 ∧</div>
+
+          <div class="detail-info">
+            <div class="detail-row">
+              <div class="detail-row-label">상품간략설명</div>
+              <div class="detail-row-value"><%= safeSummary || '-' %></div>
+            </div>
+
+            <div class="detail-row">
+              <div class="detail-row-label">SIZE(cm)</div>
+              <div class="detail-row-value">
+                <%= sizeValues.length > 0 ? sizeValues.map(v => v.value).join(' / ') : 'FREE' %>
+              </div>
+            </div>
+
+            <div class="detail-row">
+              <div class="detail-row-label">MODEL</div>
+              <div class="detail-row-value">신혜성 178cm / 70kg (상의 100~105 / 하의 30~31)</div>
+            </div>
+
+            <div class="detail-row">
+              <div class="detail-row-label">배송비(비회원)</div>
+              <div class="detail-row-value"><%= safeShipping %></div>
+            </div>
+          </div>
+
+          <div class="coupon-row">
+            <button type="button" class="coupon-btn" onclick="alert('쿠폰 다운로드 기능은 다음 단계에서 연결')">쿠폰 확인</button>
+          </div>
+
+          <div class="benefit-box">
+            <div class="benefit-line">
+              <div class="benefit-label">예상 최저가ⓘ</div>
+              <div class="benefit-value"><%= safePrice.toLocaleString() %>원</div>
+            </div>
+            <div class="benefit-line">
+              <div class="benefit-label">최대 적립 혜택</div>
+              <div class="benefit-value"><%= rewardPoint.toLocaleString() %>P</div>
+            </div>
+            <div class="benefit-toggle">자세히 보기 ˅</div>
+          </div>
+
+          <form id="productForm" method="POST">
+            <input type="hidden" name="productId" value="<%= safeProduct._id || '' %>">
+            <input type="hidden" name="selectedOption" id="selectedOptionInput" value="">
+            <input type="hidden" name="option" id="legacyOptionInput" value="">
+            <input type="hidden" name="selectedColor" id="selectedColorInput" value="">
+            <input type="hidden" name="quantity" id="quantityHidden" value="1">
+            <input type="hidden" name="selectedAddOnIds" id="selectedAddOnIdsInput" value="">
+            <input type="hidden" name="selectedAddOnNames" id="selectedAddOnNamesInput" value="">
+            <input type="hidden" name="selectedAddOnTotal" id="selectedAddOnTotalInput" value="0">
+
+            <div class="option-wrap">
+              <% if (colorValues.length > 0) { %>
+                <div class="option-group">
+                  <div class="option-title">색상</div>
+                  <div class="option-values" id="colorWrap">
+                    <% colorValues.forEach((item) => { %>
+                      <button
+                        type="button"
+                        class="option-chip <%= item.isSoldOut ? 'soldout' : '' %>"
+                        data-color="<%= item.value %>"
+                        data-soldout="<%= item.isSoldOut ? 'true' : 'false' %>"
+                      >
+                        <%= item.value %>
+                      </button>
+                    <% }) %>
+                  </div>
+                  <div class="error-text" id="colorError"></div>
+                </div>
               <% } %>
 
-                <div class="price-lines">
-                  <div class="price-line">
-                    <div class="price-label">소비자가</div>
-                    <div>
-                      <span class="price-old">
-                        <%= Number(product.oldPrice || product.price || 0).toLocaleString() %>원
-                      </span>
-                    </div>
+              <% if (sizeValues.length > 0) { %>
+                <div class="option-group">
+                  <div class="option-title">사이즈</div>
+                  <div class="option-values" id="sizeWrap">
+                    <% sizeValues.forEach((item) => { %>
+                      <button
+                        type="button"
+                        class="option-chip <%= item.isSoldOut ? 'soldout' : '' %>"
+                        data-size="<%= item.value %>"
+                        data-soldout="<%= item.isSoldOut ? 'true' : 'false' %>"
+                      >
+                        <%= item.value %>
+                      </button>
+                    <% }) %>
                   </div>
-
-                  <div class="price-line">
-                    <div class="price-label">회원판매가</div>
-                    <div>
-                      <span class="price-main">KRW <%= Number(product.price || 0).toLocaleString() %></span>
-                      <% if (discountRate> 0) { %>
-                        <span class="price-discount">(<%= discountRate %>% off)</span>
-                        <% } %>
-                    </div>
-                  </div>
+                  <div class="error-text" id="optionError"></div>
                 </div>
-
-                <div class="toggle-bar">자세히 보기 ∧</div>
-
-                <div class="detail-info">
-                  <div class="detail-row">
-                    <div class="detail-row-label">상품간략설명</div>
-                    <div class="detail-row-value">
-                      <%= safeSummary || product.name %>
-                    </div>
-                  </div>
-
-                  <div class="detail-row">
-                    <div class="detail-row-label">SIZE(cm)</div>
-                    <div class="detail-row-value">
-                      <%= sizeGroup.values.map(v=> v.value).join(' / ') %>
-                    </div>
-                  </div>
-
-                  <div class="detail-row">
-                    <div class="detail-row-label">MODEL</div>
-                    <div class="detail-row-value">신혜성 178cm / 70kg (상의 100~105 / 하의 30~31)</div>
-                  </div>
-
-                  <div class="detail-row">
-                    <div class="detail-row-label">배송비(비회원)</div>
-                    <div class="detail-row-value">
-                      <%= product.shippingFeeText || 'KRW 2,500 (KRW 70,000 이상 구매 시 무료)' %>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="coupon-row">
-                  <button type="button" class="coupon-btn" onclick="alert('쿠폰 다운로드 기능은 다음 단계에서 연결')">쿠폰 확인</button>
-                </div>
-
-                <div class="benefit-box">
-                  <div class="benefit-line">
-                    <div class="benefit-label">예상 최저가ⓘ</div>
-                    <div class="benefit-value">
-                      <%= Number(product.price || 0).toLocaleString() %>원
-                    </div>
-                  </div>
-                  <div class="benefit-line">
-                    <div class="benefit-label">최대 적립 혜택</div>
-                    <div class="benefit-value">
-                      <%= rewardPoint.toLocaleString() %>P
-                    </div>
-                  </div>
-                  <div class="benefit-toggle">자세히 보기 ˅</div>
-                </div>
-
-                <form id="productForm" method="POST">
-                  <input type="hidden" name="productId" value="<%= product._id %>">
-                  <input type="hidden" name="selectedOption" id="selectedOptionInput" value="">
-                  <input type="hidden" name="option" id="legacyOptionInput" value="">
-                  <input type="hidden" name="selectedColor" id="selectedColorInput" value="">
-                  <input type="hidden" name="quantity" id="quantityHidden" value="1">
-                  <input type="hidden" name="selectedAddOnIds" id="selectedAddOnIdsInput" value="">
-                  <input type="hidden" name="selectedAddOnNames" id="selectedAddOnNamesInput" value="">
-                  <input type="hidden" name="selectedAddOnTotal" id="selectedAddOnTotalInput" value="0">
-
-                  <div class="option-wrap">
-                    <% if (colorGroup && Array.isArray(colorGroup.values) && colorGroup.values.length> 0) { %>
-                      <div class="option-group">
-                        <div class="option-title">색상</div>
-                        <div class="option-values" id="colorWrap">
-                          <% colorGroup.values.forEach((item)=> { %>
-                            <button type="button" class="option-chip <%= item.isSoldOut ? 'soldout' : '' %>"
-                              data-color="<%= item.value %>" data-soldout="<%= item.isSoldOut ? 'true' : 'false' %>">
-                              <%= item.value %>
-                            </button>
-                            <% }) %>
-                        </div>
-                        <div class="error-text" id="colorError"></div>
-                      </div>
-                      <% } %>
-
-                        <% if (sizeGroup && Array.isArray(sizeGroup.values) && sizeGroup.values.length> 0) { %>
-                          <div class="option-group">
-                            <div class="option-title">사이즈</div>
-                            <div class="option-values" id="sizeWrap">
-                              <% sizeGroup.values.forEach((item)=> { %>
-                                <button type="button" class="option-chip <%= item.isSoldOut ? 'soldout' : '' %>"
-                                  data-size="<%= item.value %>" data-soldout="<%= item.isSoldOut ? 'true' : 'false' %>">
-                                  <%= item.value %>
-                                </button>
-                                <% }) %>
-                            </div>
-                            <div class="error-text" id="optionError"></div>
-                          </div>
-                          <% } %>
-                  </div>
-
-                  <% if (safeAddOnProducts.length> 0) { %>
-                    <div class="with-section">
-                      <div class="with-title">이 상품 구매하시는분들 이것도 같이 담고 할인받아요 🔥</div>
-                      <div class="with-sub">추가상품</div>
-
-                      <div class="with-wrap">
-                        <div class="with-viewport">
-                          <div class="with-track" id="withTrack">
-                            <% safeAddOnProducts.forEach((item, index)=> { %>
-                              <div class="with-card">
-                                <div class="with-thumb">
-                                  <div class="with-rank">
-                                    <%= index + 1 %>
-                                  </div>
-                                  <% if (item.image) { %>
-                                    <img src="<%= item.image %>" alt="<%= item.name %>">
-                                    <% } %>
-                                </div>
-
-                                <div class="with-name">
-                                  <%= item.name %>
-                                </div>
-
-                                <div class="with-price-row">
-                                  <% if (Number(item.oldPrice || 0)> Number(item.price || 0)) { %>
-                                    <span class="with-sale">
-                                      <%= Math.round((1 - Number(item.price || 0) / Number(item.oldPrice || 1)) * 100)
-                                        %>%
-                                    </span>
-                                    <span class="with-price">
-                                      <%= Number(item.price || 0).toLocaleString() %>원
-                                    </span>
-                                    <span class="with-old">
-                                      <%= Number(item.oldPrice || 0).toLocaleString() %>원
-                                    </span>
-                                    <% } else { %>
-                                      <span class="with-price">
-                                        <%= Number(item.price || 0).toLocaleString() %>원
-                                      </span>
-                                      <% } %>
-                                </div>
-
-                                <button type="button" class="with-btn add-on-select-btn" data-id="<%= item._id %>"
-                                  data-name="<%= item.name %>" data-price="<%= Number(item.price || 0) %>">
-                                  선택
-                                </button>
-                              </div>
-                              <% }) %>
-                          </div>
-                        </div>
-
-                        <div class="with-nav">
-                          <button type="button" class="with-arrow" id="withPrev">‹</button>
-                          <span class="with-page" id="withPage">1/1</span>
-                          <button type="button" class="with-arrow" id="withNext">›</button>
-                        </div>
-                      </div>
-                    </div>
-                    <% } %>
-
-                      <div class="selected-box">
-                        <div class="selected-name">
-                          <%= product.name %>
-                        </div>
-                        <div class="selected-meta" id="selectedMetaText">옵션을 선택해주세요.</div>
-
-                        <div class="qty-total-row">
-                          <div class="qty-row">
-                            <button type="button" class="qty-btn" id="minusBtn">-</button>
-                            <input type="number" id="qtyInput" class="qty-input" value="1" min="1"
-                              max="<%= Math.max(Number(product.stock || 1), 1) %>" />
-                            <button type="button" class="qty-btn" id="plusBtn">+</button>
-                          </div>
-
-                          <div class="total-box">
-                            TOTAL
-                            <span class="total-price" id="totalPrice">
-                              <%= Number(product.price || 0).toLocaleString() %>
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="btn-grid-main">
-                        <button type="button" class="action-btn btn-buy" id="buyBtn" <%=isSoldOut ? 'disabled' : '' %>
-                          >
-                          바로구매
-                        </button>
-
-                        <button type="button" class="action-btn btn-cart-icon" id="cartBtn" aria-label="장바구니"
-                          <%=isSoldOut ? 'disabled' : '' %>
-                          >
-                          🛒
-                        </button>
-
-                        <button type="button" class="action-btn btn-wish-icon" aria-label="찜"
-                          onclick="alert('찜 기능은 다음 단계에서 연결')">
-                          ♡
-                        </button>
-                      </div>
-
-                      <div class="btn-grid-sub">
-                        <button type="button" class="action-btn btn-npay" onclick="alert('네이버페이 구매는 다음 단계에서 연결')"
-                          <%=isSoldOut ? 'disabled' : '' %>
-                          >
-                          Npay 구매
-                        </button>
-                      </div>
-                </form>
-          </div>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="tab-nav">
-          <button type="button" class="tab-btn active" data-tab="detail">DETAIL</button>
-          <button type="button" class="tab-btn" data-tab="review">REVIEW</button>
-          <button type="button" class="tab-btn" data-tab="qna">Q&A</button>
-          <button type="button" class="tab-btn" data-tab="guide">GUIDE</button>
-        </div>
-
-        <div class="tab-panel active" data-panel="detail">
-          <% if (safeDetailImages.length> 0) { %>
-            <div class="detail-images">
-              <% safeDetailImages.forEach((img, index)=> { %>
-                <img src="<%= img %>" alt="상세 이미지 <%= index + 1 %>">
-                <% }) %>
+              <% } %>
             </div>
-            <% } else if (safeDesc) { %>
-              <div class="guide-text">
-                <%= safeDesc %>
+
+            <% if (safeAddOnProducts.length > 0) { %>
+              <div class="with-section">
+                <div class="with-title">이 상품 구매하시는분들 이것도 같이 담고 할인받아요 🔥</div>
+                <div class="with-sub">추가상품</div>
+
+                <div class="with-wrap">
+                  <div class="with-viewport">
+                    <div class="with-track" id="withTrack">
+                      <% safeAddOnProducts.forEach((item, index) => { 
+                        const addPrice = Number(item.price || 0);
+                        const addOldPrice = Number(item.oldPrice || item.price || 0);
+                        const addDiscount = addOldPrice > addPrice && addOldPrice > 0
+                          ? Math.round((1 - addPrice / addOldPrice) * 100)
+                          : 0;
+                      %>
+                        <div class="with-card">
+                          <div class="with-thumb">
+                            <div class="with-rank"><%= index + 1 %></div>
+                            <% if (item.image) { %>
+                              <img src="<%= item.image %>" alt="<%= item.name || '추가상품' %>">
+                            <% } %>
+                          </div>
+
+                          <div class="with-name"><%= item.name || '추가상품' %></div>
+
+                          <div class="with-price-row">
+                            <% if (addDiscount > 0) { %>
+                              <span class="with-sale"><%= addDiscount %>%</span>
+                              <span class="with-price"><%= addPrice.toLocaleString() %>원</span>
+                              <span class="with-old"><%= addOldPrice.toLocaleString() %>원</span>
+                            <% } else { %>
+                              <span class="with-price"><%= addPrice.toLocaleString() %>원</span>
+                            <% } %>
+                          </div>
+
+                          <button
+                            type="button"
+                            class="with-btn add-on-select-btn"
+                            data-id="<%= item._id || '' %>"
+                            data-name="<%= item.name || '추가상품' %>"
+                            data-price="<%= addPrice %>"
+                          >
+                            선택
+                          </button>
+                        </div>
+                      <% }) %>
+                    </div>
+                  </div>
+
+                  <div class="with-nav">
+                    <button type="button" class="with-arrow" id="withPrev">‹</button>
+                    <span class="with-page" id="withPage">1/1</span>
+                    <button type="button" class="with-arrow" id="withNext">›</button>
+                  </div>
+                </div>
               </div>
-              <% } else { %>
-                <div class="guide-text">등록된 상세 정보가 없습니다.</div>
-                <% } %>
-        </div>
-
-        <div class="tab-panel" data-panel="review">
-          <div class="guide-text">리뷰 영역은 다음 단계에서 연결</div>
-        </div>
-
-        <div class="tab-panel" data-panel="qna">
-          <div class="guide-text">Q&A 영역은 다음 단계에서 연결</div>
-        </div>
-
-        <div class="tab-panel" data-panel="guide">
-          <% if (product.guide && product.guide.sizeGuideImage) { %>
-            <div class="guide-text" style="margin-bottom: 10px;">사이즈 가이드</div>
-            <img src="<%= product.guide.sizeGuideImage %>" alt="사이즈 가이드" style="width:100%;">
             <% } %>
 
-              <% if (product.guide && product.guide.washImage) { %>
-                <div class="guide-text" style="margin: 20px 0 10px;">세탁 안내</div>
-                <img src="<%= product.guide.washImage %>" alt="세탁 안내" style="width:100%;">
-                <% } %>
+            <div class="selected-box">
+              <div class="selected-name"><%= safeName %></div>
+              <div class="selected-meta" id="selectedMetaText">옵션을 선택해주세요.</div>
 
-                  <% if (product.guide && product.guide.shippingExchangeReturn) { %>
-                    <div class="guide-text" style="margin-top:20px;">
-                      <%= product.guide.shippingExchangeReturn %>
-                    </div>
-                    <% } %>
+              <div class="qty-total-row">
+                <div class="qty-row">
+                  <button type="button" class="qty-btn" id="minusBtn">-</button>
+                  <input
+                    type="number"
+                    id="qtyInput"
+                    class="qty-input"
+                    value="1"
+                    min="1"
+                    max="<%= Math.max(safeStock || 1, 1) %>"
+                  />
+                  <button type="button" class="qty-btn" id="plusBtn">+</button>
+                </div>
+
+                <div class="total-box">
+                  TOTAL
+                  <span class="total-price" id="totalPrice"><%= safePrice.toLocaleString() %></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="btn-grid-main">
+              <button
+                type="button"
+                class="action-btn btn-buy"
+                id="buyBtn"
+                <%= isSoldOut ? 'disabled' : '' %>
+              >
+                바로구매
+              </button>
+
+              <button
+                type="button"
+                class="action-btn btn-cart-icon"
+                id="cartBtn"
+                aria-label="장바구니"
+                <%= isSoldOut ? 'disabled' : '' %>
+              >
+                🛒
+              </button>
+
+              <button
+                type="button"
+                class="action-btn btn-wish-icon"
+                aria-label="찜"
+                onclick="alert('찜 기능은 다음 단계에서 연결')"
+              >
+                ♡
+              </button>
+            </div>
+
+            <div class="btn-grid-sub">
+              <button
+                type="button"
+                class="action-btn btn-npay"
+                onclick="alert('네이버페이 구매는 다음 단계에서 연결')"
+                <%= isSoldOut ? 'disabled' : '' %>
+              >
+                Npay 구매
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
 
-    <script>
-      const productDataEl = document.getElementById('productData');
+    <div class="section">
+      <div class="tab-nav">
+        <button type="button" class="tab-btn active" data-tab="detail">DETAIL</button>
+        <button type="button" class="tab-btn" data-tab="review">REVIEW</button>
+        <button type="button" class="tab-btn" data-tab="qna">Q&A</button>
+        <button type="button" class="tab-btn" data-tab="guide">GUIDE</button>
+      </div>
 
-      const price = Number(productDataEl?.dataset.price || 0);
-      const stock = Number(productDataEl?.dataset.stock || 0);
-      const hasColor = productDataEl?.dataset.hasColor === 'true';
-      const hasSize = productDataEl?.dataset.hasSize === 'true';
+      <div class="tab-panel active" data-panel="detail">
+        <% if (safeDetailImages.length > 0) { %>
+          <div class="detail-images">
+            <% safeDetailImages.forEach((img, index) => { %>
+              <img src="<%= img %>" alt="상세 이미지 <%= index + 1 %>">
+            <% }) %>
+          </div>
+        <% } else if (safeDesc) { %>
+          <div class="guide-text"><%= safeDesc %></div>
+        <% } else { %>
+          <div class="guide-text">등록된 상세 정보가 없습니다.</div>
+        <% } %>
+      </div>
 
-      const colorWrap = document.getElementById('colorWrap');
-      const sizeWrap = document.getElementById('sizeWrap');
-      const colorButtons = colorWrap ? colorWrap.querySelectorAll('.option-chip') : [];
-      const sizeButtons = sizeWrap ? sizeWrap.querySelectorAll('.option-chip') : [];
+      <div class="tab-panel" data-panel="review">
+        <div class="guide-text">리뷰 영역은 다음 단계에서 연결</div>
+      </div>
 
-      const selectedOptionInput = document.getElementById('selectedOptionInput');
-      const legacyOptionInput = document.getElementById('legacyOptionInput');
-      const selectedColorInput = document.getElementById('selectedColorInput');
+      <div class="tab-panel" data-panel="qna">
+        <div class="guide-text">Q&A 영역은 다음 단계에서 연결</div>
+      </div>
 
-      const optionError = document.getElementById('optionError');
-      const colorError = document.getElementById('colorError');
+      <div class="tab-panel" data-panel="guide">
+        <% if (safeProduct.guide && safeProduct.guide.sizeGuideImage) { %>
+          <div class="guide-text" style="margin-bottom: 10px;">사이즈 가이드</div>
+          <img src="<%= safeProduct.guide.sizeGuideImage %>" alt="사이즈 가이드" style="width:100%;">
+        <% } %>
 
-      const addOnSelectButtons = document.querySelectorAll('.add-on-select-btn');
-      const selectedAddOnIdsInput = document.getElementById('selectedAddOnIdsInput');
-      const selectedAddOnNamesInput = document.getElementById('selectedAddOnNamesInput');
-      const selectedAddOnTotalInput = document.getElementById('selectedAddOnTotalInput');
+        <% if (safeProduct.guide && safeProduct.guide.washImage) { %>
+          <div class="guide-text" style="margin: 20px 0 10px;">세탁 안내</div>
+          <img src="<%= safeProduct.guide.washImage %>" alt="세탁 안내" style="width:100%;">
+        <% } %>
 
-      const qtyInput = document.getElementById('qtyInput');
-      const quantityHidden = document.getElementById('quantityHidden');
-      const minusBtn = document.getElementById('minusBtn');
-      const plusBtn = document.getElementById('plusBtn');
-      const totalPrice = document.getElementById('totalPrice');
-      const selectedMetaText = document.getElementById('selectedMetaText');
+        <% if (safeProduct.guide && safeProduct.guide.shippingExchangeReturn) { %>
+          <div class="guide-text" style="margin-top:20px;"><%= safeProduct.guide.shippingExchangeReturn %></div>
+        <% } %>
+      </div>
+    </div>
+  </div>
 
-      const productForm = document.getElementById('productForm');
-      const cartBtn = document.getElementById('cartBtn');
-      const buyBtn = document.getElementById('buyBtn');
+  <script>
+    const productDataEl = document.getElementById('productData');
 
-      const galleryStage = document.getElementById('galleryStage');
-      const thumbs = document.getElementById('thumbs');
+    const price = Number(productDataEl?.dataset.price || 0);
+    const stock = Number(productDataEl?.dataset.stock || 0);
+    const hasColor = productDataEl?.dataset.hasColor === 'true';
+    const hasSize = productDataEl?.dataset.hasSize === 'true';
 
-      const withTrack = document.getElementById('withTrack');
-      const withPrev = document.getElementById('withPrev');
-      const withNext = document.getElementById('withNext');
-      const withPage = document.getElementById('withPage');
+    const colorWrap = document.getElementById('colorWrap');
+    const sizeWrap = document.getElementById('sizeWrap');
+    const colorButtons = colorWrap ? colorWrap.querySelectorAll('.option-chip') : [];
+    const sizeButtons = sizeWrap ? sizeWrap.querySelectorAll('.option-chip') : [];
 
-      let selectedAddOns = [];
-      let withIndex = 0;
+    const selectedOptionInput = document.getElementById('selectedOptionInput');
+    const legacyOptionInput = document.getElementById('legacyOptionInput');
+    const selectedColorInput = document.getElementById('selectedColorInput');
 
-      function syncSelections() {
-        const colorValue = selectedColorInput ? selectedColorInput.value : '';
-        const sizeValue = selectedOptionInput ? selectedOptionInput.value : '';
+    const optionError = document.getElementById('optionError');
+    const colorError = document.getElementById('colorError');
 
-        const metaParts = [];
-        if (colorValue) metaParts.push(`색상: ${colorValue}`);
-        if (sizeValue) metaParts.push(`사이즈: ${sizeValue}`);
-        if (selectedAddOns.length) {
-          metaParts.push(`추가상품: ${selectedAddOns.map(item => item.name).join(', ')}`);
-        }
+    const addOnSelectButtons = document.querySelectorAll('.add-on-select-btn');
+    const selectedAddOnIdsInput = document.getElementById('selectedAddOnIdsInput');
+    const selectedAddOnNamesInput = document.getElementById('selectedAddOnNamesInput');
+    const selectedAddOnTotalInput = document.getElementById('selectedAddOnTotalInput');
 
-        if (selectedMetaText) {
-          selectedMetaText.textContent = metaParts.length ? metaParts.join(' / ') : '옵션을 선택해주세요.';
-        }
+    const qtyInput = document.getElementById('qtyInput');
+    const quantityHidden = document.getElementById('quantityHidden');
+    const minusBtn = document.getElementById('minusBtn');
+    const plusBtn = document.getElementById('plusBtn');
+    const totalPrice = document.getElementById('totalPrice');
+    const selectedMetaText = document.getElementById('selectedMetaText');
+
+    const productForm = document.getElementById('productForm');
+    const cartBtn = document.getElementById('cartBtn');
+    const buyBtn = document.getElementById('buyBtn');
+
+    const galleryStage = document.getElementById('galleryStage');
+    const thumbs = document.getElementById('thumbs');
+
+    const withTrack = document.getElementById('withTrack');
+    const withPrev = document.getElementById('withPrev');
+    const withNext = document.getElementById('withNext');
+    const withPage = document.getElementById('withPage');
+
+    let selectedAddOns = [];
+    let withIndex = 0;
+
+    function syncSelections() {
+      const colorValue = selectedColorInput ? selectedColorInput.value : '';
+      const sizeValue = selectedOptionInput ? selectedOptionInput.value : '';
+
+      const metaParts = [];
+      if (colorValue) metaParts.push(`색상: ${colorValue}`);
+      if (sizeValue) metaParts.push(`사이즈: ${sizeValue}`);
+      if (selectedAddOns.length) metaParts.push(`추가상품: ${selectedAddOns.map(item => item.name).join(', ')}`);
+
+      if (selectedMetaText) {
+        selectedMetaText.textContent = metaParts.length ? metaParts.join(' / ') : '옵션을 선택해주세요.';
       }
+    }
 
-      function syncAddOnInputs() {
-        const ids = selectedAddOns.map(item => item.id);
-        const names = selectedAddOns.map(item => item.name);
-        const total = selectedAddOns.reduce((sum, item) => sum + item.price, 0);
+    function syncAddOnInputs() {
+      const ids = selectedAddOns.map(item => item.id);
+      const names = selectedAddOns.map(item => item.name);
+      const total = selectedAddOns.reduce((sum, item) => sum + item.price, 0);
 
-        if (selectedAddOnIdsInput) selectedAddOnIdsInput.value = ids.join(',');
-        if (selectedAddOnNamesInput) selectedAddOnNamesInput.value = names.join(',');
-        if (selectedAddOnTotalInput) selectedAddOnTotalInput.value = String(total);
+      if (selectedAddOnIdsInput) selectedAddOnIdsInput.value = ids.join(',');
+      if (selectedAddOnNamesInput) selectedAddOnNamesInput.value = names.join(',');
+      if (selectedAddOnTotalInput) selectedAddOnTotalInput.value = String(total);
 
-        return total;
-      }
+      return total;
+    }
 
-      function updateTotal() {
-        let qty = Number(qtyInput?.value || 1);
+    function updateTotal() {
+      let qty = Number(qtyInput?.value || 1);
 
-        if (qty < 1) qty = 1;
-        if (stock > 0 && qty > stock) qty = stock;
+      if (qty < 1) qty = 1;
+      if (stock > 0 && qty > stock) qty = stock;
 
-        if (qtyInput) qtyInput.value = qty;
-        if (quantityHidden) quantityHidden.value = qty;
+      if (qtyInput) qtyInput.value = qty;
+      if (quantityHidden) quantityHidden.value = qty;
 
-        const addOnTotal = syncAddOnInputs();
-        const finalTotal = (price * qty) + addOnTotal;
+      const addOnTotal = syncAddOnInputs();
+      const finalTotal = (price * qty) + addOnTotal;
 
-        if (totalPrice) totalPrice.textContent = finalTotal.toLocaleString();
+      if (totalPrice) totalPrice.textContent = finalTotal.toLocaleString();
+      syncSelections();
+    }
 
+    colorButtons.forEach((button) => {
+      button.addEventListener('click', function () {
+        if (button.dataset.soldout === 'true') return;
+        colorButtons.forEach((btn) => btn.classList.remove('active'));
+        button.classList.add('active');
+        if (selectedColorInput) selectedColorInput.value = button.dataset.color || '';
+        if (colorError) colorError.textContent = '';
         syncSelections();
-      }
-
-      colorButtons.forEach((button) => {
-        button.addEventListener('click', function () {
-          if (button.dataset.soldout === 'true') return;
-
-          colorButtons.forEach((btn) => btn.classList.remove('active'));
-          button.classList.add('active');
-
-          if (selectedColorInput) selectedColorInput.value = button.dataset.color || '';
-          if (colorError) colorError.textContent = '';
-
-          syncSelections();
-        });
       });
+    });
 
-      sizeButtons.forEach((button) => {
-        button.addEventListener('click', function () {
-          if (button.dataset.soldout === 'true') return;
-
-          sizeButtons.forEach((btn) => btn.classList.remove('active'));
-          button.classList.add('active');
-
-          if (selectedOptionInput) selectedOptionInput.value = button.dataset.size || '';
-          if (legacyOptionInput) legacyOptionInput.value = button.dataset.size || '';
-          if (optionError) optionError.textContent = '';
-
-          syncSelections();
-        });
-      });
-
-      addOnSelectButtons.forEach((button) => {
-        button.addEventListener('click', function () {
-          const id = button.dataset.id || '';
-          const name = button.dataset.name || '';
-          const priceValue = Number(button.dataset.price || 0);
-
-          const exists = selectedAddOns.find(item => item.id === id);
-
-          if (exists) {
-            selectedAddOns = selectedAddOns.filter(item => item.id !== id);
-            button.textContent = '선택';
-            button.style.background = '#fb625f';
-          } else {
-            selectedAddOns.push({ id, name, price: priceValue });
-            button.textContent = '선택됨';
-            button.style.background = '#111';
-          }
-
-          updateTotal();
-        });
-      });
-
-      if (minusBtn) {
-        minusBtn.addEventListener('click', function () {
-          qtyInput.value = Math.max(Number(qtyInput.value || 1) - 1, 1);
-          updateTotal();
-        });
-      }
-
-      if (plusBtn) {
-        plusBtn.addEventListener('click', function () {
-          const next = Number(qtyInput.value || 1) + 1;
-          qtyInput.value = stock > 0 ? Math.min(next, stock) : next;
-          updateTotal();
-        });
-      }
-
-      if (qtyInput) qtyInput.addEventListener('input', updateTotal);
-
-      function validateForm() {
+    sizeButtons.forEach((button) => {
+      button.addEventListener('click', function () {
+        if (button.dataset.soldout === 'true') return;
+        sizeButtons.forEach((btn) => btn.classList.remove('active'));
+        button.classList.add('active');
+        if (selectedOptionInput) selectedOptionInput.value = button.dataset.size || '';
+        if (legacyOptionInput) legacyOptionInput.value = button.dataset.size || '';
+        if (optionError) optionError.textContent = '';
         syncSelections();
-
-        if (hasColor && selectedColorInput && !selectedColorInput.value) {
-          if (colorError) colorError.textContent = '색상을 선택해주세요.';
-          return false;
-        }
-
-        if (hasSize && selectedOptionInput && !selectedOptionInput.value) {
-          if (optionError) optionError.textContent = '사이즈를 선택해주세요.';
-          return false;
-        }
-
-        return true;
-      }
-
-      if (cartBtn) {
-        cartBtn.addEventListener('click', function () {
-          if (!validateForm()) return;
-          productForm.action = '/cart/add';
-          productForm.submit();
-        });
-      }
-
-      if (buyBtn) {
-        buyBtn.addEventListener('click', function () {
-          if (!validateForm()) return;
-          productForm.action = '/buy-now';
-          productForm.submit();
-        });
-      }
-
-      if (thumbs && galleryStage) {
-        thumbs.addEventListener('click', function (e) {
-          const thumb = e.target.closest('.thumb-btn');
-          if (!thumb) return;
-
-          const type = thumb.dataset.type;
-          const src = thumb.dataset.src;
-
-          if (type === 'video') {
-            galleryStage.innerHTML = `<video src="${src}" controls playsinline preload="metadata"></video>`;
-          } else {
-            galleryStage.innerHTML = `<img src="${src}" alt="상품 이미지">`;
-          }
-
-          thumbs.querySelectorAll('.thumb-btn').forEach((item) => {
-            item.classList.remove('active');
-          });
-          thumb.classList.add('active');
-        });
-      }
-
-      function moveWith(direction) {
-        if (!withTrack) return;
-
-        const cards = withTrack.querySelectorAll('.with-card');
-        if (!cards.length) return;
-
-        const cardWidth = cards[0].offsetWidth + 10;
-        const viewport = withTrack.parentElement;
-        const visibleCount = Math.max(Math.floor(viewport.offsetWidth / cardWidth), 1);
-        const totalPages = Math.max(Math.ceil(cards.length / visibleCount), 1);
-        const maxIndex = Math.max(cards.length - visibleCount, 0);
-
-        withIndex += direction;
-        if (withIndex < 0) withIndex = 0;
-        if (withIndex > maxIndex) withIndex = maxIndex;
-
-        withTrack.style.transform = `translateX(-${withIndex * cardWidth}px)`;
-
-        const currentPage = Math.min(Math.floor(withIndex / visibleCount) + 1, totalPages);
-        if (withPage) withPage.textContent = `${currentPage}/${totalPages}`;
-      }
-
-      if (withPrev) withPrev.addEventListener('click', () => moveWith(-1));
-      if (withNext) withNext.addEventListener('click', () => moveWith(1));
-      window.addEventListener('resize', () => moveWith(0));
-
-      const tabButtons = document.querySelectorAll('.tab-btn');
-      const tabPanels = document.querySelectorAll('.tab-panel');
-
-      tabButtons.forEach((button) => {
-        button.addEventListener('click', function () {
-          const target = button.dataset.tab;
-
-          tabButtons.forEach((btn) => btn.classList.remove('active'));
-          tabPanels.forEach((panel) => panel.classList.remove('active'));
-
-          button.classList.add('active');
-          const panel = document.querySelector(`[data-panel="${target}"]`);
-          if (panel) panel.classList.add('active');
-        });
       });
+    });
 
-      updateTotal();
-      moveWith(0);
-    </script>
+    addOnSelectButtons.forEach((button) => {
+      button.addEventListener('click', function () {
+        const id = button.dataset.id || '';
+        const name = button.dataset.name || '';
+        const priceValue = Number(button.dataset.price || 0);
+        const exists = selectedAddOns.find(item => item.id === id);
+
+        if (exists) {
+          selectedAddOns = selectedAddOns.filter(item => item.id !== id);
+          button.textContent = '선택';
+          button.style.background = '#fb625f';
+        } else {
+          selectedAddOns.push({ id, name, price: priceValue });
+          button.textContent = '선택됨';
+          button.style.background = '#111';
+        }
+
+        updateTotal();
+      });
+    });
+
+    if (minusBtn) {
+      minusBtn.addEventListener('click', function () {
+        qtyInput.value = Math.max(Number(qtyInput.value || 1) - 1, 1);
+        updateTotal();
+      });
+    }
+
+    if (plusBtn) {
+      plusBtn.addEventListener('click', function () {
+        const next = Number(qtyInput.value || 1) + 1;
+        qtyInput.value = stock > 0 ? Math.min(next, stock) : next;
+        updateTotal();
+      });
+    }
+
+    if (qtyInput) qtyInput.addEventListener('input', updateTotal);
+
+    function validateForm() {
+      syncSelections();
+
+      if (hasColor && selectedColorInput && !selectedColorInput.value) {
+        if (colorError) colorError.textContent = '색상을 선택해주세요.';
+        return false;
+      }
+
+      if (hasSize && selectedOptionInput && !selectedOptionInput.value) {
+        if (optionError) optionError.textContent = '사이즈를 선택해주세요.';
+        return false;
+      }
+
+      return true;
+    }
+
+    if (cartBtn) {
+      cartBtn.addEventListener('click', function () {
+        if (!validateForm()) return;
+        productForm.action = '/cart/add';
+        productForm.submit();
+      });
+    }
+
+    if (buyBtn) {
+      buyBtn.addEventListener('click', function () {
+        if (!validateForm()) return;
+        productForm.action = '/buy-now';
+        productForm.submit();
+      });
+    }
+
+    if (thumbs && galleryStage) {
+      thumbs.addEventListener('click', function (e) {
+        const thumb = e.target.closest('.thumb-btn');
+        if (!thumb) return;
+
+        const type = thumb.dataset.type;
+        const src = thumb.dataset.src;
+
+        if (type === 'video') {
+          galleryStage.innerHTML = `<video src="${src}" controls playsinline preload="metadata"></video>`;
+        } else {
+          galleryStage.innerHTML = `<img src="${src}" alt="상품 이미지">`;
+        }
+
+        thumbs.querySelectorAll('.thumb-btn').forEach((item) => item.classList.remove('active'));
+        thumb.classList.add('active');
+      });
+    }
+
+    function moveWith(direction) {
+      if (!withTrack) return;
+
+      const cards = withTrack.querySelectorAll('.with-card');
+      if (!cards.length) return;
+
+      const cardWidth = cards[0].offsetWidth + 10;
+      const viewport = withTrack.parentElement;
+      const visibleCount = Math.max(Math.floor(viewport.offsetWidth / cardWidth), 1);
+      const totalPages = Math.max(Math.ceil(cards.length / visibleCount), 1);
+      const maxIndex = Math.max(cards.length - visibleCount, 0);
+
+      withIndex += direction;
+      if (withIndex < 0) withIndex = 0;
+      if (withIndex > maxIndex) withIndex = maxIndex;
+
+      withTrack.style.transform = `translateX(-${withIndex * cardWidth}px)`;
+
+      const currentPage = Math.min(Math.floor(withIndex / visibleCount) + 1, totalPages);
+      if (withPage) withPage.textContent = `${currentPage}/${totalPages}`;
+    }
+
+    if (withPrev) withPrev.addEventListener('click', () => moveWith(-1));
+    if (withNext) withNext.addEventListener('click', () => moveWith(1));
+    window.addEventListener('resize', () => moveWith(0));
+
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+
+    tabButtons.forEach((button) => {
+      button.addEventListener('click', function () {
+        const target = button.dataset.tab;
+        tabButtons.forEach((btn) => btn.classList.remove('active'));
+        tabPanels.forEach((panel) => panel.classList.remove('active'));
+        button.classList.add('active');
+        const panel = document.querySelector(`[data-panel="${target}"]`);
+        if (panel) panel.classList.add('active');
+      });
+    });
+
+    updateTotal();
+    moveWith(0);
+  </script>
 </body>
-
 </html>
