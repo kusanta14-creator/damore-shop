@@ -5,700 +5,672 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title><%= product.name %> | DAMORE</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin:0; padding:0; box-sizing:border-box; }
 
-    :root {
-      --bg: #f5f3ef;
-      --white: #ffffff;
-      --text: #1f1f1f;
-      --muted: #7c766d;
-      --line: #e6dfd4;
-      --soft: #faf7f2;
-      --soft-2: #f3eee7;
-      --brown: #8f775d;
-      --brown-dark: #6f5a43;
-      --green: #03c75a;
-      --danger: #df5a4f;
-      --wish: #efebe4;
-      --shadow: 0 10px 24px rgba(0, 0, 0, 0.04);
-      --max: 1220px;
+    :root{
+      --bg:#f6f3ee;
+      --white:#fff;
+      --text:#1f1f1f;
+      --muted:#7b746b;
+      --line:#e6dfd4;
+      --soft:#fbf8f3;
+      --soft2:#f3eee7;
+      --brown:#8b745b;
+      --brown-dark:#6e5942;
+      --green:#03c75a;
+      --danger:#df5a4f;
+      --wish:#efebe4;
+      --max:1280px;
     }
 
-    body {
-      font-family: "Pretendard", "Noto Sans KR", Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
+    body{
+      font-family:"Pretendard","Noto Sans KR",Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.6;
     }
 
-    a {
-      text-decoration: none;
-      color: inherit;
+    a{ color:inherit; text-decoration:none; }
+    button,input,select,textarea{ font:inherit; }
+    img,video{ display:block; max-width:100%; }
+
+    .site-header{
+      width:100%;
+      background:#fff;
+      border-bottom:1px solid var(--line);
+      position:sticky;
+      top:0;
+      z-index:50;
     }
 
-    button,
-    input,
-    select,
-    textarea {
-      font: inherit;
+    .site-header-inner{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
     }
 
-    img,
-    video {
-      display: block;
-      max-width: 100%;
+    .logo{
+      font-size:22px;
+      font-weight:800;
+      letter-spacing:.08em;
     }
 
-    .page {
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 18px 16px 72px;
+    .gnb{
+      display:flex;
+      gap:20px;
+      flex-wrap:wrap;
+      font-size:13px;
+      color:#444;
     }
 
-    .breadcrumb {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      font-size: 11px;
-      color: var(--muted);
-      margin-bottom: 16px;
+    .gnb a:hover{ color:#111; }
+
+    .page{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:18px 18px 80px;
     }
 
-    .layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 520px;
-      gap: 28px;
-      align-items: start;
+    .breadcrumb{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      font-size:11px;
+      color:var(--muted);
+      margin-bottom:16px;
     }
 
-    .gallery-col {
-      min-width: 0;
+    .layout{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 560px;
+      gap:28px;
+      align-items:start;
     }
 
-    .gallery-main {
-      width: 100%;
-      aspect-ratio: 1 / 1.22;
-      background: #ece7de;
-      overflow: hidden;
-      margin-bottom: 6px;
+    .gallery-main{
+      width:100%;
+      aspect-ratio:1/1.22;
+      background:#ece7de;
+      overflow:hidden;
+      margin-bottom:8px;
     }
 
     .gallery-main img,
-    .gallery-main video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      background: #ece7de;
+    .gallery-main video{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      background:#ece7de;
     }
 
-    .thumbs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
+    .thumbs{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
     }
 
-    .thumb-btn {
-      width: 54px;
-      height: 54px;
-      border: 1px solid #d8d1c6;
-      background: #fff;
-      padding: 0;
-      cursor: pointer;
-      overflow: hidden;
+    .thumb-btn{
+      width:56px;
+      height:56px;
+      border:1px solid #d8d1c6;
+      background:#fff;
+      padding:0;
+      cursor:pointer;
+      overflow:hidden;
     }
 
-    .thumb-btn.active {
-      border-color: #111;
-    }
+    .thumb-btn.active{ border-color:#111; }
 
     .thumb-btn img,
-    .thumb-btn video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    .thumb-btn video{
+      width:100%;
+      height:100%;
+      object-fit:cover;
     }
 
-    .purchase-col {
-      min-width: 0;
+    .purchase-box{
+      position:sticky;
+      top:78px;
+      background:#fff;
+      padding:0;
     }
 
-    .purchase-box {
-      position: sticky;
-      top: 12px;
-      background: #fff;
-      padding: 0;
+    .interest-bubble{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      font-size:11px;
+      padding:7px 12px;
+      background:#f7f4ef;
+      border:1px solid #e2dbcf;
+      border-radius:999px;
+      color:#5f574c;
+      margin-bottom:10px;
+      font-weight:600;
     }
 
-    .interest-bubble {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      padding: 6px 12px;
-      background: #f6f3ee;
-      border: 1px solid #e2dbcf;
-      border-radius: 999px;
-      color: #5f574c;
-      margin-bottom: 10px;
-      font-weight: 600;
+    .brand{
+      font-size:11px;
+      color:#8f887d;
+      letter-spacing:.12em;
+      margin-bottom:6px;
     }
 
-    .brand {
-      font-size: 11px;
-      color: #8f887d;
-      letter-spacing: 0.12em;
-      margin-bottom: 6px;
+    .title{
+      font-size:24px;
+      line-height:1.38;
+      font-weight:700;
+      word-break:keep-all;
+      margin-bottom:8px;
     }
 
-    .title {
-      font-size: 20px;
-      line-height: 1.42;
-      font-weight: 700;
-      word-break: keep-all;
-      margin-bottom: 8px;
+    .price-row{
+      display:flex;
+      align-items:flex-end;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:8px;
     }
 
-    .price-row {
-      display: flex;
-      align-items: flex-end;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 8px;
+    .discount-rate{
+      font-size:14px;
+      color:var(--danger);
+      font-weight:700;
     }
 
-    .discount-rate {
-      font-size: 13px;
-      color: var(--danger);
-      font-weight: 700;
+    .main-price{
+      font-size:26px;
+      font-weight:800;
+      line-height:1;
     }
 
-    .main-price {
-      font-size: 22px;
-      font-weight: 800;
-      line-height: 1;
+    .old-price{
+      font-size:12px;
+      color:#999;
+      text-decoration:line-through;
     }
 
-    .old-price {
-      font-size: 12px;
-      color: #999;
-      text-decoration: line-through;
+    .summary{
+      font-size:13px;
+      color:#5e564d;
+      margin-bottom:10px;
+      white-space:pre-line;
+      word-break:keep-all;
     }
 
-    .summary {
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 10px;
-      white-space: pre-line;
-      word-break: keep-all;
+    .top-util{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      margin-bottom:12px;
     }
 
-    .top-util {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
+    .top-util-text{
+      font-size:11px;
+      color:var(--muted);
     }
 
-    .top-util-text {
-      font-size: 10px;
-      color: var(--muted);
+    .coupon-btn{
+      height:30px;
+      padding:0 12px;
+      border:0;
+      background:var(--brown);
+      color:#fff;
+      font-size:11px;
+      font-weight:700;
+      cursor:pointer;
     }
 
-    .coupon-btn {
-      height: 26px;
-      padding: 0 10px;
-      border: 0;
-      background: var(--brown);
-      color: #fff;
-      font-size: 10px;
-      font-weight: 700;
-      cursor: pointer;
+    .info-grid{
+      display:grid;
+      gap:10px;
+      margin-bottom:12px;
     }
 
-    .info-cards {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
-      margin-bottom: 10px;
+    .info-item{
+      display:grid;
+      grid-template-columns:90px 1fr;
+      gap:14px;
+      align-items:start;
+      font-size:13px;
     }
 
-    .info-card {
-      background: var(--soft);
-      border: 1px solid var(--line);
-      padding: 10px;
-      min-height: 68px;
+    .info-label{
+      color:var(--muted);
+      font-weight:600;
     }
 
-    .info-card-label {
-      font-size: 10px;
-      color: var(--muted);
-      margin-bottom: 4px;
+    .info-value{
+      color:#222;
+      font-weight:600;
+      word-break:keep-all;
     }
 
-    .info-card-value {
-      font-size: 11px;
-      line-height: 1.45;
-      font-weight: 700;
-      color: #222;
-      word-break: keep-all;
+    .form-group{ margin-bottom:8px; }
+
+    .select-box{
+      width:100%;
+      height:38px;
+      border:1px solid #cec6b8;
+      padding:0 10px;
+      background:#fff;
+      font-size:12px;
+      outline:none;
     }
 
-    .form-group {
-      margin-bottom: 6px;
+    .error-text{
+      min-height:14px;
+      margin-top:3px;
+      color:var(--danger);
+      font-size:10px;
+      font-weight:700;
     }
 
-    .select-box {
-      width: 100%;
-      height: 34px;
-      border: 1px solid #cec6b8;
-      padding: 0 10px;
-      background: #fff;
-      font-size: 11px;
-      outline: none;
+    .coord-box{
+      margin:12px 0;
+      padding:12px 0 4px;
+      border-top:1px solid var(--line);
+      border-bottom:1px solid var(--line);
     }
 
-    .error-text {
-      min-height: 14px;
-      margin-top: 3px;
-      color: var(--danger);
-      font-size: 10px;
-      font-weight: 700;
+    .coord-head{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:10px;
     }
 
-    .upsell-box {
-      margin: 10px 0;
-      padding: 10px;
-      border: 1px solid var(--line);
-      background: var(--soft);
+    .coord-title{
+      font-size:12px;
+      font-weight:800;
     }
 
-    .upsell-title {
-      font-size: 11px;
-      font-weight: 800;
-      margin-bottom: 2px;
+    .coord-sub{
+      font-size:11px;
+      color:var(--danger);
+      margin-top:2px;
     }
 
-    .upsell-sub {
-      font-size: 10px;
-      color: var(--danger);
-      margin-bottom: 8px;
+    .coord-nav{
+      display:flex;
+      gap:6px;
+      flex-shrink:0;
     }
 
-    .upsell-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 8px;
+    .coord-arrow{
+      width:28px;
+      height:28px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font-size:14px;
+      line-height:1;
     }
 
-    .upsell-card {
-      border: 1px solid var(--line);
-      background: #fff;
-      padding: 0 0 8px;
-      min-width: 0;
+    .coord-track-wrap{
+      overflow:hidden;
     }
 
-    .upsell-thumb-wrap {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      background: #ece7de;
-      overflow: hidden;
-      margin-bottom: 6px;
+    .coord-track{
+      display:flex;
+      gap:10px;
+      transition:transform .25s ease;
+      will-change:transform;
     }
 
-    .upsell-rank {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 18px;
-      height: 18px;
-      background: rgba(0, 0, 0, 0.68);
-      color: #fff;
-      font-size: 10px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .coord-item{
+      min-width:118px;
+      max-width:118px;
+      flex:0 0 118px;
     }
 
-    .upsell-thumb {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      background: #ece7de;
+    .coord-thumb{
+      width:100%;
+      aspect-ratio:1/1.18;
+      background:#ece7de;
+      margin-bottom:6px;
+      overflow:hidden;
     }
 
-    .upsell-name {
-      font-size: 10px;
-      line-height: 1.35;
-      min-height: 28px;
-      padding: 0 6px;
-      color: #333;
-      margin-bottom: 4px;
-      word-break: keep-all;
+    .coord-thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
     }
 
-    .upsell-price {
-      padding: 0 6px;
-      font-size: 10px;
-      font-weight: 700;
-      margin-bottom: 6px;
+    .coord-name{
+      font-size:11px;
+      line-height:1.35;
+      min-height:30px;
+      color:#333;
+      margin-bottom:4px;
+      word-break:keep-all;
     }
 
-    .upsell-select-btn {
-      margin: 0 6px;
-      width: calc(100% - 12px);
-      height: 22px;
-      border: 0;
-      background: #ff6b63;
-      color: #fff;
-      font-size: 10px;
-      font-weight: 700;
-      cursor: pointer;
+    .coord-price{
+      font-size:11px;
+      font-weight:700;
+      margin-bottom:6px;
     }
 
-    .option-summary {
-      margin-top: 8px;
-      border-top: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
-      padding: 8px 0;
+    .coord-btn{
+      width:100%;
+      height:24px;
+      border:0;
+      background:#f08a80;
+      color:#fff;
+      font-size:10px;
+      font-weight:700;
+      cursor:pointer;
     }
 
-    .selected-box {
-      background: var(--soft);
-      border: 1px solid var(--line);
-      padding: 9px;
+    .option-summary{
+      margin-top:10px;
+      padding-top:10px;
+      border-top:1px solid var(--line);
     }
 
-    .selected-name {
-      font-size: 10px;
-      font-weight: 700;
-      margin-bottom: 4px;
+    .selected-box{
+      background:var(--soft);
+      padding:10px;
     }
 
-    .selected-meta {
-      font-size: 10px;
-      color: var(--muted);
-      margin-bottom: 6px;
+    .selected-name{
+      font-size:11px;
+      font-weight:700;
+      margin-bottom:4px;
     }
 
-    .qty-total-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      gap: 12px;
-      flex-wrap: wrap;
+    .selected-meta{
+      font-size:11px;
+      color:var(--muted);
+      margin-bottom:8px;
     }
 
-    .qty-row {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      width: fit-content;
-      border: 1px solid #d4ccbf;
-      background: #fff;
-      height: 30px;
+    .qty-total-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:12px;
+      flex-wrap:wrap;
     }
 
-    .qty-btn {
-      width: 30px;
-      height: 30px;
-      border: 0;
-      background: #fff;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 700;
+    .qty-row{
+      display:flex;
+      align-items:center;
+      gap:4px;
+      width:fit-content;
+      border:1px solid #d4ccbf;
+      background:#fff;
+      height:32px;
     }
 
-    .qty-input {
-      width: 40px;
-      height: 30px;
-      border: 0;
-      outline: none;
-      text-align: center;
-      font-size: 11px;
-      background: #fff;
+    .qty-btn{
+      width:32px;
+      height:32px;
+      border:0;
+      background:#fff;
+      cursor:pointer;
+      font-size:15px;
+      font-weight:700;
     }
 
-    .total-row {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 2px;
-      font-size: 10px;
+    .qty-input{
+      width:42px;
+      height:32px;
+      border:0;
+      outline:none;
+      text-align:center;
+      font-size:12px;
+      background:#fff;
     }
 
-    .total-row strong {
-      font-size: 16px;
-      font-weight: 800;
+    .total-row{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap:2px;
+      font-size:10px;
     }
 
-    .btn-grid-main {
-      display: grid;
-      grid-template-columns: 1fr 1fr 64px;
-      gap: 4px;
-      margin-top: 10px;
+    .total-row strong{
+      font-size:18px;
+      font-weight:800;
     }
 
-    .btn-grid-sub {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 4px;
-      margin-top: 4px;
+    .btn-grid-main{
+      display:grid;
+      grid-template-columns:1fr 1fr 68px;
+      gap:6px;
+      margin-top:12px;
     }
 
-    .action-btn {
-      height: 32px;
-      border: 0;
-      cursor: pointer;
-      font-size: 10px;
-      font-weight: 800;
+    .btn-grid-sub{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:6px;
+      margin-top:6px;
     }
 
-    .btn-buy {
-      background: var(--brown-dark);
-      color: #fff;
+    .action-btn{
+      height:36px;
+      border:0;
+      cursor:pointer;
+      font-size:11px;
+      font-weight:800;
     }
 
-    .btn-cart {
-      background: #cfc5b8;
-      color: #111;
+    .btn-buy{ background:var(--brown-dark); color:#fff; }
+    .btn-cart{ background:#cfc5b8; color:#111; }
+    .btn-wish{ background:var(--wish); color:#777; border:1px solid #d8d0c3; }
+    .btn-npay{ background:var(--green); color:#fff; }
+
+    .section{
+      margin-top:34px;
+      background:#fff;
+      border-top:1px solid var(--line);
+      border-bottom:1px solid var(--line);
     }
 
-    .btn-wish {
-      background: var(--wish);
-      color: #777;
-      border: 1px solid #d8d0c3;
+    .tab-nav{
+      display:flex;
+      justify-content:center;
+      border-bottom:1px solid var(--line);
+      overflow-x:auto;
     }
 
-    .btn-npay {
-      background: var(--green);
-      color: #fff;
+    .tab-btn{
+      min-width:100px;
+      height:42px;
+      border:0;
+      border-right:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font-size:11px;
+      font-weight:700;
+      color:#666;
+      flex-shrink:0;
     }
 
-    .section {
-      margin-top: 34px;
-      background: #fff;
-      border-top: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
+    .tab-btn:last-child{ border-right:0; }
+    .tab-btn.active{ background:#111; color:#fff; }
+
+    .tab-panel{
+      display:none;
+      padding:24px;
     }
 
-    .tab-nav {
-      display: flex;
-      justify-content: center;
-      border-bottom: 1px solid var(--line);
-      overflow-x: auto;
+    .tab-panel.active{ display:block; }
+
+    .detail-images{
+      display:grid;
+      gap:18px;
     }
 
-    .tab-btn {
-      min-width: 100px;
-      height: 40px;
-      border: 0;
-      border-right: 1px solid var(--line);
-      background: #fff;
-      cursor: pointer;
-      font-size: 11px;
-      font-weight: 700;
-      color: #666;
-      flex-shrink: 0;
+    .detail-images img{ width:100%; }
+
+    .review-summary{
+      display:grid;
+      grid-template-columns:180px 1fr;
+      gap:20px;
+      align-items:center;
+      margin-bottom:22px;
     }
 
-    .tab-btn:last-child {
-      border-right: 0;
+    .review-score-box{
+      padding:18px;
+      background:var(--soft);
+      border:1px solid var(--line);
+      text-align:center;
     }
 
-    .tab-btn.active {
-      background: #111;
-      color: #fff;
+    .review-score{
+      font-size:32px;
+      font-weight:800;
+      line-height:1;
+      margin-bottom:8px;
     }
 
-    .tab-panel {
-      display: none;
-      padding: 24px;
+    .star-row{
+      color:#c7a867;
+      font-size:15px;
+      margin-bottom:8px;
+      letter-spacing:1px;
     }
 
-    .tab-panel.active {
-      display: block;
-    }
-
-    .detail-images {
-      display: grid;
-      gap: 18px;
-    }
-
-    .detail-images img {
-      width: 100%;
-    }
-
-    .review-summary {
-      display: grid;
-      grid-template-columns: 180px 1fr;
-      gap: 20px;
-      align-items: center;
-      margin-bottom: 22px;
-    }
-
-    .review-score-box {
-      padding: 18px;
-      background: var(--soft);
-      border: 1px solid var(--line);
-      text-align: center;
-    }
-
-    .review-score {
-      font-size: 32px;
-      font-weight: 800;
-      line-height: 1;
-      margin-bottom: 8px;
-    }
-
-    .star-row {
-      color: #c7a867;
-      font-size: 15px;
-      margin-bottom: 8px;
-      letter-spacing: 1px;
-    }
-
-    .review-count {
-      font-size: 11px;
-      color: var(--muted);
-      font-weight: 700;
+    .review-count{
+      font-size:11px;
+      color:var(--muted);
+      font-weight:700;
     }
 
     .review-list,
-    .inquiry-list {
-      display: grid;
-      gap: 12px;
+    .inquiry-list{
+      display:grid;
+      gap:12px;
     }
 
     .review-item,
-    .inquiry-item {
-      border: 1px solid var(--line);
-      background: var(--soft);
-      padding: 14px;
+    .inquiry-item{
+      border:1px solid var(--line);
+      background:var(--soft);
+      padding:14px;
     }
 
     .review-head,
-    .inquiry-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 8px;
-      font-size: 11px;
+    .inquiry-head{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:8px;
+      font-size:11px;
     }
 
     .review-author,
-    .inquiry-author {
-      font-weight: 800;
-    }
-
+    .inquiry-author{ font-weight:800; }
     .review-date,
-    .inquiry-date {
-      color: #888;
-    }
+    .inquiry-date{ color:#888; }
 
     .review-body,
     .inquiry-body,
-    .guide-text {
-      font-size: 12px;
-      color: #555;
-      white-space: pre-line;
-      word-break: keep-all;
+    .guide-text{
+      font-size:12px;
+      color:#555;
+      white-space:pre-line;
+      word-break:keep-all;
     }
 
-    .inquiry-form {
-      display: grid;
-      gap: 8px;
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px solid var(--line);
+    .inquiry-form{
+      display:grid;
+      gap:8px;
+      margin-top:16px;
+      padding-top:16px;
+      border-top:1px solid var(--line);
     }
 
     .text-input,
-    .text-area {
-      width: 100%;
-      border: 1px solid #d2cabd;
-      background: #fff;
-      padding: 10px 12px;
-      font-size: 12px;
-      outline: none;
+    .text-area{
+      width:100%;
+      border:1px solid #d2cabd;
+      background:#fff;
+      padding:10px 12px;
+      font-size:12px;
+      outline:none;
     }
 
-    .text-area {
-      min-height: 120px;
-      resize: vertical;
+    .text-area{
+      min-height:120px;
+      resize:vertical;
     }
 
-    .submit-btn {
-      height: 34px;
-      border: 0;
-      background: #111;
-      color: #fff;
-      cursor: pointer;
-      font-size: 11px;
-      font-weight: 800;
+    .submit-btn{
+      height:34px;
+      border:0;
+      background:#111;
+      color:#fff;
+      cursor:pointer;
+      font-size:11px;
+      font-weight:800;
     }
 
-    .guide-block + .guide-block {
-      margin-top: 24px;
+    .guide-block + .guide-block{ margin-top:24px; }
+
+    .guide-label{
+      font-size:12px;
+      font-weight:800;
+      margin-bottom:8px;
     }
 
-    .guide-label {
-      font-size: 12px;
-      font-weight: 800;
-      margin-bottom: 8px;
-    }
-
-    @media (max-width: 1024px) {
-      .layout {
-        grid-template-columns: 1fr;
+    @media (max-width: 1100px){
+      .layout{
+        grid-template-columns:1fr;
       }
-
-      .purchase-box {
-        position: static;
-      }
-
-      .upsell-grid,
-      .info-cards {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+      .purchase-box{
+        position:static;
       }
     }
 
-    @media (max-width: 640px) {
-      .page {
-        padding: 14px 12px 60px;
+    @media (max-width: 640px){
+      .site-header-inner{
+        flex-direction:column;
+        align-items:flex-start;
       }
 
-      .title {
-        font-size: 18px;
+      .page{
+        padding:14px 12px 60px;
       }
 
-      .main-price {
-        font-size: 18px;
+      .title{
+        font-size:20px;
       }
 
-      .btn-grid-main,
-      .info-cards {
-        grid-template-columns: 1fr;
+      .main-price{
+        font-size:22px;
       }
 
-      .tab-panel {
-        padding: 18px 14px;
+      .btn-grid-main{
+        grid-template-columns:1fr;
       }
 
-      .review-summary {
-        grid-template-columns: 1fr;
+      .tab-panel{
+        padding:18px 14px;
       }
 
-      .thumb-btn {
-        width: 50px;
-        height: 50px;
+      .review-summary{
+        grid-template-columns:1fr;
       }
 
-      .upsell-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+      .coord-item{
+        min-width:104px;
+        max-width:104px;
+        flex-basis:104px;
       }
     }
   </style>
@@ -766,6 +738,20 @@
       }
     ];
   %>
+
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a href="/" class="logo">DAMORE</a>
+      <nav class="gnb">
+        <a href="/">HOME</a>
+        <a href="/category/outer">OUTER</a>
+        <a href="/category/top">TOP</a>
+        <a href="/category/bottom">BOTTOM</a>
+        <a href="/category/dress">DRESS</a>
+        <a href="/category/acc">ACC</a>
+      </nav>
+    </div>
+  </header>
 
   <div
     id="productData"
@@ -841,23 +827,39 @@
 
           <div class="top-util">
             <div class="top-util-text">관심/찜 많은 상품</div>
-            <button type="button" class="coupon-btn" onclick="alert('쿠폰 다운로드 기능은 다음 단계에서 연결')">할인쿠폰 다운로드</button>
+            <button type="button" class="coupon-btn" onclick="alert('쿠폰 다운로드 기능은 다음 단계에서 연결')">쿠폰 확인</button>
           </div>
 
-          <div class="info-cards">
-            <div class="info-card">
-              <div class="info-card-label">상품 간략설명</div>
-              <div class="info-card-value"><%= safeSummary || product.name %></div>
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">상품간략설명</div>
+              <div class="info-value"><%= safeSummary || product.name %></div>
             </div>
 
-            <div class="info-card">
-              <div class="info-card-label">적립금</div>
-              <div class="info-card-value"><%= rewardPoint.toLocaleString() %>P</div>
+            <div class="info-item">
+              <div class="info-label">SIZE(cm)</div>
+              <div class="info-value">
+                <% if (sizeGroup && Array.isArray(sizeGroup.values) && sizeGroup.values.length > 0) { %>
+                  <%= sizeGroup.values.map(v => v.value).join(', ') %>
+                <% } else { %>
+                  FREE
+                <% } %>
+              </div>
             </div>
 
-            <div class="info-card">
-              <div class="info-card-label">배송비</div>
-              <div class="info-card-value"><%= product.shippingFeeText || 'KRW 2,500 (KRW 70,000 이상 구매 시 무료)' %></div>
+            <div class="info-item">
+              <div class="info-label">MODEL</div>
+              <div class="info-value">신혜성 178cm / 70kg (상의 100~105 / 하의 30~31)</div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-label">배송비(비회원)</div>
+              <div class="info-value"><%= product.shippingFeeText || 'KRW 2,500 (KRW 70,000 이상 구매 시 무료)' %></div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-label">최대 적립 혜택</div>
+              <div class="info-value"><%= rewardPoint.toLocaleString() %>P</div>
             </div>
           </div>
 
@@ -900,36 +902,41 @@
             <% } %>
 
             <% if (safeAddOnProducts.length > 0) { %>
-              <div class="upsell-box">
-                <div class="upsell-title">Weekly Best</div>
-                <div class="upsell-sub">모델이 같이 착용한 아이템 / 이 제품이랑 잘 어울려요</div>
+              <div class="coord-box">
+                <div class="coord-head">
+                  <div>
+                    <div class="coord-title">모델이 같이 착용한 아이템</div>
+                    <div class="coord-sub">이 제품이랑 잘 어울려요</div>
+                  </div>
+                  <div class="coord-nav">
+                    <button type="button" class="coord-arrow" id="coordPrev">‹</button>
+                    <button type="button" class="coord-arrow" id="coordNext">›</button>
+                  </div>
+                </div>
 
-                <div class="upsell-grid">
-                  <% safeAddOnProducts.slice(0, 4).forEach((item, index) => { %>
-                    <div class="upsell-card">
-                      <div class="upsell-thumb-wrap">
-                        <div class="upsell-rank"><%= index + 1 %></div>
-                        <% if (item.image) { %>
-                          <img src="<%= item.image %>" alt="<%= item.name %>" class="upsell-thumb">
-                        <% } else { %>
-                          <div class="upsell-thumb"></div>
-                        <% } %>
+                <div class="coord-track-wrap">
+                  <div class="coord-track" id="coordTrack">
+                    <% safeAddOnProducts.forEach((item) => { %>
+                      <div class="coord-item">
+                        <div class="coord-thumb">
+                          <% if (item.image) { %>
+                            <img src="<%= item.image %>" alt="<%= item.name %>">
+                          <% } %>
+                        </div>
+                        <div class="coord-name"><%= item.name %></div>
+                        <div class="coord-price"><%= Number(item.price || 0).toLocaleString() %>원</div>
+                        <button
+                          type="button"
+                          class="coord-btn add-on-select-btn"
+                          data-id="<%= item._id %>"
+                          data-name="<%= item.name %>"
+                          data-price="<%= Number(item.price || 0) %>"
+                        >
+                          선택
+                        </button>
                       </div>
-
-                      <div class="upsell-name"><%= item.name %></div>
-                      <div class="upsell-price"><%= Number(item.price || 0).toLocaleString() %>원</div>
-
-                      <button
-                        type="button"
-                        class="upsell-select-btn add-on-select-btn"
-                        data-id="<%= item._id %>"
-                        data-name="<%= item.name %>"
-                        data-price="<%= Number(item.price || 0) %>"
-                      >
-                        선택
-                      </button>
-                    </div>
-                  <% }) %>
+                    <% }) %>
+                  </div>
                 </div>
               </div>
             <% } %>
@@ -1152,7 +1159,12 @@
     const galleryStage = document.getElementById('galleryStage');
     const thumbs = document.getElementById('thumbs');
 
+    const coordTrack = document.getElementById('coordTrack');
+    const coordPrev = document.getElementById('coordPrev');
+    const coordNext = document.getElementById('coordNext');
+
     let selectedAddOns = [];
+    let coordIndex = 0;
 
     function syncSelections() {
       const colorValue = colorSelect ? colorSelect.value : '';
@@ -1166,7 +1178,7 @@
       if (colorValue) metaParts.push(`색상: ${colorValue}`);
       if (sizeValue) metaParts.push(`사이즈: ${sizeValue}`);
       if (selectedAddOns.length) {
-        metaParts.push(`추가상품: ${selectedAddOns.map(item => item.name).join(', ')}`);
+        metaParts.push(`코디상품: ${selectedAddOns.map(item => item.name).join(', ')}`);
       }
 
       if (selectedMetaText) {
@@ -1216,7 +1228,7 @@
         if (exists) {
           selectedAddOns = selectedAddOns.filter(item => item.id !== id);
           button.textContent = '선택';
-          button.style.background = '#ff6b63';
+          button.style.background = '#f08a80';
         } else {
           selectedAddOns.push({ id, name, price: priceValue });
           button.textContent = '선택됨';
@@ -1313,6 +1325,26 @@
       });
     }
 
+    function moveCoord(direction) {
+      if (!coordTrack) return;
+      const items = coordTrack.querySelectorAll('.coord-item');
+      if (!items.length) return;
+
+      const itemWidth = items[0].offsetWidth + 10;
+      const visibleCount = Math.max(Math.floor(coordTrack.parentElement.offsetWidth / itemWidth), 1);
+      const maxIndex = Math.max(items.length - visibleCount, 0);
+
+      coordIndex += direction;
+      if (coordIndex < 0) coordIndex = 0;
+      if (coordIndex > maxIndex) coordIndex = maxIndex;
+
+      coordTrack.style.transform = `translateX(-${coordIndex * itemWidth}px)`;
+    }
+
+    if (coordPrev) coordPrev.addEventListener('click', () => moveCoord(-1));
+    if (coordNext) coordNext.addEventListener('click', () => moveCoord(1));
+    window.addEventListener('resize', () => moveCoord(0));
+
     const tabButtons = document.querySelectorAll('.tab-btn');
     const tabPanels = document.querySelectorAll('.tab-panel');
 
@@ -1330,6 +1362,7 @@
     });
 
     updateTotal();
+    moveCoord(0);
   </script>
 </body>
 </html>
