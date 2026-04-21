@@ -7,10 +7,25 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    :root {
+      --bg: #f7f4ef;
+      --card: #ffffff;
+      --text: #111111;
+      --muted: #6e675f;
+      --line: rgba(17, 17, 17, 0.08);
+      --soft: #f3ede4;
+      --beige: #ede4d8;
+      --point: #9d8660;
+      --danger: #b23a2c;
+      --shadow: 0 18px 44px rgba(0, 0, 0, 0.06);
+      --radius: 24px;
+      --max: 1280px;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #f8f5ef;
-      color: #111;
+      font-family: "Pretendard", "Noto Sans KR", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
       line-height: 1.6;
     }
 
@@ -33,72 +48,68 @@
     }
 
     .page {
-      max-width: 1240px;
+      max-width: var(--max);
       margin: 0 auto;
-      padding: 24px 20px 80px;
+      padding: 28px 20px 90px;
     }
 
     .breadcrumb {
       display: flex;
-      align-items: center;
       gap: 8px;
-      font-size: 13px;
-      color: #777;
-      margin-bottom: 20px;
       flex-wrap: wrap;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 22px;
     }
 
     .breadcrumb a:hover {
-      color: #111;
+      color: var(--text);
     }
 
     .layout {
       display: grid;
       grid-template-columns: 1.08fr 0.92fr;
-      gap: 36px;
+      gap: 34px;
       align-items: start;
     }
 
-    .gallery-area {
-      position: sticky;
-      top: 20px;
+    .gallery-column {
+      min-width: 0;
     }
 
-    .viewer {
+    .gallery-main {
       width: 100%;
-      border-radius: 20px;
+      border-radius: 26px;
       overflow: hidden;
-      background: #efe8dd;
-      aspect-ratio: 1 / 1.2;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: #ede7dc;
+      aspect-ratio: 1 / 1.22;
       margin-bottom: 14px;
+      box-shadow: var(--shadow);
     }
 
-    .viewer img,
-    .viewer video {
+    .gallery-main img,
+    .gallery-main video {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      background: #efe8dd;
+      background: #ede7dc;
     }
 
-    .thumb-list {
+    .thumbs {
       display: flex;
-      gap: 10px;
       flex-wrap: wrap;
+      gap: 10px;
     }
 
     .thumb-btn {
-      width: 74px;
-      height: 74px;
-      border-radius: 14px;
+      width: 78px;
+      height: 78px;
+      border-radius: 16px;
       overflow: hidden;
       border: 2px solid transparent;
-      background: #efe8dd;
-      cursor: pointer;
       padding: 0;
+      cursor: pointer;
+      background: #ede7dc;
       flex-shrink: 0;
     }
 
@@ -113,38 +124,43 @@
       object-fit: cover;
     }
 
-    .info-card,
-    .section {
-      background: #fff;
-      border-radius: 24px;
-      padding: 28px;
-      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.06);
+    .purchase-column {
+      min-width: 0;
+    }
+
+    .purchase-card {
+      position: sticky;
+      top: 20px;
+      background: var(--card);
+      border-radius: 28px;
+      padding: 30px;
+      box-shadow: var(--shadow);
     }
 
     .category {
       display: inline-block;
+      margin-bottom: 10px;
+      color: var(--point);
       font-size: 12px;
       font-weight: 800;
-      color: #9a7d4f;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      margin-bottom: 10px;
     }
 
     .title {
-      font-size: 32px;
+      font-size: 34px;
+      line-height: 1.28;
       font-weight: 900;
-      line-height: 1.25;
-      margin-bottom: 10px;
       word-break: keep-all;
+      margin-bottom: 10px;
     }
 
     .summary {
+      color: var(--muted);
       font-size: 14px;
-      color: #666;
-      margin-bottom: 14px;
       white-space: pre-line;
       word-break: keep-all;
+      margin-bottom: 16px;
     }
 
     .tag-row {
@@ -165,26 +181,33 @@
       font-weight: 800;
     }
 
-    .chip-dark {
+    .chip.dark {
       background: #111;
       color: #fff;
     }
 
-    .chip-soft {
-      background: #f4ede2;
-      color: #8b6230;
+    .chip.soft {
+      background: #f6efe5;
+      color: #876338;
     }
 
-    .price-box {
+    .price-wrap {
       display: flex;
-      align-items: end;
+      align-items: flex-end;
       gap: 10px;
       flex-wrap: wrap;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
 
-    .price {
-      font-size: 32px;
+    .discount-rate {
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--danger);
+      margin-bottom: 2px;
+    }
+
+    .main-price {
+      font-size: 34px;
       font-weight: 900;
       line-height: 1;
     }
@@ -196,22 +219,42 @@
       margin-bottom: 3px;
     }
 
-    .discount {
-      font-size: 15px;
-      font-weight: 800;
-      color: #c0392b;
-      margin-bottom: 2px;
+    .benefit-box {
+      display: grid;
+      gap: 10px;
+      padding: 16px;
+      border-radius: 20px;
+      background: #faf7f2;
+      border: 1px solid var(--line);
+      margin-bottom: 18px;
     }
 
-    .stock {
+    .benefit-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 14px;
+      align-items: center;
+    }
+
+    .benefit-row span {
+      color: var(--muted);
+    }
+
+    .benefit-row strong {
+      font-weight: 800;
+      text-align: right;
+      word-break: keep-all;
+    }
+
+    .stock-text {
       font-size: 14px;
       font-weight: 800;
-      margin-bottom: 20px;
-      color: #111;
+      margin-bottom: 18px;
     }
 
-    .stock.soldout {
-      color: #c0392b;
+    .stock-text.soldout {
+      color: var(--danger);
     }
 
     .desc {
@@ -219,13 +262,13 @@
       color: #555;
       white-space: pre-line;
       word-break: keep-all;
-      margin-bottom: 22px;
+      margin-bottom: 20px;
     }
 
     .divider {
       height: 1px;
-      background: #eee6da;
-      margin: 22px 0;
+      background: var(--line);
+      margin: 20px 0;
     }
 
     .form-group {
@@ -247,13 +290,14 @@
 
     .option-btn,
     .color-btn {
-      min-width: 74px;
+      min-width: 76px;
       min-height: 44px;
       padding: 10px 16px;
       border-radius: 999px;
-      border: 1px solid #ddd6ca;
+      border: 1px solid #ddd3c5;
       background: #fff;
       cursor: pointer;
+      font-size: 14px;
       font-weight: 800;
       color: #111;
     }
@@ -272,17 +316,10 @@
       cursor: not-allowed;
     }
 
-    .qty-row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
     .qty-box {
       display: inline-flex;
       align-items: center;
-      border: 1px solid #ddd6ca;
+      border: 1px solid #ddd3c5;
       border-radius: 999px;
       overflow: hidden;
       background: #fff;
@@ -302,17 +339,11 @@
       width: 60px;
       height: 42px;
       border: 0;
-      text-align: center;
       outline: none;
+      text-align: center;
+      font-size: 14px;
       font-weight: 800;
-    }
-
-    .error-text {
-      min-height: 18px;
-      margin-top: 8px;
-      font-size: 13px;
-      color: #c0392b;
-      font-weight: 700;
+      background: #fff;
     }
 
     .add-on-list {
@@ -325,10 +356,10 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      border: 1px solid #e7dfd3;
-      border-radius: 16px;
-      padding: 12px;
+      border: 1px solid #ece3d7;
+      border-radius: 18px;
       background: #fcfaf7;
+      padding: 12px;
     }
 
     .add-on-left {
@@ -346,11 +377,11 @@
     }
 
     .add-on-thumb {
-      width: 56px;
-      height: 56px;
+      width: 58px;
+      height: 58px;
       border-radius: 12px;
       object-fit: cover;
-      background: #efe8dd;
+      background: #ede7dc;
       flex-shrink: 0;
     }
 
@@ -361,21 +392,28 @@
     .add-on-name {
       font-size: 14px;
       font-weight: 800;
-      color: #111;
       word-break: keep-all;
     }
 
     .add-on-price {
       font-size: 13px;
-      color: #666;
+      color: var(--muted);
       margin-top: 2px;
     }
 
+    .error-text {
+      min-height: 18px;
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--danger);
+      font-weight: 700;
+    }
+
     .total-box {
-      margin-top: 24px;
-      background: #f4ede2;
-      border-radius: 18px;
+      margin-top: 22px;
       padding: 18px 20px;
+      border-radius: 20px;
+      background: #f2eadd;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -384,16 +422,16 @@
 
     .total-label {
       font-size: 14px;
-      color: #666;
+      color: var(--muted);
       font-weight: 700;
     }
 
     .total-price {
-      font-size: 28px;
+      font-size: 30px;
       font-weight: 900;
     }
 
-    .action-row {
+    .button-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
@@ -401,9 +439,9 @@
     }
 
     .action-btn {
-      height: 54px;
+      height: 56px;
       border: 0;
-      border-radius: 14px;
+      border-radius: 16px;
       cursor: pointer;
       font-size: 15px;
       font-weight: 900;
@@ -420,17 +458,53 @@
     }
 
     .action-btn:disabled {
-      background: #d9d2c8;
+      background: #d8d2c8;
       color: #7a7368;
       cursor: not-allowed;
     }
 
     .section {
       margin-top: 34px;
+      background: var(--card);
+      border-radius: 28px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+    }
+
+    .tab-nav {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+
+    .tab-btn {
+      min-height: 42px;
+      padding: 0 16px;
+      border-radius: 999px;
+      border: 1px solid #ddd3c5;
+      background: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .tab-btn.active {
+      background: #111;
+      color: #fff;
+      border-color: #111;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
     }
 
     .section-title {
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 900;
       margin-bottom: 18px;
     }
@@ -442,7 +516,7 @@
 
     .detail-images img {
       width: 100%;
-      border-radius: 18px;
+      border-radius: 20px;
     }
 
     .guide-block + .guide-block {
@@ -462,24 +536,20 @@
       word-break: keep-all;
     }
 
-    .empty {
-      font-size: 14px;
-      color: #777;
-    }
-
     .review-summary {
       display: grid;
       grid-template-columns: 220px 1fr;
-      gap: 24px;
-      margin-bottom: 24px;
+      gap: 22px;
       align-items: center;
+      margin-bottom: 24px;
     }
 
     .review-score-box {
+      border-radius: 22px;
       background: #faf7f2;
-      border-radius: 20px;
-      padding: 22px;
+      padding: 24px;
       text-align: center;
+      border: 1px solid var(--line);
     }
 
     .review-score {
@@ -489,19 +559,19 @@
       margin-bottom: 6px;
     }
 
-    .review-count {
-      font-size: 14px;
-      color: #666;
-      font-weight: 700;
-    }
-
     .star-row {
       display: flex;
-      gap: 2px;
       justify-content: center;
-      margin-bottom: 8px;
-      color: #c8a96b;
+      gap: 2px;
+      color: #c7a867;
       font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .review-count {
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 700;
     }
 
     .review-list,
@@ -512,16 +582,15 @@
 
     .review-item,
     .inquiry-item {
-      border: 1px solid #ece4d8;
+      border: 1px solid #ece3d7;
       border-radius: 18px;
-      padding: 18px;
       background: #fcfaf7;
+      padding: 18px;
     }
 
     .review-head,
     .inquiry-head {
       display: flex;
-      align-items: center;
       justify-content: space-between;
       gap: 12px;
       flex-wrap: wrap;
@@ -530,8 +599,8 @@
 
     .review-author,
     .inquiry-author {
-      font-weight: 800;
       font-size: 14px;
+      font-weight: 800;
     }
 
     .review-date,
@@ -548,53 +617,22 @@
       word-break: keep-all;
     }
 
-    .tab-nav {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
-
-    .tab-btn {
-      min-height: 42px;
-      padding: 0 16px;
-      border-radius: 999px;
-      border: 1px solid #ddd6ca;
-      background: #fff;
-      cursor: pointer;
-      font-weight: 800;
-    }
-
-    .tab-btn.active {
-      background: #111;
-      color: #fff;
-      border-color: #111;
-    }
-
-    .tab-panel {
-      display: none;
-    }
-
-    .tab-panel.active {
-      display: block;
-    }
-
     .inquiry-form {
       display: grid;
       gap: 12px;
       margin-top: 20px;
       padding-top: 20px;
-      border-top: 1px solid #eee6da;
+      border-top: 1px solid var(--line);
     }
 
     .text-input,
     .text-area {
       width: 100%;
-      border: 1px solid #ddd6ca;
+      border: 1px solid #ddd3c5;
       border-radius: 14px;
-      background: #fff;
       padding: 14px 16px;
       outline: none;
+      background: #fff;
     }
 
     .text-area {
@@ -620,17 +658,17 @@
 
     .recommend-card {
       display: block;
-      border-radius: 18px;
+      border-radius: 20px;
       overflow: hidden;
       background: #fcfaf7;
-      border: 1px solid #ece4d8;
+      border: 1px solid #ece3d7;
     }
 
     .recommend-thumb {
       width: 100%;
       aspect-ratio: 1 / 1.18;
       object-fit: cover;
-      background: #efe8dd;
+      background: #ede7dc;
     }
 
     .recommend-info {
@@ -641,7 +679,7 @@
       font-size: 14px;
       font-weight: 800;
       line-height: 1.45;
-      min-height: 40px;
+      min-height: 42px;
       word-break: keep-all;
       margin-bottom: 6px;
     }
@@ -651,12 +689,17 @@
       font-weight: 900;
     }
 
+    .empty {
+      color: #777;
+      font-size: 14px;
+    }
+
     @media (max-width: 980px) {
       .layout {
         grid-template-columns: 1fr;
       }
 
-      .gallery-area {
+      .purchase-card {
         position: static;
       }
 
@@ -671,27 +714,28 @@
 
     @media (max-width: 640px) {
       .page {
-        padding: 16px 14px 60px;
+        padding: 18px 14px 70px;
       }
 
-      .info-card,
+      .purchase-card,
       .section {
-        padding: 20px;
+        padding: 22px;
+        border-radius: 22px;
       }
 
       .title {
-        font-size: 26px;
-      }
-
-      .price {
         font-size: 28px;
       }
 
-      .total-price {
-        font-size: 24px;
+      .main-price {
+        font-size: 30px;
       }
 
-      .action-row {
+      .total-price {
+        font-size: 26px;
+      }
+
+      .button-row {
         grid-template-columns: 1fr;
       }
 
@@ -759,27 +803,29 @@
         ? Math.round((1 - Number(product.price || 0) / Number(product.oldPrice || 0)) * 100)
         : 0;
 
-    const fakeReviews = [
+    const rewardPoint = Math.floor(Number(product.price || 0) * 0.01);
+
+    const reviewSamples = [
       {
         author: 'damore***',
         date: '2026-04-18',
         rating: 5,
-        body: '핏이 진짜 예쁘고 원단이 생각보다 더 좋았어요. 데일리로 입기 좋습니다.'
+        body: '핏이 예쁘고 원단 퀄리티가 좋아서 만족했어요. 실제로 받아보니 더 괜찮았습니다.'
       },
       {
         author: 'style***',
         date: '2026-04-16',
         rating: 4,
-        body: '색감이 화면이랑 거의 비슷하고 사이즈도 정사이즈 느낌입니다.'
+        body: '색감이 화면이랑 비슷하고 데일리로 입기 좋아요. 정사이즈 느낌입니다.'
       }
     ];
 
-    const fakeInquiries = [
+    const inquirySamples = [
       {
         author: 'guest***',
         date: '2026-04-20',
         title: '배송 문의',
-        body: '오늘 주문하면 언제 출고되나요?'
+        body: '오늘 주문하면 언제쯤 출고될까요?'
       },
       {
         author: 'look***',
@@ -812,8 +858,8 @@
     </div>
 
     <div class="layout">
-      <div class="gallery-area">
-        <div class="viewer" id="galleryStage">
+      <div class="gallery-column">
+        <div class="gallery-main" id="galleryStage">
           <% if (galleryItems.length > 0) { %>
             <% if (galleryItems[0].type === 'video') { %>
               <video src="<%= galleryItems[0].src %>" controls playsinline preload="metadata"></video>
@@ -824,7 +870,7 @@
         </div>
 
         <% if (galleryItems.length > 1) { %>
-          <div class="thumb-list" id="thumbs">
+          <div class="thumbs" id="thumbs">
             <% galleryItems.forEach((item, index) => { %>
               <button
                 type="button"
@@ -843,102 +889,123 @@
         <% } %>
       </div>
 
-      <div class="info-card">
-        <% if (product.category) { %>
-          <div class="category"><%= product.category %></div>
-        <% } %>
-
-        <div class="title"><%= product.name %></div>
-
-        <% if (safeSummary) { %>
-          <div class="summary"><%= safeSummary %></div>
-        <% } %>
-
-        <div class="tag-row">
-          <% if (product.tag) { %>
-            <div class="chip chip-dark"><%= product.tag %></div>
+      <div class="purchase-column">
+        <div class="purchase-card">
+          <% if (product.category) { %>
+            <div class="category"><%= product.category %></div>
           <% } %>
 
-          <% if (product.couponDisplay && product.couponDisplay.enabled && product.couponDisplay.label) { %>
-            <div class="chip chip-soft"><%= product.couponDisplay.label %></div>
+          <div class="title"><%= product.name %></div>
+
+          <% if (safeSummary) { %>
+            <div class="summary"><%= safeSummary %></div>
           <% } %>
-        </div>
 
-        <div class="price-box">
-          <% if (discountRate > 0) { %>
-            <div class="discount"><%= discountRate %>%</div>
-          <% } %>
-          <div class="price"><%= Number(product.price || 0).toLocaleString() %>원</div>
-          <% if (Number(product.oldPrice || 0) > 0) { %>
-            <div class="old-price"><%= Number(product.oldPrice || 0).toLocaleString() %>원</div>
-          <% } %>
-        </div>
+          <div class="tag-row">
+            <% if (product.tag) { %>
+              <div class="chip dark"><%= product.tag %></div>
+            <% } %>
 
-        <div class="stock <%= isSoldOut ? 'soldout' : '' %>">
-          <% if (isSoldOut) { %>
-            품절된 상품입니다
-          <% } else { %>
-            재고 <%= Number(product.stock || 0) %>개 · <%= product.shippingFeeText || '무료배송' %>
-          <% } %>
-        </div>
+            <% if (product.couponDisplay && product.couponDisplay.enabled && product.couponDisplay.label) { %>
+              <div class="chip soft"><%= product.couponDisplay.label %></div>
+            <% } %>
+          </div>
 
-        <% if (safeDesc) { %>
-          <div class="desc"><%= safeDesc %></div>
-        <% } %>
+          <div class="price-wrap">
+            <% if (discountRate > 0) { %>
+              <div class="discount-rate"><%= discountRate %>%</div>
+            <% } %>
+            <div class="main-price"><%= Number(product.price || 0).toLocaleString() %>원</div>
+            <% if (Number(product.oldPrice || 0) > 0) { %>
+              <div class="old-price"><%= Number(product.oldPrice || 0).toLocaleString() %>원</div>
+            <% } %>
+          </div>
 
-        <div class="divider"></div>
-
-        <form id="productForm" method="POST">
-          <input type="hidden" name="productId" value="<%= product._id %>">
-          <input type="hidden" name="selectedOption" id="selectedOptionInput" value="">
-          <input type="hidden" name="option" id="legacyOptionInput" value="">
-          <input type="hidden" name="selectedColor" id="selectedColorInput" value="">
-          <input type="hidden" name="quantity" id="quantityHidden" value="1">
-          <input type="hidden" name="selectedAddOnIds" id="selectedAddOnIdsInput" value="">
-          <input type="hidden" name="selectedAddOnNames" id="selectedAddOnNamesInput" value="">
-          <input type="hidden" name="selectedAddOnTotal" id="selectedAddOnTotalInput" value="0">
-
-          <% if (firstGroup && Array.isArray(firstGroup.values) && firstGroup.values.length > 0) { %>
-            <div class="form-group">
-              <label class="label"><%= firstGroup.name || '옵션 선택' %></label>
-              <div class="option-wrap" id="optionWrap">
-                <% firstGroup.values.forEach((item) => { %>
-                  <button
-                    type="button"
-                    class="option-btn <%= item.isSoldOut ? 'soldout' : '' %>"
-                    data-option="<%= item.value %>"
-                    data-soldout="<%= item.isSoldOut ? 'true' : 'false' %>"
-                  >
-                    <%= item.value %>
-                  </button>
-                <% }) %>
-              </div>
-              <div class="error-text" id="optionError"></div>
+          <div class="benefit-box">
+            <div class="benefit-row">
+              <span>적립혜택</span>
+              <strong>최대 <%= rewardPoint.toLocaleString() %>원 적립</strong>
             </div>
-          <% } %>
-
-          <% if (secondGroup && Array.isArray(secondGroup.values) && secondGroup.values.length > 0) { %>
-            <div class="form-group">
-              <label class="label"><%= secondGroup.name || '컬러 선택' %></label>
-              <div class="option-wrap" id="colorWrap">
-                <% secondGroup.values.forEach((item) => { %>
-                  <button
-                    type="button"
-                    class="color-btn <%= item.isSoldOut ? 'soldout' : '' %>"
-                    data-color="<%= item.value %>"
-                    data-soldout="<%= item.isSoldOut ? 'true' : 'false' %>"
-                  >
-                    <%= item.value %>
-                  </button>
-                <% }) %>
-              </div>
-              <div class="error-text" id="colorError"></div>
+            <div class="benefit-row">
+              <span>배송안내</span>
+              <strong><%= product.shippingFeeText || '무료배송' %></strong>
             </div>
+            <div class="benefit-row">
+              <span>혜택안내</span>
+              <strong>
+                <% if (product.couponDisplay && product.couponDisplay.enabled && product.couponDisplay.label) { %>
+                  <%= product.couponDisplay.label %>
+                <% } else { %>
+                  회원 혜택 적용 가능
+                <% } %>
+              </strong>
+            </div>
+          </div>
+
+          <div class="stock-text <%= isSoldOut ? 'soldout' : '' %>">
+            <% if (isSoldOut) { %>
+              품절된 상품입니다
+            <% } else { %>
+              현재 구매 가능 · 재고 <%= Number(product.stock || 0) %>개
+            <% } %>
+          </div>
+
+          <% if (safeDesc) { %>
+            <div class="desc"><%= safeDesc %></div>
           <% } %>
 
-          <div class="form-group">
-            <label class="label">수량</label>
-            <div class="qty-row">
+          <div class="divider"></div>
+
+          <form id="productForm" method="POST">
+            <input type="hidden" name="productId" value="<%= product._id %>">
+            <input type="hidden" name="selectedOption" id="selectedOptionInput" value="">
+            <input type="hidden" name="option" id="legacyOptionInput" value="">
+            <input type="hidden" name="selectedColor" id="selectedColorInput" value="">
+            <input type="hidden" name="quantity" id="quantityHidden" value="1">
+            <input type="hidden" name="selectedAddOnIds" id="selectedAddOnIdsInput" value="">
+            <input type="hidden" name="selectedAddOnNames" id="selectedAddOnNamesInput" value="">
+            <input type="hidden" name="selectedAddOnTotal" id="selectedAddOnTotalInput" value="0">
+
+            <% if (firstGroup && Array.isArray(firstGroup.values) && firstGroup.values.length > 0) { %>
+              <div class="form-group">
+                <label class="label"><%= firstGroup.name || '옵션 선택' %></label>
+                <div class="option-wrap" id="optionWrap">
+                  <% firstGroup.values.forEach((item) => { %>
+                    <button
+                      type="button"
+                      class="option-btn <%= item.isSoldOut ? 'soldout' : '' %>"
+                      data-option="<%= item.value %>"
+                      data-soldout="<%= item.isSoldOut ? 'true' : 'false' %>"
+                    >
+                      <%= item.value %>
+                    </button>
+                  <% }) %>
+                </div>
+                <div class="error-text" id="optionError"></div>
+              </div>
+            <% } %>
+
+            <% if (secondGroup && Array.isArray(secondGroup.values) && secondGroup.values.length > 0) { %>
+              <div class="form-group">
+                <label class="label"><%= secondGroup.name || '컬러 선택' %></label>
+                <div class="option-wrap" id="colorWrap">
+                  <% secondGroup.values.forEach((item) => { %>
+                    <button
+                      type="button"
+                      class="color-btn <%= item.isSoldOut ? 'soldout' : '' %>"
+                      data-color="<%= item.value %>"
+                      data-soldout="<%= item.isSoldOut ? 'true' : 'false' %>"
+                    >
+                      <%= item.value %>
+                    </button>
+                  <% }) %>
+                </div>
+                <div class="error-text" id="colorError"></div>
+              </div>
+            <% } %>
+
+            <div class="form-group">
+              <label class="label">수량</label>
               <div class="qty-box">
                 <button type="button" class="qty-btn" id="minusBtn">-</button>
                 <input
@@ -952,63 +1019,65 @@
                 <button type="button" class="qty-btn" id="plusBtn">+</button>
               </div>
             </div>
-          </div>
 
-          <% if (safeAddOnProducts.length > 0) { %>
-            <div class="form-group">
-              <label class="label">추가상품</label>
-              <div class="add-on-list" id="addOnList">
-                <% safeAddOnProducts.forEach((item) => { %>
-                  <label class="add-on-item">
-                    <div class="add-on-left">
-                      <input
-                        type="checkbox"
-                        class="add-on-check"
-                        data-id="<%= item._id %>"
-                        data-name="<%= item.name %>"
-                        data-price="<%= Number(item.price || 0) %>"
-                      />
-                      <% if (item.image) { %>
-                        <img src="<%= item.image %>" alt="<%= item.name %>" class="add-on-thumb">
-                      <% } else { %>
-                        <div class="add-on-thumb"></div>
-                      <% } %>
-                      <div class="add-on-info">
-                        <div class="add-on-name"><%= item.name %></div>
-                        <div class="add-on-price"><%= Number(item.price || 0).toLocaleString() %>원</div>
+            <% if (safeAddOnProducts.length > 0) { %>
+              <div class="form-group">
+                <label class="label">추가상품</label>
+                <div class="add-on-list" id="addOnList">
+                  <% safeAddOnProducts.forEach((item) => { %>
+                    <label class="add-on-item">
+                      <div class="add-on-left">
+                        <input
+                          type="checkbox"
+                          class="add-on-check"
+                          data-id="<%= item._id %>"
+                          data-name="<%= item.name %>"
+                          data-price="<%= Number(item.price || 0) %>"
+                        />
+
+                        <% if (item.image) { %>
+                          <img src="<%= item.image %>" alt="<%= item.name %>" class="add-on-thumb">
+                        <% } else { %>
+                          <div class="add-on-thumb"></div>
+                        <% } %>
+
+                        <div class="add-on-info">
+                          <div class="add-on-name"><%= item.name %></div>
+                          <div class="add-on-price"><%= Number(item.price || 0).toLocaleString() %>원</div>
+                        </div>
                       </div>
-                    </div>
-                  </label>
-                <% }) %>
+                    </label>
+                  <% }) %>
+                </div>
               </div>
+            <% } %>
+
+            <div class="total-box">
+              <div class="total-label">총 상품금액</div>
+              <div class="total-price" id="totalPrice"><%= Number(product.price || 0).toLocaleString() %>원</div>
             </div>
-          <% } %>
 
-          <div class="total-box">
-            <div class="total-label">총 상품금액</div>
-            <div class="total-price" id="totalPrice"><%= Number(product.price || 0).toLocaleString() %>원</div>
-          </div>
+            <div class="button-row">
+              <button
+                type="button"
+                class="action-btn light"
+                id="cartBtn"
+                <%= isSoldOut ? 'disabled' : '' %>
+              >
+                장바구니 담기
+              </button>
 
-          <div class="action-row">
-            <button
-              type="button"
-              class="action-btn light"
-              id="cartBtn"
-              <%= isSoldOut ? 'disabled' : '' %>
-            >
-              장바구니 담기
-            </button>
-
-            <button
-              type="button"
-              class="action-btn dark"
-              id="buyBtn"
-              <%= isSoldOut ? 'disabled' : '' %>
-            >
-              바로구매
-            </button>
-          </div>
-        </form>
+              <button
+                type="button"
+                class="action-btn dark"
+                id="buyBtn"
+                <%= isSoldOut ? 'disabled' : '' %>
+              >
+                바로구매
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
 
@@ -1029,9 +1098,46 @@
             <% }) %>
           </div>
         <% } else if (safeDesc) { %>
-          <div class="desc"><%= safeDesc %></div>
+          <div class="guide-text"><%= safeDesc %></div>
         <% } else { %>
           <div class="empty">등록된 상세 정보가 없습니다.</div>
+        <% } %>
+
+        <% if (
+          (product.guide && product.guide.sizeGuideImage) ||
+          (product.guide && product.guide.washImage) ||
+          (product.guide && product.guide.shippingExchangeReturn) ||
+          (product.guide && product.guide.copyrightNotice)
+        ) { %>
+          <div style="margin-top:32px;">
+            <% if (product.guide && product.guide.sizeGuideImage) { %>
+              <div class="guide-block">
+                <div class="guide-label">사이즈 가이드</div>
+                <img src="<%= product.guide.sizeGuideImage %>" alt="사이즈 가이드" style="border-radius:20px;">
+              </div>
+            <% } %>
+
+            <% if (product.guide && product.guide.washImage) { %>
+              <div class="guide-block">
+                <div class="guide-label">세탁 안내</div>
+                <img src="<%= product.guide.washImage %>" alt="세탁 안내" style="border-radius:20px;">
+              </div>
+            <% } %>
+
+            <% if (product.guide && product.guide.shippingExchangeReturn) { %>
+              <div class="guide-block">
+                <div class="guide-label">배송 / 교환 / 반품 안내</div>
+                <div class="guide-text"><%= product.guide.shippingExchangeReturn %></div>
+              </div>
+            <% } %>
+
+            <% if (product.guide && product.guide.copyrightNotice) { %>
+              <div class="guide-block">
+                <div class="guide-label">저작권 안내</div>
+                <div class="guide-text"><%= product.guide.copyrightNotice %></div>
+              </div>
+            <% } %>
+          </div>
         <% } %>
       </div>
 
@@ -1042,17 +1148,17 @@
           <div class="review-score-box">
             <div class="review-score">4.8</div>
             <div class="star-row">★★★★★</div>
-            <div class="review-count">총 <%= Number(product.reviewCount || fakeReviews.length) %>개 리뷰</div>
+            <div class="review-count">총 <%= Number(product.reviewCount || reviewSamples.length) %>개 리뷰</div>
           </div>
 
-          <div class="desc" style="margin:0;">
-            구매 고객들이 만족한 상품이에요.  
-            원단, 핏, 착용감 관련 반응이 좋은 편입니다.
+          <div class="guide-text">
+            실제 구매 고객 기준으로 핏, 원단, 착용감 만족도가 높은 상품입니다.
+            여성의류 쇼핑몰 느낌으로 리뷰 요약 영역까지 들어간 구성입니다.
           </div>
         </div>
 
         <div class="review-list">
-          <% fakeReviews.forEach((review) => { %>
+          <% reviewSamples.forEach((review) => { %>
             <div class="review-item">
               <div class="review-head">
                 <div class="review-author"><%= review.author %></div>
@@ -1071,7 +1177,7 @@
         <div class="section-title">상품 문의</div>
 
         <div class="inquiry-list">
-          <% fakeInquiries.forEach((item) => { %>
+          <% inquirySamples.forEach((item) => { %>
             <div class="inquiry-item">
               <div class="inquiry-head">
                 <div class="inquiry-author"><%= item.author %> · <%= item.title %></div>
@@ -1082,52 +1188,13 @@
           <% }) %>
         </div>
 
-        <form class="inquiry-form" onsubmit="event.preventDefault(); alert('문의 등록 기능은 다음 단계에서 연결하면 됨');">
+        <form class="inquiry-form" onsubmit="event.preventDefault(); alert('문의 저장 기능은 다음 단계에서 연결하면 됨');">
           <input class="text-input" type="text" placeholder="문의 제목">
           <textarea class="text-area" placeholder="문의 내용을 입력하세요"></textarea>
           <button class="submit-btn" type="submit">문의 등록</button>
         </form>
       </div>
     </div>
-
-    <% if (
-      (product.guide && product.guide.sizeGuideImage) ||
-      (product.guide && product.guide.washImage) ||
-      (product.guide && product.guide.shippingExchangeReturn) ||
-      (product.guide && product.guide.copyrightNotice)
-    ) { %>
-      <div class="section">
-        <div class="section-title">구매 안내</div>
-
-        <% if (product.guide && product.guide.sizeGuideImage) { %>
-          <div class="guide-block">
-            <div class="guide-label">사이즈 가이드</div>
-            <img src="<%= product.guide.sizeGuideImage %>" alt="사이즈 가이드">
-          </div>
-        <% } %>
-
-        <% if (product.guide && product.guide.washImage) { %>
-          <div class="guide-block">
-            <div class="guide-label">세탁 안내</div>
-            <img src="<%= product.guide.washImage %>" alt="세탁 안내">
-          </div>
-        <% } %>
-
-        <% if (product.guide && product.guide.shippingExchangeReturn) { %>
-          <div class="guide-block">
-            <div class="guide-label">배송 / 교환 / 반품 안내</div>
-            <div class="guide-text"><%= product.guide.shippingExchangeReturn %></div>
-          </div>
-        <% } %>
-
-        <% if (product.guide && product.guide.copyrightNotice) { %>
-          <div class="guide-block">
-            <div class="guide-label">저작권 안내</div>
-            <div class="guide-text"><%= product.guide.copyrightNotice %></div>
-          </div>
-        <% } %>
-      </div>
-    <% } %>
 
     <% if (recommendProducts.length > 0) { %>
       <div class="section">
