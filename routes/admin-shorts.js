@@ -10,20 +10,25 @@ const router = express.Router();
 const ShortsItem = require('../models/ShortsItem');
 const Product = require('../models/Product');
 
-ffmpeg.setFfmpegPath(ffmpegPath);
+if (ffmpegPath) {
+  ffmpeg.setFfmpegPath(ffmpegPath);
+}
 
 function checkAdmin(req, res, next) {
-  if (!req.session.adminId) {
+  if (!req.session || !req.session.adminId) {
     return res.redirect('/login');
   }
   next();
 }
 
 const uploadDir = path.join(__dirname, '../public/uploads/shorts');
-const convertedDir = path.join(__dirname, '../public/uploads/shorts');
-
 fs.mkdirSync(uploadDir, { recursive: true });
-fs.mkdirSync(convertedDir, { recursive: true });
+
+function sanitizeFileName(name) {
+  return String(name || 'video')
+    .replace(/\s+/g, '-')
+    .replace(/[^a-zA-Z0-9-_가-힣]/g, '');
+}
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -31,11 +36,7 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname || '').toLowerCase();
-    const baseName = path
-      .basename(file.originalname || 'video', ext)
-      .replace(/\s+/g, '-')
-      .replace(/[^a-zA-Z0-9-_가-힣]/g, '');
-
+    const baseName = sanitizeFileName(path.basename(file.originalname || 'video', ext));
     cb(null, `${Date.now()}-${baseName}${ext}`);
   }
 });
@@ -53,7 +54,7 @@ const upload = multer({
       return cb(null, true);
     }
 
-    cb(new Error('지원하지 않는 영상 형식입니다.'));
+    return cb(new Error('지원하지 않는 영상 형식입니다.'));
   }
 });
 
@@ -67,10 +68,19 @@ function unlinkIfExists(filePath) {
   }
 }
 
+function publicPathToAbsolutePath(publicPath) {
+  return path.join(__dirname, '../public', String(publicPath || '').replace(/^\//, ''));
+}
+
+function toPublicPath(file) {
+  if (!file) return '';
+  return `/uploads/shorts/${file.filename}`;
+}
+
 function convertVideoToMp4(inputPath) {
   return new Promise((resolve, reject) => {
     const outputName = `${Date.now()}-converted.mp4`;
-    const outputPath = path.join(convertedDir, outputName);
+    const outputPath = path.join(uploadDir, outputName);
 
     ffmpeg(inputPath)
       .videoCodec('libx264')
@@ -95,7 +105,7 @@ function convertVideoToMp4(inputPath) {
   });
 }
 
-async function buildShortPayload(body, uploadedVideoPublicPath) {
+async function buildShortPayload(body, videoPath, existingShort = null) {
   const productId = String(body.productId || '').trim();
   let product = null;
 
@@ -105,9 +115,9 @@ async function buildShortPayload(body, uploadedVideoPublicPath) {
 
   return {
     title: String(body.title || '').trim(),
-    brandLabel: 'DAMORE SHORTS',
-    video: uploadedVideoPublicPath || '',
-    poster: '',
+    brandLabel: String(body.brandLabel || existingShort?.brandLabel || 'DAMORE SHORTS').trim() || 'DAMORE SHORTS',
+    video: String(videoPath || existingShort?.video || '').trim(),
+    poster: product ? (product.image || '') : String(existingShort?.poster || '').trim(),
     link: product ? `/products/${product._id}` : '/about',
     productId: product ? product._id : null,
     productTitle: product ? product.name : '',
@@ -135,7 +145,10 @@ router.get('/', checkAdmin, async (req, res) => {
 // 등록 페이지
 router.get('/new', checkAdmin, async (req, res) => {
   try {
-    const products = await Product.find().sort({ createdAt: -1 }).limit(300);
+    const products = await Product.find()
+      .select('_id name price image')
+      .sort({ createdAt: -1 })
+      .limit(300);
 
     res.render('admin/shorts/form', {
       mode: 'create',
@@ -151,6 +164,7 @@ router.get('/new', checkAdmin, async (req, res) => {
 // 등록 처리
 router.post('/new', checkAdmin, upload.single('videoFile'), async (req, res) => {
   let uploadedInputPath = '';
+  let convertedOutputPath = '';
 
   try {
     const uploadedVideo = req.file;
@@ -161,17 +175,25 @@ router.post('/new', checkAdmin, upload.single('videoFile'), async (req, res) => 
 
     uploadedInputPath = uploadedVideo.path;
 
-    const converted = await convertVideoToMp4(uploadedInputPath);
-    const payload = await buildShortPayload(req.body, converted.publicPath);
+    const ext = path.extname(uploadedVideo.originalname || '').toLowerCase();
+    let finalPublicPath = toPublicPath(uploadedVideo);
 
+    if (ext !== '.mp4') {
+      const converted = await convertVideoToMp4(uploadedInputPath);
+      convertedOutputPath = converted.outputPath;
+      finalPublicPath = converted.publicPath;
+      unlinkIfExists(uploadedInputPath);
+      uploadedInputPath = '';
+    }
+
+    const payload = await buildShortPayload(req.body, finalPublicPath);
     await ShortsItem.create(payload);
-
-    unlinkIfExists(uploadedInputPath);
 
     res.redirect('/admin/shorts');
   } catch (error) {
     console.error(error);
     unlinkIfExists(uploadedInputPath);
+    unlinkIfExists(convertedOutputPath);
     res.status(500).send(error.message || '숏폼 등록 오류');
   }
 });
@@ -180,11 +202,15 @@ router.post('/new', checkAdmin, upload.single('videoFile'), async (req, res) => 
 router.get('/:id/edit', checkAdmin, async (req, res) => {
   try {
     const short = await ShortsItem.findById(req.params.id);
+
     if (!short) {
       return res.status(404).send('숏폼을 찾을 수 없습니다.');
     }
 
-    const products = await Product.find().sort({ createdAt: -1 }).limit(300);
+    const products = await Product.find()
+      .select('_id name price image')
+      .sort({ createdAt: -1 })
+      .limit(300);
 
     res.render('admin/shorts/form', {
       mode: 'edit',
@@ -200,36 +226,44 @@ router.get('/:id/edit', checkAdmin, async (req, res) => {
 // 수정 처리
 router.post('/:id/edit', checkAdmin, upload.single('videoFile'), async (req, res) => {
   let uploadedInputPath = '';
+  let convertedOutputPath = '';
 
   try {
     const short = await ShortsItem.findById(req.params.id);
+
     if (!short) {
       return res.status(404).send('숏폼을 찾을 수 없습니다.');
     }
 
-    const uploadedVideo = req.file;
     let finalVideoPath = short.video || '';
+    const uploadedVideo = req.file;
 
     if (uploadedVideo) {
       uploadedInputPath = uploadedVideo.path;
 
-      const converted = await convertVideoToMp4(uploadedInputPath);
-      finalVideoPath = converted.publicPath;
+      const ext = path.extname(uploadedVideo.originalname || '').toLowerCase();
 
-      if (short.video) {
-        const oldVideoPath = path.join(__dirname, '../public', short.video.replace(/^\//, ''));
-        unlinkIfExists(oldVideoPath);
+      if (ext === '.mp4') {
+        finalVideoPath = toPublicPath(uploadedVideo);
+      } else {
+        const converted = await convertVideoToMp4(uploadedInputPath);
+        convertedOutputPath = converted.outputPath;
+        finalVideoPath = converted.publicPath;
+        unlinkIfExists(uploadedInputPath);
+        uploadedInputPath = '';
       }
 
-      unlinkIfExists(uploadedInputPath);
+      if (short.video && short.video !== finalVideoPath) {
+        unlinkIfExists(publicPathToAbsolutePath(short.video));
+      }
     }
 
-    const payload = await buildShortPayload(req.body, finalVideoPath);
+    const payload = await buildShortPayload(req.body, finalVideoPath, short);
 
     short.title = payload.title;
     short.brandLabel = payload.brandLabel;
     short.video = payload.video;
-    short.poster = '';
+    short.poster = payload.poster;
     short.link = payload.link;
     short.productId = payload.productId;
     short.productTitle = payload.productTitle;
@@ -244,9 +278,11 @@ router.post('/:id/edit', checkAdmin, upload.single('videoFile'), async (req, res
   } catch (error) {
     console.error(error);
     unlinkIfExists(uploadedInputPath);
+    unlinkIfExists(convertedOutputPath);
     res.status(500).send(error.message || '숏폼 수정 오류');
   }
 });
+
 // 노출/숨김 토글
 router.post('/:id/toggle-visible', checkAdmin, async (req, res) => {
   try {
@@ -265,14 +301,14 @@ router.post('/:id/toggle-visible', checkAdmin, async (req, res) => {
     res.status(500).send('숏폼 노출 상태 변경 오류');
   }
 });
+
 // 삭제
 router.post('/:id/delete', checkAdmin, async (req, res) => {
   try {
     const short = await ShortsItem.findById(req.params.id);
 
-    if (short && short.video) {
-      const videoPath = path.join(__dirname, '../public', short.video.replace(/^\//, ''));
-      unlinkIfExists(videoPath);
+    if (short?.video) {
+      unlinkIfExists(publicPathToAbsolutePath(short.video));
     }
 
     await ShortsItem.findByIdAndDelete(req.params.id);
