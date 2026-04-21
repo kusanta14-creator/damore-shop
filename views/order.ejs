@@ -198,33 +198,74 @@
       font-weight: 700;
     }
 
-    .summary-item {
-      padding: 14px 0;
-      border-bottom: 1px solid var(--line);
+    .summary-list {
+      display: grid;
+      gap: 14px;
     }
 
-    .summary-item:last-child {
-      border-bottom: 0;
+    .summary-item {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: #fcfaf7;
+    }
+
+    .summary-top {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .summary-thumb {
+      width: 88px;
+      height: 104px;
+      border-radius: 16px;
+      object-fit: cover;
+      background: #efe9df;
+      flex-shrink: 0;
+    }
+
+    .summary-content {
+      flex: 1;
+      min-width: 0;
     }
 
     .summary-name {
       font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 6px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      line-height: 1.45;
+      word-break: keep-all;
     }
 
     .summary-meta {
       font-size: 13px;
       color: var(--muted);
       margin-bottom: 4px;
+      line-height: 1.7;
     }
 
-    .summary-meta-line {
-      margin-bottom: 4px;
+    .summary-price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .summary-unit {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .summary-price {
+      font-size: 15px;
+      font-weight: 900;
     }
 
     .add-on-box {
-      margin-top: 8px;
+      margin-top: 10px;
       padding: 10px 12px;
       border-radius: 12px;
       background: #faf8f4;
@@ -236,11 +277,6 @@
 
     .add-on-box strong {
       color: var(--black);
-    }
-
-    .summary-price {
-      font-size: 14px;
-      font-weight: 800;
     }
 
     .price-box {
@@ -264,8 +300,29 @@
     }
 
     .price-total {
-      font-size: 19px;
-      font-weight: 800;
+      margin-top: 4px;
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .total-highlight {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 18px;
+      background: #f1eadf;
+      border: 1px solid var(--line);
+    }
+
+    .total-highlight small {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .total-highlight strong {
+      font-size: 28px;
+      font-weight: 900;
     }
 
     .order-note {
@@ -320,12 +377,24 @@
       .top-btn {
         width: 100%;
       }
+
+      .summary-top {
+        flex-direction: column;
+      }
+
+      .summary-thumb {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1 / 1.1;
+      }
     }
   </style>
 </head>
 <body>
   <%
-    const hasStockIssue = (cart || []).some((item) => {
+    const safeCart = Array.isArray(cart) ? cart : [];
+
+    const hasStockIssue = safeCart.some((item) => {
       const stock = Number(item.stock || 0);
       const qty = Number(item.quantity || 0);
       return stock <= 0 || qty > stock;
@@ -335,11 +404,11 @@
     const defaultName =
       typeof currentUser !== 'undefined' && currentUser ? currentUser.name : '';
 
-    const productOnlyTotal = (cart || []).reduce((sum, item) => {
+    const productOnlyTotal = safeCart.reduce((sum, item) => {
       return sum + (Number(item.price || 0) * Number(item.quantity || 0));
     }, 0);
 
-    const addOnGrandTotal = (cart || []).reduce((sum, item) => {
+    const addOnGrandTotal = safeCart.reduce((sum, item) => {
       return sum + Number(item.addOnTotal || 0);
     }, 0);
   %>
@@ -349,7 +418,7 @@
       <div class="page-head">
         <small>Checkout</small>
         <h1>주문서 작성</h1>
-        <p>결제 연동 전 단계로, 지금은 주문서 UX를 먼저 완성하는 중입니다.</p>
+        <p>결제 연동 전 단계로, 주문 정보 입력과 주문 요약 UX를 먼저 완성한 상태입니다.</p>
       </div>
 
       <div class="top-actions">
@@ -358,8 +427,8 @@
       </div>
 
       <div class="guide-box">
-        현재는 결제 기능을 잠시 보류하고 주문서 화면을 먼저 마감하는 단계입니다.<br />
-        입력 UX, 주문 요약, 이동 버튼 등을 먼저 정리한 버전입니다.
+        현재는 주문서 화면을 먼저 완성하는 단계입니다.<br />
+        결제 기능은 사업자 등록 및 실결제 전환 이후 연결하면 됩니다.
       </div>
 
       <% if (hasStockIssue) { %>
@@ -420,69 +489,101 @@
           </form>
 
           <div class="order-note">
-            결제 기능은 사업자 등록 이후 연동 예정입니다.<br />
-            현재는 주문서 입력 UX와 사용자 흐름을 먼저 정리하는 단계입니다.
+            지금은 주문서 UX를 먼저 완성하는 단계입니다.<br />
+            결제 기능은 다음 단계에서 토스와 연결하면 됩니다.
           </div>
         </div>
 
         <div class="card">
           <h2 class="section-title">주문 상품</h2>
 
-          <% cart.forEach((item) => { %>
-            <%
-              const addOnNames = Array.isArray(item.addOnNames) ? item.addOnNames : [];
-              const addOnTotal = Number(item.addOnTotal || 0);
-              const lineTotal = (Number(item.price || 0) * Number(item.quantity || 0)) + addOnTotal;
-            %>
+          <div class="summary-list">
+            <% safeCart.forEach((item) => { %>
+              <%
+                const addOnNames = Array.isArray(item.addOnNames) ? item.addOnNames : [];
+                const addOnTotal = Number(item.addOnTotal || 0);
+                const lineProductTotal = Number(item.price || 0) * Number(item.quantity || 0);
+                const lineTotal = lineProductTotal + addOnTotal;
+              %>
 
-            <div class="summary-item">
-              <div class="summary-name"><%= item.name %></div>
+              <div class="summary-item">
+                <div class="summary-top">
+                  <% if (item.image) { %>
+                    <img src="<%= item.image %>" alt="<%= item.name %>" class="summary-thumb">
+                  <% } else { %>
+                    <div class="summary-thumb"></div>
+                  <% } %>
 
-              <div class="summary-meta">
-                <% if (item.option) { %>
-                  <div class="summary-meta-line">옵션: <%= item.option %></div>
-                <% } %>
+                  <div class="summary-content">
+                    <div class="summary-name"><%= item.name %></div>
 
-                <% if (item.color) { %>
-                  <div class="summary-meta-line">컬러: <%= item.color %></div>
-                <% } %>
-
-                <div class="summary-meta-line">수량: <%= item.quantity %></div>
-
-                <% if (addOnNames.length > 0) { %>
-                  <div class="add-on-box">
-                    <strong>추가상품</strong><br />
-                    <%= addOnNames.join(', ') %>
-                    <% if (addOnTotal > 0) { %>
-                      <br />추가금액: <strong><%= addOnTotal.toLocaleString() %>원</strong>
+                    <% if (item.option) { %>
+                      <div class="summary-meta">옵션: <%= item.option %></div>
                     <% } %>
-                  </div>
-                <% } %>
-              </div>
 
-              <div class="summary-price">
-                <%= lineTotal.toLocaleString() %>원
+                    <% if (item.color) { %>
+                      <div class="summary-meta">컬러: <%= item.color %></div>
+                    <% } %>
+
+                    <div class="summary-meta">수량: <%= item.quantity %>개</div>
+
+                    <% if (typeof item.stock !== 'undefined') { %>
+                      <div class="summary-meta">
+                        현재 재고:
+                        <%= Number(item.stock || 0) %>개
+                        <% if (Number(item.stock || 0) <= 0 || Number(item.quantity || 0) > Number(item.stock || 0)) { %>
+                          <span style="color:#b23a2c; font-weight:800;">(주문 불가)</span>
+                        <% } %>
+                      </div>
+                    <% } %>
+
+                    <% if (addOnNames.length > 0) { %>
+                      <div class="add-on-box">
+                        <strong>추가상품</strong><br />
+                        <%= addOnNames.join(', ') %>
+                        <% if (addOnTotal > 0) { %>
+                          <br />추가금액: <strong><%= addOnTotal.toLocaleString() %>원</strong>
+                        <% } %>
+                      </div>
+                    <% } %>
+
+                    <div class="summary-price-row">
+                      <div class="summary-unit">
+                        상품금액 <%= Number(item.price || 0).toLocaleString() %>원 × <%= item.quantity %>
+                      </div>
+                      <div class="summary-price"><%= lineTotal.toLocaleString() %>원</div>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          <% }) %>
+            <% }) %>
+          </div>
 
           <div class="price-box">
             <div class="price-row">
               <span>상품 합계</span>
               <strong><%= productOnlyTotal.toLocaleString() %>원</strong>
             </div>
+
             <div class="price-row">
               <span>추가상품 합계</span>
               <strong><%= addOnGrandTotal.toLocaleString() %>원</strong>
             </div>
+
             <div class="price-row">
               <span>배송비</span>
               <strong>0원</strong>
             </div>
+
             <div class="price-total">
               <span>최종 금액</span>
               <span><%= safeTotalPrice.toLocaleString() %>원</span>
             </div>
+          </div>
+
+          <div class="total-highlight">
+            <small>최종 결제 예정 금액</small>
+            <strong><%= safeTotalPrice.toLocaleString() %>원</strong>
           </div>
         </div>
       </div>
@@ -559,7 +660,7 @@
 
         alert(
           '주문서 입력이 확인되었습니다.\\n\\n' +
-          '결제 기능은 사업자 등록 후 연동 예정입니다.'
+          '결제 기능은 다음 단계에서 연결하면 됩니다.'
         );
       });
     </script>
