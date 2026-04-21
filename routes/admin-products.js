@@ -17,17 +17,19 @@ function checkAdmin(req, res, next) {
 const uploadDir = path.join(__dirname, '../public/uploads/products');
 fs.mkdirSync(uploadDir, { recursive: true });
 
+function sanitizeFileName(name) {
+  return String(name || 'file')
+    .replace(/\s+/g, '-')
+    .replace(/[^a-zA-Z0-9-_가-힣]/g, '');
+}
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname || '').toLowerCase();
-    const baseName = path
-      .basename(file.originalname || 'file', ext)
-      .replace(/\s+/g, '-')
-      .replace(/[^a-zA-Z0-9-_가-힣]/g, '');
-
+    const baseName = sanitizeFileName(path.basename(file.originalname || 'file', ext));
     cb(null, `${Date.now()}-${baseName}${ext}`);
   }
 });
@@ -40,12 +42,11 @@ const upload = multer({
   fileFilter: (req, file, cb) => {
     const imageExts = ['.jpg', '.jpeg', '.png', '.webp'];
     const videoExts = ['.mp4', '.mov', '.webm', '.m4v'];
-
     const ext = path.extname(file.originalname || '').toLowerCase();
 
     if (
-      ['imageFile', 'subImageFiles', 'detailImageFiles', 'washImageFile', 'sizeGuideImageFile'].includes(file.fieldname)
-      && imageExts.includes(ext)
+      ['imageFile', 'subImageFiles', 'detailImageFiles', 'washImageFile', 'sizeGuideImageFile'].includes(file.fieldname) &&
+      imageExts.includes(ext)
     ) {
       return cb(null, true);
     }
@@ -54,7 +55,7 @@ const upload = multer({
       return cb(null, true);
     }
 
-    cb(new Error('지원하지 않는 파일 형식입니다.'));
+    return cb(new Error('지원하지 않는 파일 형식입니다.'));
   }
 });
 
@@ -80,25 +81,9 @@ function splitLines(value) {
     .filter(Boolean);
 }
 
-function buildOptionGroup(name, valuesText) {
-  const values = splitLines(valuesText).map((value) => ({
-    value,
-    isSoldOut: false
-  }));
-
-  if (!name || values.length === 0) {
-    return null;
-  }
-
-  return {
-    name: String(name || '').trim(),
-    values
-  };
-}
-
 function normalizeArrayInput(value) {
   if (Array.isArray(value)) return value;
-  if (typeof value === 'undefined') return [];
+  if (typeof value === 'undefined' || value === null) return [];
   return [value];
 }
 
@@ -106,6 +91,49 @@ function extractExistingArray(bodyValue) {
   return normalizeArrayInput(bodyValue)
     .map((item) => String(item || '').trim())
     .filter(Boolean);
+}
+
+function buildOptionGroup(name, valuesText) {
+  const groupName = String(name || '').trim();
+  const values = splitLines(valuesText).map((value) => ({
+    value,
+    isSoldOut: false
+  }));
+
+  if (!groupName || values.length === 0) {
+    return null;
+  }
+
+  return {
+    name: groupName,
+    values
+  };
+}
+
+function collectAllMediaPaths(product) {
+  const result = [];
+
+  if (!product) return result;
+
+  if (product.image) result.push(product.image);
+  if (product.video) result.push(product.video);
+
+  (product.subImages || []).forEach((item) => {
+    if (item) result.push(item);
+  });
+
+  (product.detailImages || []).forEach((item) => {
+    if (item) result.push(item);
+  });
+
+  if (product.guide?.washImage) result.push(product.guide.washImage);
+  if (product.guide?.sizeGuideImage) result.push(product.guide.sizeGuideImage);
+
+  return result;
+}
+
+function publicPathToAbsolutePath(publicPath) {
+  return path.join(__dirname, '../public', String(publicPath || '').replace(/^\//, ''));
 }
 
 async function buildProductPayload(req, existingProduct = null) {
@@ -126,23 +154,15 @@ async function buildProductPayload(req, existingProduct = null) {
     ? toPublicPath(videoFile)
     : String(req.body.video || existingProduct?.video || '').trim();
 
-  let subImages = [];
   const existingSubImages = extractExistingArray(req.body.existingSubImages);
+  const subImages = subImageFiles.length > 0
+    ? subImageFiles.map(toPublicPath)
+    : (existingSubImages.length > 0 ? existingSubImages : (existingProduct?.subImages || []));
 
-  if (subImageFiles.length > 0) {
-    subImages = subImageFiles.map(toPublicPath);
-  } else {
-    subImages = existingSubImages.length > 0 ? existingSubImages : (existingProduct?.subImages || []);
-  }
-
-  let detailImages = [];
   const existingDetailImages = extractExistingArray(req.body.existingDetailImages);
-
-  if (detailImageFiles.length > 0) {
-    detailImages = detailImageFiles.map(toPublicPath);
-  } else {
-    detailImages = existingDetailImages.length > 0 ? existingDetailImages : (existingProduct?.detailImages || []);
-  }
+  const detailImages = detailImageFiles.length > 0
+    ? detailImageFiles.map(toPublicPath)
+    : (existingDetailImages.length > 0 ? existingDetailImages : (existingProduct?.detailImages || []));
 
   const washImage = washImageFile
     ? toPublicPath(washImageFile)
@@ -183,10 +203,11 @@ async function buildProductPayload(req, existingProduct = null) {
     },
     isBest: req.body.isBest === 'true',
     status: String(req.body.status || 'onsale').trim(),
+    stock: Number(req.body.stock || existingProduct?.stock || 0),
     likeCount: Number(req.body.likeCount || existingProduct?.likeCount || 0),
     viewCount: Number(req.body.viewCount || existingProduct?.viewCount || 0),
     interestCount: Number(req.body.interestCount || existingProduct?.interestCount || 0),
-    reviewCount: Number(req.body.reviewCount || 0),
+    reviewCount: Number(req.body.reviewCount || existingProduct?.reviewCount || 0),
     shippingFeeText: String(req.body.shippingFeeText || '').trim() || '무료배송',
     guide: {
       washImage,
@@ -197,34 +218,10 @@ async function buildProductPayload(req, existingProduct = null) {
   };
 }
 
-function collectAllMediaPaths(product) {
-  const result = [];
-
-  if (!product) return result;
-
-  if (product.image) result.push(product.image);
-  if (product.video) result.push(product.video);
-
-  (product.subImages || []).forEach((item) => {
-    if (item) result.push(item);
-  });
-
-  (product.detailImages || []).forEach((item) => {
-    if (item) result.push(item);
-  });
-
-  if (product.guide?.washImage) result.push(product.guide.washImage);
-  if (product.guide?.sizeGuideImage) result.push(product.guide.sizeGuideImage);
-
-  return result;
-}
-
 // 목록
 router.get('/', checkAdmin, async (req, res) => {
   try {
-    const products = await Product.find()
-      .sort({ createdAt: -1 });
-
+    const products = await Product.find().sort({ createdAt: -1 });
     res.render('admin/products/index', { products });
   } catch (error) {
     console.error(error);
@@ -266,7 +263,6 @@ router.post(
     try {
       const payload = await buildProductPayload(req);
       await Product.create(payload);
-
       res.redirect('/admin/products');
     } catch (error) {
       console.error(error);
@@ -340,6 +336,7 @@ router.post(
       product.couponDisplay = payload.couponDisplay;
       product.isBest = payload.isBest;
       product.status = payload.status;
+      product.stock = payload.stock;
       product.likeCount = payload.likeCount;
       product.viewCount = payload.viewCount;
       product.interestCount = payload.interestCount;
@@ -354,8 +351,7 @@ router.post(
 
       oldMedia.forEach((mediaPath) => {
         if (!newMediaSet.has(mediaPath)) {
-          const absolutePath = path.join(__dirname, '../public', mediaPath.replace(/^\//, ''));
-          unlinkIfExists(absolutePath);
+          unlinkIfExists(publicPathToAbsolutePath(mediaPath));
         }
       });
 
@@ -374,10 +370,8 @@ router.post('/:id/delete', checkAdmin, async (req, res) => {
 
     if (product) {
       const mediaPaths = collectAllMediaPaths(product);
-
       mediaPaths.forEach((mediaPath) => {
-        const absolutePath = path.join(__dirname, '../public', mediaPath.replace(/^\//, ''));
-        unlinkIfExists(absolutePath);
+        unlinkIfExists(publicPathToAbsolutePath(mediaPath));
       });
     }
 
