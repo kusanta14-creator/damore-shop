@@ -8,19 +8,20 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --bg: #f6f4ef;
+      --bg: #f5f3ee;
       --white: #ffffff;
-      --text: #1e1e1e;
-      --muted: #7b746b;
-      --line: #e6e1d8;
-      --soft: #f3eee6;
+      --text: #1f1f1f;
+      --muted: #7a7369;
+      --line: #e4ded4;
+      --soft: #f7f4ef;
       --soft-2: #faf8f4;
-      --brown: #8f7758;
-      --dark-brown: #6f5a43;
-      --danger: #d1493f;
-      --green: #00c73c;
-      --shadow: 0 10px 28px rgba(0, 0, 0, 0.04);
-      --max: 1240px;
+      --brown: #8d7860;
+      --brown-dark: #6d5943;
+      --green: #03c75a;
+      --danger: #e15b4f;
+      --wish: #f0ece5;
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+      --max: 1220px;
     }
 
     body {
@@ -51,7 +52,7 @@
     .page {
       max-width: var(--max);
       margin: 0 auto;
-      padding: 20px 18px 80px;
+      padding: 18px 16px 70px;
     }
 
     .breadcrumb {
@@ -60,14 +61,13 @@
       gap: 8px;
       font-size: 11px;
       color: var(--muted);
-      margin-bottom: 18px;
-      letter-spacing: 0.02em;
+      margin-bottom: 16px;
     }
 
     .layout {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 420px;
-      gap: 34px;
+      grid-template-columns: minmax(0, 1fr) 520px;
+      gap: 28px;
       align-items: start;
     }
 
@@ -80,8 +80,7 @@
       aspect-ratio: 1 / 1.22;
       background: #ece7de;
       overflow: hidden;
-      position: relative;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .gallery-main img,
@@ -99,8 +98,8 @@
     }
 
     .thumb-btn {
-      width: 64px;
-      height: 64px;
+      width: 54px;
+      height: 54px;
       border: 1px solid #d9d2c6;
       background: #fff;
       padding: 0;
@@ -125,82 +124,88 @@
 
     .purchase-box {
       position: sticky;
-      top: 18px;
+      top: 12px;
       background: #fff;
       padding: 0;
     }
 
-    .brand {
-      font-size: 11px;
-      color: var(--muted);
+    .top-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      color: #666;
       margin-bottom: 6px;
-      letter-spacing: 0.08em;
     }
 
     .title {
-      font-size: 24px;
-      line-height: 1.4;
+      font-size: 19px;
+      line-height: 1.42;
       font-weight: 700;
       word-break: keep-all;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .summary {
-      font-size: 13px;
+      font-size: 11px;
       color: var(--muted);
+      margin-bottom: 8px;
       white-space: pre-line;
       word-break: keep-all;
+    }
+
+    .product-code {
+      font-size: 10px;
+      color: #999;
       margin-bottom: 10px;
     }
 
     .price-row {
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       gap: 8px;
       flex-wrap: wrap;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .discount-rate {
-      font-size: 20px;
+      font-size: 13px;
       color: var(--danger);
       font-weight: 700;
-      line-height: 1;
     }
 
     .main-price {
-      font-size: 28px;
+      font-size: 18px;
       font-weight: 800;
       line-height: 1;
     }
 
     .old-price {
-      font-size: 14px;
-      color: #9b948b;
+      font-size: 11px;
+      color: #999;
       text-decoration: line-through;
-      line-height: 1.2;
     }
 
     .top-util {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
+      gap: 8px;
+      margin-bottom: 8px;
     }
 
     .interest-text {
-      font-size: 12px;
+      font-size: 10px;
       color: var(--muted);
     }
 
     .coupon-btn {
-      height: 28px;
+      height: 24px;
       padding: 0 10px;
       border: 0;
-      background: var(--dark-brown);
+      background: var(--brown);
       color: #fff;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       cursor: pointer;
     }
@@ -208,8 +213,8 @@
     .product-info-table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 14px;
-      font-size: 12px;
+      margin-bottom: 10px;
+      font-size: 10px;
     }
 
     .product-info-table tr {
@@ -222,60 +227,151 @@
 
     .product-info-table th,
     .product-info-table td {
-      padding: 8px 0;
+      padding: 6px 0;
       text-align: left;
       vertical-align: top;
     }
 
     .product-info-table th {
-      width: 92px;
+      width: 88px;
       color: var(--muted);
       font-weight: 600;
-      padding-right: 12px;
+      padding-right: 10px;
     }
 
     .product-info-table td {
-      font-weight: 500;
+      font-weight: 600;
       color: #222;
       word-break: keep-all;
     }
 
     .form-group {
-      margin-bottom: 10px;
+      margin-bottom: 6px;
     }
 
     .select-box {
       width: 100%;
-      height: 34px;
+      height: 30px;
       border: 1px solid #cfc7ba;
-      padding: 0 10px;
+      padding: 0 8px;
       background: #fff;
-      font-size: 12px;
+      font-size: 10px;
       outline: none;
     }
 
+    .upsell-box {
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid var(--line);
+      background: var(--soft-2);
+    }
+
+    .upsell-title {
+      font-size: 11px;
+      font-weight: 800;
+      margin-bottom: 2px;
+    }
+
+    .upsell-sub {
+      font-size: 10px;
+      color: var(--danger);
+      margin-bottom: 8px;
+    }
+
+    .upsell-slider {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .upsell-card {
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 0 0 8px;
+      min-width: 0;
+    }
+
+    .upsell-thumb-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: #ece7de;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .upsell-rank {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 18px;
+      height: 18px;
+      background: rgba(0,0,0,0.65);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .upsell-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #ece7de;
+    }
+
+    .upsell-name {
+      font-size: 10px;
+      line-height: 1.35;
+      min-height: 28px;
+      padding: 0 6px;
+      word-break: keep-all;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .upsell-price {
+      padding: 0 6px;
+      font-size: 10px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .upsell-select-btn {
+      margin: 0 6px;
+      width: calc(100% - 12px);
+      height: 20px;
+      border: 0;
+      background: #ff6b63;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
     .option-summary {
-      margin-top: 12px;
+      margin-top: 8px;
       border-top: 1px solid var(--line);
       border-bottom: 1px solid var(--line);
-      padding: 12px 0;
+      padding: 8px 0;
     }
 
     .selected-box {
       background: var(--soft-2);
       border: 1px solid var(--line);
-      padding: 10px;
-      margin-bottom: 10px;
+      padding: 8px;
     }
 
     .selected-name {
-      font-size: 12px;
+      font-size: 10px;
       font-weight: 700;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .selected-meta {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--muted);
       margin-bottom: 6px;
     }
@@ -283,30 +379,30 @@
     .qty-row {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       width: fit-content;
       border: 1px solid #d4ccbf;
       background: #fff;
-      height: 30px;
+      height: 28px;
     }
 
     .qty-btn {
-      width: 30px;
-      height: 30px;
+      width: 28px;
+      height: 28px;
       border: 0;
       background: #fff;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 700;
     }
 
     .qty-input {
-      width: 42px;
-      height: 30px;
+      width: 36px;
+      height: 28px;
       border: 0;
       outline: none;
       text-align: center;
-      font-size: 12px;
+      font-size: 10px;
       background: #fff;
     }
 
@@ -314,58 +410,58 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 12px;
-      margin-top: 12px;
-      font-size: 12px;
+      gap: 10px;
+      margin-top: 8px;
+      font-size: 10px;
     }
 
     .total-row strong {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 800;
     }
 
     .error-text {
-      min-height: 16px;
-      margin-top: 4px;
+      min-height: 14px;
+      margin-top: 3px;
       color: var(--danger);
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
     }
 
     .btn-grid-main {
       display: grid;
-      grid-template-columns: 1fr 1fr 68px;
-      gap: 6px;
-      margin-top: 12px;
+      grid-template-columns: 1fr 1fr 64px;
+      gap: 4px;
+      margin-top: 10px;
     }
 
     .btn-grid-sub {
       display: grid;
-      grid-template-columns: 1fr 68px;
-      gap: 6px;
-      margin-top: 6px;
+      grid-template-columns: 1fr 64px;
+      gap: 4px;
+      margin-top: 4px;
     }
 
     .action-btn {
-      height: 34px;
+      height: 30px;
       border: 0;
       cursor: pointer;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 800;
     }
 
     .btn-buy {
-      background: var(--dark-brown);
+      background: var(--brown-dark);
       color: #fff;
     }
 
     .btn-cart {
-      background: #d9d3c8;
+      background: #cfc5b8;
       color: #111;
     }
 
     .btn-wish {
-      background: #efebe5;
+      background: var(--wish);
       color: #777;
       border: 1px solid #d8d0c3;
     }
@@ -376,74 +472,16 @@
     }
 
     .btn-like {
-      background: #f1c900;
+      background: var(--wish);
       color: #111;
-    }
-
-    .with-item-inline {
-      margin-top: 18px;
-      border-top: 1px solid var(--line);
-      padding-top: 16px;
-    }
-
-    .with-title {
-      font-size: 12px;
-      font-weight: 800;
-      margin-bottom: 8px;
-      letter-spacing: 0.04em;
-    }
-
-    .with-list {
-      display: grid;
-      gap: 8px;
-    }
-
-    .with-card {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      border: 1px solid var(--line);
-      padding: 8px;
-      background: #fff;
-    }
-
-    .with-check {
-      width: 16px;
-      height: 16px;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    .with-thumb {
-      width: 52px;
-      height: 52px;
-      object-fit: cover;
-      background: #ece7de;
-      flex-shrink: 0;
-    }
-
-    .with-info {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .with-name {
-      font-size: 12px;
-      font-weight: 700;
-      line-height: 1.4;
-      word-break: keep-all;
-    }
-
-    .with-price {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 2px;
+      border: 1px solid #d8d0c3;
     }
 
     .section {
-      margin-top: 36px;
+      margin-top: 34px;
       background: #fff;
-      border: 1px solid var(--line);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
     }
 
     .tab-nav {
@@ -454,13 +492,13 @@
     }
 
     .tab-btn {
-      min-width: 110px;
-      height: 46px;
+      min-width: 100px;
+      height: 40px;
       border: 0;
       border-right: 1px solid var(--line);
       background: #fff;
       cursor: pointer;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       color: #666;
       flex-shrink: 0;
@@ -477,7 +515,7 @@
 
     .tab-panel {
       display: none;
-      padding: 28px;
+      padding: 24px;
     }
 
     .tab-panel.active {
@@ -502,14 +540,14 @@
     }
 
     .review-score-box {
-      padding: 20px;
+      padding: 18px;
       background: var(--soft-2);
       border: 1px solid var(--line);
       text-align: center;
     }
 
     .review-score {
-      font-size: 34px;
+      font-size: 32px;
       font-weight: 800;
       line-height: 1;
       margin-bottom: 8px;
@@ -517,13 +555,13 @@
 
     .star-row {
       color: #c7a867;
-      font-size: 16px;
+      font-size: 15px;
       margin-bottom: 8px;
       letter-spacing: 1px;
     }
 
     .review-count {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--muted);
       font-weight: 700;
     }
@@ -548,7 +586,7 @@
       gap: 10px;
       flex-wrap: wrap;
       margin-bottom: 8px;
-      font-size: 12px;
+      font-size: 11px;
     }
 
     .review-author,
@@ -564,7 +602,7 @@
     .review-body,
     .inquiry-body,
     .guide-text {
-      font-size: 13px;
+      font-size: 12px;
       color: #555;
       white-space: pre-line;
       word-break: keep-all;
@@ -594,12 +632,12 @@
     }
 
     .submit-btn {
-      height: 36px;
+      height: 34px;
       border: 0;
       background: #111;
       color: #fff;
       cursor: pointer;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 800;
     }
 
@@ -608,7 +646,7 @@
     }
 
     .guide-label {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
       margin-bottom: 8px;
     }
@@ -621,6 +659,10 @@
       .purchase-box {
         position: static;
       }
+
+      .upsell-slider {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     @media (max-width: 640px) {
@@ -628,16 +670,12 @@
         padding: 14px 12px 60px;
       }
 
-      .layout {
-        gap: 22px;
-      }
-
       .title {
-        font-size: 22px;
+        font-size: 18px;
       }
 
       .main-price {
-        font-size: 24px;
+        font-size: 16px;
       }
 
       .btn-grid-main,
@@ -646,7 +684,7 @@
       }
 
       .tab-panel {
-        padding: 20px 16px;
+        padding: 18px 14px;
       }
 
       .review-summary {
@@ -654,8 +692,12 @@
       }
 
       .thumb-btn {
-        width: 58px;
-        height: 58px;
+        width: 50px;
+        height: 50px;
+      }
+
+      .upsell-slider {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
   </style>
@@ -691,20 +733,20 @@
         : 0;
 
     const rewardPoint = Math.floor(Number(product.price || 0) * 0.01);
-    const interestCount = Math.max(Number(product.likeCount || 0), 17);
+    const interestCount = Math.max(Number(product.likeCount || 0), 138);
 
     const reviewSamples = [
       {
         author: 'damore***',
         date: '2026-04-18',
         rating: 5,
-        body: '핏이 정말 예쁘고 원단감이 좋아요. 실제로 받아보니 더 만족했습니다.'
+        body: '핏이 정말 예쁘고 실제로 받아보니 더 만족스러웠어요.'
       },
       {
         author: 'style***',
         date: '2026-04-16',
         rating: 4,
-        body: '색감이 화면이랑 거의 비슷하고 데일리하게 입기 좋습니다.'
+        body: '컬러감이 화면이랑 거의 비슷하고 코디하기 좋습니다.'
       }
     ];
 
@@ -719,7 +761,7 @@
         author: 'look***',
         date: '2026-04-19',
         title: '사이즈 문의',
-        body: '평소 55~66 입는데 어느 쪽이 나을까요?'
+        body: '정사이즈로 가면 될까요?'
       }
     ];
   %>
@@ -777,25 +819,28 @@
 
       <div class="purchase-col">
         <div class="purchase-box">
-          <div class="brand">DAMORE</div>
+          <div class="top-badge">🔥 <span><%= interestCount.toLocaleString() %>명이 이 상품을 관심상품에 담았어요.</span></div>
+
           <div class="title"><%= product.name %></div>
 
           <% if (safeSummary) { %>
             <div class="summary"><%= safeSummary %></div>
           <% } %>
 
+          <div class="product-code">DAMORE ITEM</div>
+
           <div class="top-util">
-            <div class="interest-text">이 상품은 지금 <strong><%= interestCount.toLocaleString() %>명</strong>이 관심 보였어요</div>
-            <button type="button" class="coupon-btn" onclick="alert('할인쿠폰 다운로드 기능은 다음 단계에서 연결')">할인쿠폰 다운로드</button>
+            <div class="interest-text">관심/찜 많은 상품</div>
+            <button type="button" class="coupon-btn" onclick="alert('쿠폰 다운로드 기능은 다음 단계에서 연결')">쿠폰 받기</button>
           </div>
 
           <div class="price-row">
             <% if (discountRate > 0) { %>
-              <div class="discount-rate"><%= discountRate %>%</div>
+              <div class="discount-rate"><%= discountRate %>% off</div>
             <% } %>
-            <div class="main-price"><%= Number(product.price || 0).toLocaleString() %>원</div>
+            <div class="main-price">KRW <%= Number(product.price || 0).toLocaleString() %></div>
             <% if (Number(product.oldPrice || 0) > 0) { %>
-              <div class="old-price"><%= Number(product.oldPrice || 0).toLocaleString() %>원</div>
+              <div class="old-price"><%= Number(product.oldPrice || 0).toLocaleString() %></div>
             <% } %>
           </div>
 
@@ -807,11 +852,11 @@
               </tr>
               <tr>
                 <th>적립금</th>
-                <td><%= rewardPoint.toLocaleString() %>원 (1%)</td>
+                <td><%= rewardPoint.toLocaleString() %>P</td>
               </tr>
               <tr>
                 <th>배송비</th>
-                <td><%= product.shippingFeeText || '3,000원 (50,000원 이상 구매 시 무료)' %></td>
+                <td><%= product.shippingFeeText || '70,000원 이상 구매 시 무료배송' %></td>
               </tr>
             </tbody>
           </table>
@@ -829,10 +874,10 @@
             <% if (colorGroup && Array.isArray(colorGroup.values) && colorGroup.values.length > 0) { %>
               <div class="form-group">
                 <select id="colorSelect" class="select-box">
-                  <option value="">- [필수] 옵션선을 선택해 주세요 -</option>
+                  <option value="">색상</option>
                   <% colorGroup.values.forEach((item) => { %>
                     <option value="<%= item.value %>" <%= item.isSoldOut ? 'disabled' : '' %>>
-                      [필수] <%= item.value %><%= item.isSoldOut ? ' (품절)' : '' %>
+                      <%= item.value %><%= item.isSoldOut ? ' (품절)' : '' %>
                     </option>
                   <% }) %>
                 </select>
@@ -843,14 +888,49 @@
             <% if (sizeGroup && Array.isArray(sizeGroup.values) && sizeGroup.values.length > 0) { %>
               <div class="form-group">
                 <select id="sizeSelect" class="select-box">
-                  <option value="">- [필수] 옵션선을 선택해 주세요 -</option>
+                  <option value="">사이즈</option>
                   <% sizeGroup.values.forEach((item) => { %>
                     <option value="<%= item.value %>" <%= item.isSoldOut ? 'disabled' : '' %>>
-                      [필수] <%= item.value %><%= item.isSoldOut ? ' (품절)' : '' %>
+                      <%= item.value %><%= item.isSoldOut ? ' (품절)' : '' %>
                     </option>
                   <% }) %>
                 </select>
                 <div class="error-text" id="optionError"></div>
+              </div>
+            <% } %>
+
+            <% if (safeAddOnProducts.length > 0) { %>
+              <div class="upsell-box">
+                <div class="upsell-title">Weekly Best</div>
+                <div class="upsell-sub">모델이 같이 착용한 아이템 / 이 제품이랑 잘 어울려요</div>
+
+                <div class="upsell-slider">
+                  <% safeAddOnProducts.slice(0, 4).forEach((item, index) => { %>
+                    <div class="upsell-card">
+                      <div class="upsell-thumb-wrap">
+                        <div class="upsell-rank"><%= index + 1 %></div>
+                        <% if (item.image) { %>
+                          <img src="<%= item.image %>" alt="<%= item.name %>" class="upsell-thumb">
+                        <% } else { %>
+                          <div class="upsell-thumb"></div>
+                        <% } %>
+                      </div>
+
+                      <div class="upsell-name"><%= item.name %></div>
+                      <div class="upsell-price"><%= Number(item.price || 0).toLocaleString() %>원</div>
+
+                      <button
+                        type="button"
+                        class="upsell-select-btn add-on-select-btn"
+                        data-id="<%= item._id %>"
+                        data-name="<%= item.name %>"
+                        data-price="<%= Number(item.price || 0) %>"
+                      >
+                        선택
+                      </button>
+                    </div>
+                  <% }) %>
+                </div>
               </div>
             <% } %>
 
@@ -874,37 +954,9 @@
 
                 <div class="total-row">
                   <span>TOTAL</span>
-                  <strong id="totalPrice"><%= Number(product.price || 0).toLocaleString() %>원</strong>
+                  <strong id="totalPrice"><%= Number(product.price || 0).toLocaleString() %></strong>
                 </div>
               </div>
-
-              <% if (safeAddOnProducts.length > 0) { %>
-                <div class="with-item-inline">
-                  <div class="with-title">WITH ITEM</div>
-                  <div class="with-list" id="addOnList">
-                    <% safeAddOnProducts.forEach((item) => { %>
-                      <label class="with-card">
-                        <input
-                          type="checkbox"
-                          class="with-check add-on-check"
-                          data-id="<%= item._id %>"
-                          data-name="<%= item.name %>"
-                          data-price="<%= Number(item.price || 0) %>"
-                        >
-                        <% if (item.image) { %>
-                          <img src="<%= item.image %>" alt="<%= item.name %>" class="with-thumb">
-                        <% } else { %>
-                          <div class="with-thumb"></div>
-                        <% } %>
-                        <div class="with-info">
-                          <div class="with-name"><%= item.name %></div>
-                          <div class="with-price"><%= Number(item.price || 0).toLocaleString() %>원</div>
-                        </div>
-                      </label>
-                    <% }) %>
-                  </div>
-                </div>
-              <% } %>
             </div>
 
             <div class="btn-grid-main">
@@ -942,7 +994,7 @@
                 onclick="alert('네이버페이 구매는 다음 단계에서 연결')"
                 <%= isSoldOut ? 'disabled' : '' %>
               >
-                네이버페이 구매
+                N pay 구매
               </button>
 
               <button
@@ -1087,7 +1139,7 @@
     const optionError = document.getElementById('optionError');
     const colorError = document.getElementById('colorError');
 
-    const addOnChecks = document.querySelectorAll('.add-on-check');
+    const addOnSelectButtons = document.querySelectorAll('.add-on-select-btn');
     const selectedAddOnIdsInput = document.getElementById('selectedAddOnIdsInput');
     const selectedAddOnNamesInput = document.getElementById('selectedAddOnNamesInput');
     const selectedAddOnTotalInput = document.getElementById('selectedAddOnTotalInput');
@@ -1106,6 +1158,8 @@
     const galleryStage = document.getElementById('galleryStage');
     const thumbs = document.getElementById('thumbs');
 
+    let selectedAddOns = [];
+
     function syncSelections() {
       const colorValue = colorSelect ? colorSelect.value : '';
       const sizeValue = sizeSelect ? sizeSelect.value : '';
@@ -1117,6 +1171,9 @@
       const metaParts = [];
       if (colorValue) metaParts.push(`색상: ${colorValue}`);
       if (sizeValue) metaParts.push(`사이즈: ${sizeValue}`);
+      if (selectedAddOns.length) {
+        metaParts.push(`추가상품: ${selectedAddOns.map(item => item.name).join(', ')}`);
+      }
 
       if (selectedMetaText) {
         selectedMetaText.textContent = metaParts.length ? metaParts.join(' / ') : '옵션을 선택해주세요.';
@@ -1124,17 +1181,9 @@
     }
 
     function syncAddOnInputs() {
-      const ids = [];
-      const names = [];
-      let total = 0;
-
-      addOnChecks.forEach((check) => {
-        if (check.checked) {
-          ids.push(check.dataset.id || '');
-          names.push(check.dataset.name || '');
-          total += Number(check.dataset.price || 0);
-        }
-      });
+      const ids = selectedAddOns.map(item => item.id);
+      const names = selectedAddOns.map(item => item.name);
+      const total = selectedAddOns.reduce((sum, item) => sum + item.price, 0);
 
       if (selectedAddOnIdsInput) selectedAddOnIdsInput.value = ids.join(',');
       if (selectedAddOnNamesInput) selectedAddOnNamesInput.value = names.join(',');
@@ -1156,11 +1205,33 @@
       const finalTotal = (price * qty) + addOnTotal;
 
       if (totalPrice) {
-        totalPrice.textContent = finalTotal.toLocaleString() + '원';
+        totalPrice.textContent = finalTotal.toLocaleString();
       }
 
       syncSelections();
     }
+
+    addOnSelectButtons.forEach((button) => {
+      button.addEventListener('click', function () {
+        const id = button.dataset.id || '';
+        const name = button.dataset.name || '';
+        const priceValue = Number(button.dataset.price || 0);
+
+        const exists = selectedAddOns.find(item => item.id === id);
+
+        if (exists) {
+          selectedAddOns = selectedAddOns.filter(item => item.id !== id);
+          button.textContent = '선택';
+          button.style.background = '#ff6b63';
+        } else {
+          selectedAddOns.push({ id, name, price: priceValue });
+          button.textContent = '선택됨';
+          button.style.background = '#111';
+        }
+
+        updateTotal();
+      });
+    });
 
     if (colorSelect) {
       colorSelect.addEventListener('change', function () {
@@ -1194,10 +1265,6 @@
     if (qtyInput) {
       qtyInput.addEventListener('input', updateTotal);
     }
-
-    addOnChecks.forEach((check) => {
-      check.addEventListener('change', updateTotal);
-    });
 
     function validateForm() {
       syncSelections();
