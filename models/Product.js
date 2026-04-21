@@ -5,7 +5,7 @@ const optionValueSchema = new mongoose.Schema(
     value: {
       type: String,
       trim: true,
-      default: ''
+      required: true
     },
     isSoldOut: {
       type: Boolean,
@@ -20,35 +20,11 @@ const optionGroupSchema = new mongoose.Schema(
     name: {
       type: String,
       trim: true,
-      default: ''
+      required: true
     },
     values: {
       type: [optionValueSchema],
       default: []
-    }
-  },
-  { _id: false }
-);
-
-const guideSchema = new mongoose.Schema(
-  {
-    washImage: {
-      type: String,
-      default: ''
-    },
-    sizeGuideImage: {
-      type: String,
-      default: ''
-    },
-    copyrightNotice: {
-      type: String,
-      trim: true,
-      default: ''
-    },
-    shippingExchangeReturn: {
-      type: String,
-      trim: true,
-      default: ''
     }
   },
   { _id: false }
@@ -69,9 +45,34 @@ const couponDisplaySchema = new mongoose.Schema(
   { _id: false }
 );
 
+const guideSchema = new mongoose.Schema(
+  {
+    washImage: {
+      type: String,
+      trim: true,
+      default: ''
+    },
+    sizeGuideImage: {
+      type: String,
+      trim: true,
+      default: ''
+    },
+    copyrightNotice: {
+      type: String,
+      trim: true,
+      default: ''
+    },
+    shippingExchangeReturn: {
+      type: String,
+      trim: true,
+      default: ''
+    }
+  },
+  { _id: false }
+);
+
 const productSchema = new mongoose.Schema(
   {
-    // 기본 정보
     name: {
       type: String,
       required: true,
@@ -92,13 +93,17 @@ const productSchema = new mongoose.Schema(
       trim: true,
       default: ''
     },
+    subCategory: {
+      type: String,
+      trim: true,
+      default: ''
+    },
     tag: {
       type: String,
       trim: true,
       default: ''
     },
 
-    // 가격 정보
     price: {
       type: Number,
       required: true,
@@ -111,9 +116,9 @@ const productSchema = new mongoose.Schema(
       min: 0
     },
 
-    // 미디어
     image: {
       type: String,
+      trim: true,
       default: ''
     },
     subImages: {
@@ -126,16 +131,15 @@ const productSchema = new mongoose.Schema(
     },
     video: {
       type: String,
+      trim: true,
       default: ''
     },
 
-    // 옵션
     optionGroups: {
       type: [optionGroupSchema],
       default: []
     },
 
-    // 추가 상품 연결
     additionalProducts: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -143,22 +147,28 @@ const productSchema = new mongoose.Schema(
       }
     ],
 
-    // 혜택/노출
     couponDisplay: {
       type: couponDisplaySchema,
       default: () => ({})
     },
+
     isBest: {
       type: Boolean,
       default: false
     },
-    status: {
-      type: String,
-      enum: ['onsale', 'soldout'],
-      default: 'onsale'
+
+    stock: {
+      type: Number,
+      default: 0,
+      min: 0
     },
 
-    // 통계/보조 데이터
+    status: {
+      type: String,
+      enum: ['active', 'soldout', 'hidden', 'onsale'],
+      default: 'active'
+    },
+
     likeCount: {
       type: Number,
       default: 0,
@@ -180,12 +190,12 @@ const productSchema = new mongoose.Schema(
       min: 0
     },
 
-    // 배송/안내
     shippingFeeText: {
       type: String,
       trim: true,
       default: '무료배송'
     },
+
     guide: {
       type: guideSchema,
       default: () => ({})
@@ -198,7 +208,6 @@ const productSchema = new mongoose.Schema(
   }
 );
 
-// 할인율 계산
 productSchema.virtual('discountRate').get(function () {
   if (!this.oldPrice || this.oldPrice <= this.price || this.oldPrice <= 0) {
     return 0;
@@ -207,7 +216,6 @@ productSchema.virtual('discountRate').get(function () {
   return Math.round((1 - this.price / this.oldPrice) * 100);
 });
 
-// 대표 미디어 묶음
 productSchema.virtual('mediaItems').get(function () {
   const items = [];
 
@@ -237,6 +245,17 @@ productSchema.virtual('mediaItems').get(function () {
   }
 
   return items;
+});
+
+productSchema.pre('save', function (next) {
+  if (Number(this.stock || 0) <= 0) {
+    this.stock = 0;
+    this.status = 'soldout';
+  } else if (this.status === 'soldout') {
+    this.status = 'active';
+  }
+
+  next();
 });
 
 module.exports = mongoose.model('Product', productSchema);
