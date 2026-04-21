@@ -8,7 +8,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Arial', sans-serif;
+      font-family: Arial, sans-serif;
       background: #f8f5ef;
       color: #111;
       line-height: 1.6;
@@ -20,7 +20,9 @@
     }
 
     button,
-    input {
+    input,
+    textarea,
+    select {
       font: inherit;
     }
 
@@ -111,11 +113,12 @@
       object-fit: cover;
     }
 
-    .info-card {
+    .info-card,
+    .section {
       background: #fff;
       border-radius: 24px;
       padding: 28px;
-      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.07);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.06);
     }
 
     .category {
@@ -424,10 +427,6 @@
 
     .section {
       margin-top: 34px;
-      background: #fff;
-      border-radius: 24px;
-      padding: 28px;
-      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.06);
     }
 
     .section-title {
@@ -468,6 +467,190 @@
       color: #777;
     }
 
+    .review-summary {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+      align-items: center;
+    }
+
+    .review-score-box {
+      background: #faf7f2;
+      border-radius: 20px;
+      padding: 22px;
+      text-align: center;
+    }
+
+    .review-score {
+      font-size: 42px;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .review-count {
+      font-size: 14px;
+      color: #666;
+      font-weight: 700;
+    }
+
+    .star-row {
+      display: flex;
+      gap: 2px;
+      justify-content: center;
+      margin-bottom: 8px;
+      color: #c8a96b;
+      font-size: 18px;
+    }
+
+    .review-list,
+    .inquiry-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .review-item,
+    .inquiry-item {
+      border: 1px solid #ece4d8;
+      border-radius: 18px;
+      padding: 18px;
+      background: #fcfaf7;
+    }
+
+    .review-head,
+    .inquiry-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .review-author,
+    .inquiry-author {
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .review-date,
+    .inquiry-date {
+      font-size: 12px;
+      color: #888;
+    }
+
+    .review-body,
+    .inquiry-body {
+      font-size: 14px;
+      color: #555;
+      white-space: pre-line;
+      word-break: keep-all;
+    }
+
+    .tab-nav {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      min-height: 42px;
+      padding: 0 16px;
+      border-radius: 999px;
+      border: 1px solid #ddd6ca;
+      background: #fff;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .tab-btn.active {
+      background: #111;
+      color: #fff;
+      border-color: #111;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .inquiry-form {
+      display: grid;
+      gap: 12px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #eee6da;
+    }
+
+    .text-input,
+    .text-area {
+      width: 100%;
+      border: 1px solid #ddd6ca;
+      border-radius: 14px;
+      background: #fff;
+      padding: 14px 16px;
+      outline: none;
+    }
+
+    .text-area {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .submit-btn {
+      height: 48px;
+      border: 0;
+      border-radius: 14px;
+      background: #111;
+      color: #fff;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .recommend-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .recommend-card {
+      display: block;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #fcfaf7;
+      border: 1px solid #ece4d8;
+    }
+
+    .recommend-thumb {
+      width: 100%;
+      aspect-ratio: 1 / 1.18;
+      object-fit: cover;
+      background: #efe8dd;
+    }
+
+    .recommend-info {
+      padding: 14px;
+    }
+
+    .recommend-name {
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.45;
+      min-height: 40px;
+      word-break: keep-all;
+      margin-bottom: 6px;
+    }
+
+    .recommend-price {
+      font-size: 15px;
+      font-weight: 900;
+    }
+
     @media (max-width: 980px) {
       .layout {
         grid-template-columns: 1fr;
@@ -475,6 +658,14 @@
 
       .gallery-area {
         position: static;
+      }
+
+      .review-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .recommend-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
@@ -502,6 +693,11 @@
 
       .action-row {
         grid-template-columns: 1fr;
+      }
+
+      .recommend-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
       }
     }
   </style>
@@ -562,6 +758,38 @@
       Number(product.oldPrice || 0) > Number(product.price || 0)
         ? Math.round((1 - Number(product.price || 0) / Number(product.oldPrice || 0)) * 100)
         : 0;
+
+    const fakeReviews = [
+      {
+        author: 'damore***',
+        date: '2026-04-18',
+        rating: 5,
+        body: '핏이 진짜 예쁘고 원단이 생각보다 더 좋았어요. 데일리로 입기 좋습니다.'
+      },
+      {
+        author: 'style***',
+        date: '2026-04-16',
+        rating: 4,
+        body: '색감이 화면이랑 거의 비슷하고 사이즈도 정사이즈 느낌입니다.'
+      }
+    ];
+
+    const fakeInquiries = [
+      {
+        author: 'guest***',
+        date: '2026-04-20',
+        title: '배송 문의',
+        body: '오늘 주문하면 언제 출고되나요?'
+      },
+      {
+        author: 'look***',
+        date: '2026-04-19',
+        title: '사이즈 문의',
+        body: '평소 100 입는데 이 상품은 어떤 사이즈 추천인가요?'
+      }
+    ];
+
+    const recommendProducts = safeAddOnProducts.slice(0, 4);
   %>
 
   <div
@@ -640,9 +868,7 @@
           <% if (discountRate > 0) { %>
             <div class="discount"><%= discountRate %>%</div>
           <% } %>
-
           <div class="price"><%= Number(product.price || 0).toLocaleString() %>원</div>
-
           <% if (Number(product.oldPrice || 0) > 0) { %>
             <div class="old-price"><%= Number(product.oldPrice || 0).toLocaleString() %>원</div>
           <% } %>
@@ -742,13 +968,11 @@
                         data-name="<%= item.name %>"
                         data-price="<%= Number(item.price || 0) %>"
                       />
-
                       <% if (item.image) { %>
                         <img src="<%= item.image %>" alt="<%= item.name %>" class="add-on-thumb">
                       <% } else { %>
                         <div class="add-on-thumb"></div>
                       <% } %>
-
                       <div class="add-on-info">
                         <div class="add-on-name"><%= item.name %></div>
                         <div class="add-on-price"><%= Number(item.price || 0).toLocaleString() %>원</div>
@@ -789,19 +1013,81 @@
     </div>
 
     <div class="section">
-      <div class="section-title">상품 상세정보</div>
+      <div class="tab-nav">
+        <button type="button" class="tab-btn active" data-tab="detail">상세정보</button>
+        <button type="button" class="tab-btn" data-tab="review">리뷰</button>
+        <button type="button" class="tab-btn" data-tab="inquiry">문의</button>
+      </div>
 
-      <% if (safeDetailImages.length > 0) { %>
-        <div class="detail-images">
-          <% safeDetailImages.forEach((img, index) => { %>
-            <img src="<%= img %>" alt="상세 이미지 <%= index + 1 %>">
+      <div class="tab-panel active" data-panel="detail">
+        <div class="section-title">상품 상세정보</div>
+
+        <% if (safeDetailImages.length > 0) { %>
+          <div class="detail-images">
+            <% safeDetailImages.forEach((img, index) => { %>
+              <img src="<%= img %>" alt="상세 이미지 <%= index + 1 %>">
+            <% }) %>
+          </div>
+        <% } else if (safeDesc) { %>
+          <div class="desc"><%= safeDesc %></div>
+        <% } else { %>
+          <div class="empty">등록된 상세 정보가 없습니다.</div>
+        <% } %>
+      </div>
+
+      <div class="tab-panel" data-panel="review">
+        <div class="section-title">상품 리뷰</div>
+
+        <div class="review-summary">
+          <div class="review-score-box">
+            <div class="review-score">4.8</div>
+            <div class="star-row">★★★★★</div>
+            <div class="review-count">총 <%= Number(product.reviewCount || fakeReviews.length) %>개 리뷰</div>
+          </div>
+
+          <div class="desc" style="margin:0;">
+            구매 고객들이 만족한 상품이에요.  
+            원단, 핏, 착용감 관련 반응이 좋은 편입니다.
+          </div>
+        </div>
+
+        <div class="review-list">
+          <% fakeReviews.forEach((review) => { %>
+            <div class="review-item">
+              <div class="review-head">
+                <div class="review-author"><%= review.author %></div>
+                <div class="review-date"><%= review.date %></div>
+              </div>
+              <div class="star-row" style="justify-content:flex-start; margin-bottom:10px;">
+                <% for (let i = 0; i < review.rating; i++) { %>★<% } %>
+              </div>
+              <div class="review-body"><%= review.body %></div>
+            </div>
           <% }) %>
         </div>
-      <% } else if (safeDesc) { %>
-        <div class="desc"><%= safeDesc %></div>
-      <% } else { %>
-        <div class="empty">등록된 상세 정보가 없습니다.</div>
-      <% } %>
+      </div>
+
+      <div class="tab-panel" data-panel="inquiry">
+        <div class="section-title">상품 문의</div>
+
+        <div class="inquiry-list">
+          <% fakeInquiries.forEach((item) => { %>
+            <div class="inquiry-item">
+              <div class="inquiry-head">
+                <div class="inquiry-author"><%= item.author %> · <%= item.title %></div>
+                <div class="inquiry-date"><%= item.date %></div>
+              </div>
+              <div class="inquiry-body"><%= item.body %></div>
+            </div>
+          <% }) %>
+        </div>
+
+        <form class="inquiry-form" onsubmit="event.preventDefault(); alert('문의 등록 기능은 다음 단계에서 연결하면 됨');">
+          <input class="text-input" type="text" placeholder="문의 제목">
+          <textarea class="text-area" placeholder="문의 내용을 입력하세요"></textarea>
+          <button class="submit-btn" type="submit">문의 등록</button>
+        </form>
+      </div>
     </div>
 
     <% if (
@@ -840,6 +1126,27 @@
             <div class="guide-text"><%= product.guide.copyrightNotice %></div>
           </div>
         <% } %>
+      </div>
+    <% } %>
+
+    <% if (recommendProducts.length > 0) { %>
+      <div class="section">
+        <div class="section-title">추천 상품</div>
+        <div class="recommend-grid">
+          <% recommendProducts.forEach((item) => { %>
+            <a class="recommend-card" href="/products/<%= item._id %>">
+              <% if (item.image) { %>
+                <img class="recommend-thumb" src="<%= item.image %>" alt="<%= item.name %>">
+              <% } else { %>
+                <div class="recommend-thumb"></div>
+              <% } %>
+              <div class="recommend-info">
+                <div class="recommend-name"><%= item.name %></div>
+                <div class="recommend-price"><%= Number(item.price || 0).toLocaleString() %>원</div>
+              </div>
+            </a>
+          <% }) %>
+        </div>
       </div>
     <% } %>
   </div>
@@ -884,13 +1191,11 @@
 
     function getSelectedAddOnTotal() {
       let sum = 0;
-
       addOnChecks.forEach((check) => {
         if (check.checked) {
           sum += Number(check.dataset.price || 0);
         }
       });
-
       return sum;
     }
 
@@ -1033,6 +1338,22 @@
         thumb.classList.add('active');
       });
     }
+
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+
+    tabButtons.forEach((button) => {
+      button.addEventListener('click', function () {
+        const target = button.dataset.tab;
+
+        tabButtons.forEach((btn) => btn.classList.remove('active'));
+        tabPanels.forEach((panel) => panel.classList.remove('active'));
+
+        button.classList.add('active');
+        const panel = document.querySelector(`[data-panel="${target}"]`);
+        if (panel) panel.classList.add('active');
+      });
+    });
 
     updateTotal();
   </script>
