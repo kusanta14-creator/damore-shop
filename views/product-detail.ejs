@@ -191,7 +191,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 8px;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
     .interest-text {
@@ -210,39 +210,32 @@
       cursor: pointer;
     }
 
-    .product-info-table {
-      width: 100%;
-      border-collapse: collapse;
+    .info-cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
       margin-bottom: 10px;
+    }
+
+    .info-card {
+      background: var(--soft-2);
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      min-height: 62px;
+    }
+
+    .info-card-label {
       font-size: 10px;
-    }
-
-    .product-info-table tr {
-      border-top: 1px solid var(--line);
-    }
-
-    .product-info-table tr:last-child {
-      border-bottom: 1px solid var(--line);
-    }
-
-    .product-info-table th,
-    .product-info-table td {
-      padding: 6px 0;
-      text-align: left;
-      vertical-align: top;
-    }
-
-    .product-info-table th {
-      width: 88px;
       color: var(--muted);
-      font-weight: 600;
-      padding-right: 10px;
+      margin-bottom: 4px;
     }
 
-    .product-info-table td {
-      font-weight: 600;
-      color: #222;
+    .info-card-value {
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.4;
       word-break: keep-all;
+      color: #222;
     }
 
     .form-group {
@@ -376,6 +369,14 @@
       margin-bottom: 6px;
     }
 
+    .qty-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
     .qty-row {
       display: flex;
       align-items: center;
@@ -408,10 +409,9 @@
 
     .total-row {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      margin-top: 8px;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
       font-size: 10px;
     }
 
@@ -660,7 +660,8 @@
         position: static;
       }
 
-      .upsell-slider {
+      .upsell-slider,
+      .info-cards {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
@@ -679,7 +680,8 @@
       }
 
       .btn-grid-main,
-      .btn-grid-sub {
+      .btn-grid-sub,
+      .info-cards {
         grid-template-columns: 1fr;
       }
 
@@ -844,22 +846,22 @@
             <% } %>
           </div>
 
-          <table class="product-info-table">
-            <tbody>
-              <tr>
-                <th>상품요약정보</th>
-                <td><%= safeSummary || product.name %></td>
-              </tr>
-              <tr>
-                <th>적립금</th>
-                <td><%= rewardPoint.toLocaleString() %>P</td>
-              </tr>
-              <tr>
-                <th>배송비</th>
-                <td><%= product.shippingFeeText || '70,000원 이상 구매 시 무료배송' %></td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="info-cards">
+            <div class="info-card">
+              <div class="info-card-label">상품요약정보</div>
+              <div class="info-card-value"><%= safeSummary || product.name %></div>
+            </div>
+
+            <div class="info-card">
+              <div class="info-card-label">적립금</div>
+              <div class="info-card-value"><%= rewardPoint.toLocaleString() %>P</div>
+            </div>
+
+            <div class="info-card">
+              <div class="info-card-label">배송비</div>
+              <div class="info-card-value"><%= product.shippingFeeText || '70,000원 이상 무료배송' %></div>
+            </div>
+          </div>
 
           <form id="productForm" method="POST">
             <input type="hidden" name="productId" value="<%= product._id %>">
@@ -939,22 +941,24 @@
                 <div class="selected-name"><%= product.name %></div>
                 <div class="selected-meta" id="selectedMetaText">옵션을 선택해주세요.</div>
 
-                <div class="qty-row">
-                  <button type="button" class="qty-btn" id="minusBtn">-</button>
-                  <input
-                    type="number"
-                    id="qtyInput"
-                    class="qty-input"
-                    value="1"
-                    min="1"
-                    max="<%= Math.max(Number(product.stock || 1), 1) %>"
-                  />
-                  <button type="button" class="qty-btn" id="plusBtn">+</button>
-                </div>
+                <div class="qty-total-row">
+                  <div class="qty-row">
+                    <button type="button" class="qty-btn" id="minusBtn">-</button>
+                    <input
+                      type="number"
+                      id="qtyInput"
+                      class="qty-input"
+                      value="1"
+                      min="1"
+                      max="<%= Math.max(Number(product.stock || 1), 1) %>"
+                    />
+                    <button type="button" class="qty-btn" id="plusBtn">+</button>
+                  </div>
 
-                <div class="total-row">
-                  <span>TOTAL</span>
-                  <strong id="totalPrice"><%= Number(product.price || 0).toLocaleString() %></strong>
+                  <div class="total-row">
+                    <span>TOTAL</span>
+                    <strong id="totalPrice"><%= Number(product.price || 0).toLocaleString() %></strong>
+                  </div>
                 </div>
               </div>
             </div>
