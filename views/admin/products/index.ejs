@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>상품 관리 | DAMORE ADMIN</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    :root {
+      --bg: #f5f3ef;
+      --white: #ffffff;
+      --black: #111111;
+      --muted: #6f6a63;
+      --line: rgba(17, 17, 17, 0.08);
+      --gold: #9d8660;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
+      --radius: 24px;
+      --max: 1480px;
+      --soft: #efe9df;
+      --red: #b23a2c;
+      --red-bg: #fff1ee;
+      --green: #1f7a4d;
+      --green-bg: #edf7f0;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Pretendard", "Noto Sans KR", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--black);
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: 100%;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .page {
+      padding: 36px 0 70px;
+    }
+
+    .page-head {
+      margin-bottom: 24px;
+    }
+
+    .page-head small {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .page-head h1 {
+      margin: 0 0 10px;
+      font-size: 38px;
+    }
+
+    .page-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .top-btn {
+      min-width: 160px;
+      height: 46px;
+      padding: 0 18px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .top-btn-dark {
+      background: #111;
+      color: #fff;
+    }
+
+    .top-btn-light {
+      background: var(--soft);
+      color: #111;
+    }
+
+    .summary-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .summary-card {
+      background: var(--white);
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .summary-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .summary-value {
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .product-card {
+      background: #fff;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 16px 34px rgba(17, 17, 17, 0.08);
+      border: 1px solid rgba(17, 17, 17, 0.05);
+    }
+
+    .product-thumb {
+      position: relative;
+      aspect-ratio: 3 / 4;
+      background: #ece8e1;
+      overflow: hidden;
+    }
+
+    .product-thumb img,
+    .product-thumb video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .thumb-fallback {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #8e877d;
+      font-size: 13px;
+    }
+
+    .badge-row {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      z-index: 2;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 30px;
+      padding: 0 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      backdrop-filter: blur(10px);
+    }
+
+    .badge.dark {
+      background: rgba(17, 17, 17, 0.88);
+      color: #fff;
+    }
+
+    .badge.active {
+      background: var(--green-bg);
+      color: var(--green);
+    }
+
+    .badge.soldout {
+      background: var(--red-bg);
+      color: var(--red);
+    }
+
+    .product-body {
+      padding: 18px;
+    }
+
+    .category {
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .name {
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.35;
+      margin-bottom: 10px;
+      min-height: 48px;
+      word-break: keep-all;
+    }
+
+    .summary {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+      min-height: 42px;
+      margin-bottom: 12px;
+    }
+
+    .price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .price {
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .old-price {
+      font-size: 13px;
+      color: #999;
+      text-decoration: line-through;
+      font-weight: 700;
+    }
+
+    .discount {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--red);
+    }
+
+    .meta-list {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .meta-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(17, 17, 17, 0.06);
+    }
+
+    .meta-item:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .meta-label {
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .meta-value {
+      text-align: right;
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .btn,
+    .actions button {
+      width: 100%;
+      height: 44px;
+      border: 0;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .btn-dark {
+      background: #111;
+      color: #fff;
+    }
+
+    .btn-light {
+      background: var(--soft);
+      color: #111;
+    }
+
+    .delete-form {
+      margin: 0;
+    }
+
+    .empty-box {
+      background: #fff;
+      border-radius: 24px;
+      padding: 80px 24px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .empty-box h2 {
+      margin: 0 0 10px;
+      font-size: 28px;
+    }
+
+    .empty-box p {
+      margin: 0 0 24px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 1200px) {
+      .product-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .summary-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 860px) {
+      .product-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      .container {
+        padding: 0 16px;
+      }
+
+      .product-grid,
+      .summary-row {
+        grid-template-columns: 1fr;
+      }
+
+      .page-head h1 {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%
+    const safeProducts = Array.isArray(products) ? products : [];
+    const onsaleCount = safeProducts.filter(item => item.status !== 'soldout').length;
+    const soldoutCount = safeProducts.filter(item => item.status === 'soldout').length;
+    const bestCount = safeProducts.filter(item => item.isBest === true).length;
+  %>
+
+  <main class="page">
+    <div class="container">
+      <div class="page-head">
+        <small>Admin Product</small>
+        <h1>상품 관리</h1>
+        <p>등록된 상품을 한눈에 보고 수정 / 삭제할 수 있어요.</p>
+      </div>
+
+      <div class="top-actions">
+        <a href="/admin" class="top-btn top-btn-light">대시보드</a>
+        <a href="/admin/products/new" class="top-btn top-btn-dark">+ 새 상품 등록</a>
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-card">
+          <div class="summary-label">전체 상품</div>
+          <div class="summary-value"><%= safeProducts.length %></div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">판매중</div>
+          <div class="summary-value"><%= onsaleCount %></div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">품절</div>
+          <div class="summary-value"><%= soldoutCount %></div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">BEST</div>
+          <div class="summary-value"><%= bestCount %></div>
+        </div>
+      </div>
+
+      <% if (!safeProducts.length) { %>
+        <div class="empty-box">
+          <h2>등록된 상품이 아직 없어요</h2>
+          <p>새 상품을 등록해서 관리자 목록을 채워보세요.</p>
+          <a href="/admin/products/new" class="top-btn top-btn-dark">상품 등록하러 가기</a>
+        </div>
+      <% } else { %>
+        <div class="product-grid">
+          <% safeProducts.forEach((item) => { %>
+            <% 
+              const price = Number(item.price || 0);
+              const oldPrice = Number(item.oldPrice || 0);
+              const discountPercent = oldPrice > price && oldPrice > 0
+                ? Math.round(((oldPrice - price) / oldPrice) * 100)
+                : 0;
+            %>
+
+            <div class="product-card">
+              <div class="product-thumb">
+                <div class="badge-row">
+                  <% if (item.isBest) { %>
+                    <span class="badge dark">BEST</span>
+                  <% } else { %>
+                    <span></span>
+                  <% } %>
+
+                  <span class="badge <%= item.status === 'soldout' ? 'soldout' : 'active' %>">
+                    <%= item.status === 'soldout' ? '품절' : '판매중' %>
+                  </span>
+                </div>
+
+                <% if (item.image) { %>
+                  <img src="<%= item.image %>" alt="<%= item.name %>">
+                <% } else if (item.video) { %>
+                  <video src="<%= item.video %>" muted playsinline preload="metadata"></video>
+                <% } else { %>
+                  <div class="thumb-fallback">이미지 없음</div>
+                <% } %>
+              </div>
+
+              <div class="product-body">
+                <div class="category"><%= item.category || 'CATEGORY' %></div>
+                <div class="name"><%= item.name || '상품명 없음' %></div>
+                <div class="summary"><%= item.summary || '한줄 요약 없음' %></div>
+
+                <div class="price-row">
+                  <span class="price"><%= price.toLocaleString() %>원</span>
+
+                  <% if (oldPrice > 0) { %>
+                    <span class="old-price"><%= oldPrice.toLocaleString() %>원</span>
+                  <% } %>
+
+                  <% if (discountPercent > 0) { %>
+                    <span class="discount"><%= discountPercent %>% OFF</span>
+                  <% } %>
+                </div>
+
+                <div class="meta-list">
+                  <div class="meta-item">
+                    <span class="meta-label">태그</span>
+                    <span class="meta-value"><%= item.tag || '-' %></span>
+                  </div>
+                  <div class="meta-item">
+                    <span class="meta-label">서브 이미지</span>
+                    <span class="meta-value"><%= Array.isArray(item.subImages) ? item.subImages.length : 0 %>장</span>
+                  </div>
+                  <div class="meta-item">
+                    <span class="meta-label">상세 이미지</span>
+                    <span class="meta-value"><%= Array.isArray(item.detailImages) ? item.detailImages.length : 0 %>장</span>
+                  </div>
+                  <div class="meta-item">
+                    <span class="meta-label">추가상품</span>
+                    <span class="meta-value"><%= Array.isArray(item.additionalProducts) ? item.additionalProducts.length : 0 %>개</span>
+                  </div>
+                </div>
+
+                <div class="actions">
+                  <a href="/admin/products/<%= item._id %>/edit" class="btn btn-dark">수정</a>
+
+                  <form
+                    method="POST"
+                    action="/admin/products/<%= item._id %>/delete"
+                    class="delete-form"
+                    onsubmit="return confirm('이 상품을 삭제할까요?');">
+                    <button type="submit" class="btn btn-light">삭제</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+  </main>
+</body>
+</html>

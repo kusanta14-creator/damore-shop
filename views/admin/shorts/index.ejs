@@ -6,154 +6,479 @@
   <title>숏폼 관리 | DAMORE ADMIN</title>
   <style>
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background: #f6f3ee;
       color: #111;
     }
-    .wrap {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 40px 20px;
+
+    a {
+      text-decoration: none;
+      color: inherit;
     }
-    .top {
+
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+    }
+
+    .topbar {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       gap: 16px;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
       flex-wrap: wrap;
     }
-    h1 {
+
+    .topbar-left h1 {
       margin: 0;
-      font-size: 32px;
+      font-size: 34px;
+      line-height: 1.2;
+      letter-spacing: -0.5px;
     }
-    .btn {
+
+    .topbar-left p {
+      margin: 8px 0 0;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .topbar-right {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .top-btn {
+      height: 48px;
+      padding: 0 20px;
+      border-radius: 999px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 44px;
-      padding: 0 16px;
-      border-radius: 999px;
+      font-weight: 700;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .primary-btn {
       background: #111;
       color: #fff;
-      text-decoration: none;
-      font-weight: 700;
-      border: 0;
-      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
     }
-    .back {
-      color: #666;
-      text-decoration: none;
-      font-size: 14px;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 18px;
-    }
-    .card {
+
+    .ghost-btn {
       background: #fff;
-      border-radius: 20px;
+      color: #111;
+      border: 1px solid #e5dfd7;
+    }
+
+    .summary-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .summary-card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
+      border: 1px solid #f0ebe4;
+    }
+
+    .summary-label {
+      font-size: 13px;
+      color: #777;
+      margin-bottom: 10px;
+    }
+
+    .summary-value {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .shorts-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .short-card {
+      background: #fff;
+      border-radius: 28px;
       overflow: hidden;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+      border: 1px solid #efe8df;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.06);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
     }
-    .thumb {
+
+    .short-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.08);
+    }
+
+    .media-wrap {
+      position: relative;
+      background: #000;
       aspect-ratio: 9 / 16;
-      background: #ddd;
+      overflow: hidden;
     }
-    .thumb video,
-    .thumb img {
+
+    .media-wrap video,
+    .media-fallback {
       width: 100%;
       height: 100%;
-      object-fit: cover;
       display: block;
+      object-fit: cover;
+      background: #111;
     }
-    .body {
-      padding: 14px;
-    }
-    .title {
-      font-size: 15px;
-      font-weight: 800;
-      margin-bottom: 8px;
-    }
-    .meta {
-      font-size: 13px;
-      color: #666;
-      margin-bottom: 6px;
-    }
-    .actions {
+
+    .media-fallback {
       display: flex;
-      gap: 8px;
-      margin-top: 12px;
-    }
-    .actions a,
-    .actions button {
-      flex: 1;
-      min-height: 40px;
-      border-radius: 12px;
-      border: 0;
-      cursor: pointer;
-      text-decoration: none;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.7);
+      font-size: 14px;
       font-weight: 700;
     }
+
+    .badge-row {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      height: 30px;
+      padding: 0 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      backdrop-filter: blur(10px);
+      background: rgba(17, 17, 17, 0.7);
+      color: #fff;
+    }
+
+    .badge.light {
+      background: rgba(255,255,255,0.86);
+      color: #111;
+    }
+
+    .card-body {
+      padding: 18px;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 21px;
+      font-weight: 800;
+      line-height: 1.35;
+      letter-spacing: -0.3px;
+    }
+
+    .meta-list {
+      margin-top: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .meta-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #f2eee8;
+    }
+
+    .meta-item:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .meta-label {
+      color: #777;
+      flex-shrink: 0;
+    }
+
+    .meta-value {
+      font-weight: 700;
+      text-align: right;
+      word-break: break-word;
+    }
+
+    .product-box {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 18px;
+      background: #faf8f4;
+      border: 1px solid #eee6dc;
+    }
+
+    .product-label {
+      font-size: 12px;
+      color: #777;
+      margin-bottom: 6px;
+    }
+
+    .product-title {
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.4;
+      margin-bottom: 4px;
+    }
+
+    .product-price {
+      font-size: 14px;
+      color: #111;
+      font-weight: 700;
+    }
+
+    .shorts-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .shorts-actions-bottom {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .shorts-actions a,
+    .shorts-actions button,
+    .shorts-actions-bottom button {
+      width: 100%;
+      height: 46px;
+      border-radius: 14px;
+      border: 0;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     .edit-btn {
       background: #111;
       color: #fff;
     }
+
     .delete-btn {
-      background: #eee;
+      background: #efefef;
       color: #111;
     }
+
+    .toggle-show-btn {
+      background: #1f7a4d;
+      color: #fff;
+    }
+
+    .toggle-hide-btn {
+      background: #b7812b;
+      color: #fff;
+    }
+
+    .action-form {
+      margin: 0;
+    }
+
+    .empty-box {
+      background: #fff;
+      border-radius: 28px;
+      padding: 80px 24px;
+      text-align: center;
+      border: 1px solid #efe8df;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.05);
+    }
+
+    .empty-box h2 {
+      margin: 0 0 10px;
+      font-size: 28px;
+    }
+
+    .empty-box p {
+      margin: 0 0 24px;
+      color: #666;
+      font-size: 15px;
+    }
+
     @media (max-width: 1100px) {
-      .grid {
-        grid-template-columns: repeat(2, 1fr);
+      .shorts-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
     }
-    @media (max-width: 760px) {
-      .grid {
+
+    @media (max-width: 860px) {
+      .summary-row {
         grid-template-columns: 1fr;
+      }
+
+      .shorts-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      .wrap {
+        padding: 24px 14px 50px;
+      }
+
+      .topbar-left h1 {
+        font-size: 28px;
+      }
+
+      .shorts-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .short-card {
+        border-radius: 24px;
       }
     }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <a href="/admin/dashboard" class="back">← 관리자 메인으로</a>
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1>숏폼 관리</h1>
+        <p>업로드된 숏폼 영상과 연결 상품을 한눈에 관리할 수 있어요.</p>
+      </div>
 
-    <div class="top">
-      <h1>숏폼 관리</h1>
-      <a href="/admin/shorts/new" class="btn">숏폼 등록</a>
+      <div class="topbar-right">
+        <a href="/admin" class="top-btn ghost-btn">대시보드</a>
+        <a href="/admin/shorts/new" class="top-btn primary-btn">+ 새 숏폼 등록</a>
+      </div>
     </div>
 
-    <div class="grid">
-      <% shorts.forEach((item) => { %>
-        <div class="card">
-          <div class="thumb">
-            <% if (item.video) { %>
-              <video src="<%= item.video %>" muted playsinline preload="metadata"></video>
-            <% } else if (item.poster) { %>
-              <img src="<%= item.poster %>" alt="<%= item.title %>">
-            <% } %>
-          </div>
+    <%
+      const totalCount = shorts.length;
+      const visibleCount = shorts.filter(item => item.isVisible !== false).length;
+      const hiddenCount = shorts.filter(item => item.isVisible === false).length;
+    %>
 
-          <div class="body">
-            <div class="title"><%= item.title || '제목 없음' %></div>
-            <div class="meta">노출: <%= item.isVisible ? 'ON' : 'OFF' %></div>
-            <div class="meta">정렬순서: <%= item.sortOrder %></div>
-            <div class="meta">연결링크: <%= item.link || '-' %></div>
+    <div class="summary-row">
+      <div class="summary-card">
+        <div class="summary-label">전체 숏폼</div>
+        <div class="summary-value"><%= totalCount %></div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">노출중</div>
+        <div class="summary-value"><%= visibleCount %></div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">숨김</div>
+        <div class="summary-value"><%= hiddenCount %></div>
+      </div>
+    </div>
 
-            <div class="actions">
-              <a href="/admin/shorts/<%= item._id %>/edit" class="edit-btn">수정</a>
-              <form method="POST" action="/admin/shorts/<%= item._id %>/delete" style="flex:1;">
-                <button type="submit" class="delete-btn">삭제</button>
-              </form>
+    <% if (!shorts || shorts.length === 0) { %>
+      <div class="empty-box">
+        <h2>등록된 숏폼이 아직 없어요</h2>
+        <p>첫 숏폼을 등록해서 메인 화면에 바로 노출해보세요.</p>
+        <a href="/admin/shorts/new" class="top-btn primary-btn">숏폼 등록하러 가기</a>
+      </div>
+    <% } else { %>
+      <div class="shorts-grid">
+        <% shorts.forEach((item) => { %>
+          <%
+            const product = item.productId && item.productId._id ? item.productId : null;
+            const productTitle = product ? (product.name || '') : (item.productTitle || '');
+            const productPrice = product
+              ? `₩${Number(product.price || 0).toLocaleString()}`
+              : (item.productPrice || '');
+            const resolvedLink = product ? `/products/${product._id}` : (item.link || '-');
+          %>
+
+          <div class="short-card">
+            <div class="media-wrap">
+              <% if (item.video) { %>
+                <video
+                  src="<%= item.video %>"
+                  muted
+                  loop
+                  playsinline
+                  controls
+                  preload="metadata">
+                </video>
+              <% } else { %>
+                <div class="media-fallback">영상 없음</div>
+              <% } %>
+
+              <div class="badge-row">
+                <span class="badge"><%= item.brandLabel || 'DAMORE SHORTS' %></span>
+                <span class="badge light"><%= item.isVisible === false ? '숨김' : '노출중' %></span>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <h2 class="title"><%= item.title || '제목 없음' %></h2>
+
+              <div class="meta-list">
+                <div class="meta-item">
+                  <span class="meta-label">정렬순서</span>
+                  <span class="meta-value"><%= item.sortOrder ?? 0 %></span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">연결 링크</span>
+                  <span class="meta-value"><%= resolvedLink %></span>
+                </div>
+              </div>
+
+              <div class="product-box">
+                <div class="product-label">연결 상품</div>
+                <div class="product-title"><%= productTitle || '연결 상품 없음' %></div>
+                <div class="product-price"><%= productPrice || '' %></div>
+              </div>
+
+              <div class="shorts-actions">
+                <a href="/admin/shorts/<%= item._id %>/edit" class="edit-btn">수정</a>
+
+                <form
+                  method="POST"
+                  action="/admin/shorts/<%= item._id %>/delete"
+                  class="action-form"
+                  onsubmit="return confirm('이 숏폼을 삭제할까요?');">
+                  <button type="submit" class="delete-btn">삭제</button>
+                </form>
+              </div>
+
+              <div class="shorts-actions-bottom">
+                <form
+                  method="POST"
+                  action="/admin/shorts/<%= item._id %>/toggle-visible"
+                  class="action-form">
+                  <button
+                    type="submit"
+                    class="<%= item.isVisible === false ? 'toggle-show-btn' : 'toggle-hide-btn' %>">
+                    <%= item.isVisible === false ? '노출로 변경' : '숨김으로 변경' %>
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
-        </div>
-      <% }) %>
-    </div>
+        <% }) %>
+      </div>
+    <% } %>
   </div>
 </body>
 </html>

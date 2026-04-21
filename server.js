@@ -11,6 +11,7 @@ dotenv.config();
 const connectDB = require('./config/db');
 const adminRoutes = require('./routes/admin');
 const adminShortsRoutes = require('./routes/admin-shorts');
+const adminProductsRoutes = require('./routes/admin-products');
 const authRoutes = require('./routes/auth');
 
 const Product = require('./models/Product');
@@ -33,6 +34,7 @@ const TOSS_SECRET_KEY = process.env.TOSS_SECRET_KEY || '';
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.set('trust proxy', 1);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -48,7 +50,10 @@ app.use(
       mongoUrl: process.env.MONGO_URI
     }),
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24
+      maxAge: 1000 * 60 * 60 * 24,
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: false
     }
   })
 );
@@ -61,7 +66,7 @@ app.use(async (req, res, next) => {
     res.locals.tossClientKey = TOSS_CLIENT_KEY;
     res.locals.currentPath = req.path;
 
-    if (req.session.adminId) {
+    if (req.session && req.session.adminId) {
       const admin = await Admin.findById(req.session.adminId).select('username');
       if (admin) {
         res.locals.adminId = admin._id.toString();
@@ -71,7 +76,7 @@ app.use(async (req, res, next) => {
       }
     }
 
-    if (req.session.userId) {
+    if (req.session && req.session.userId) {
       const user = await User.findById(req.session.userId).select('name email');
       if (user) {
         res.locals.currentUser = user;
@@ -80,7 +85,7 @@ app.use(async (req, res, next) => {
       }
     }
 
-    res.locals.cartCount = req.session.cart
+    res.locals.cartCount = req.session && req.session.cart
       ? req.session.cart.reduce((sum, item) => sum + Number(item.quantity || 0), 0)
       : 0;
 
@@ -303,6 +308,10 @@ async function buildHomeSectionProductsMap(homeSections) {
   return map;
 }
 
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
 app.use('/', authRoutes);
 
 // 메인 페이지
@@ -359,7 +368,7 @@ app.get('/', async (req, res) => {
     const heroSlides = await HeroSlide.find({ isActive: true }).sort({ order: 1, createdAt: 1 });
 
     let homeSections = [];
-    let homeSectionProductsMap = [];
+    let homeSectionProductsMap = {};
     let shortsItems = [];
 
     if (!category) {
@@ -369,9 +378,32 @@ app.get('/', async (req, res) => {
 
       homeSectionProductsMap = await buildHomeSectionProductsMap(homeSections);
 
-      shortsItems = await ShortsItem.find({ isVisible: true })
+      const shortsDocs = await ShortsItem.find({ isVisible: true })
+        .populate('productId')
         .sort({ sortOrder: 1, createdAt: -1 })
         .limit(4);
+
+      shortsItems = shortsDocs.map((item) => {
+        const product = item.productId && item.productId._id ? item.productId : null;
+
+        return {
+          _id: item._id,
+          title: item.title || '',
+          brandLabel: item.brandLabel || 'DAMORE SHORTS',
+          video: item.video || '',
+          poster: item.poster || '',
+          link: product ? `/products/${product._id}` : (item.link || '/about'),
+          productTitle: product
+            ? (product.name || '')
+            : (item.productTitle || ''),
+          productPrice: product
+            ? `₩${Number(product.price || 0).toLocaleString()}`
+            : (item.productPrice || ''),
+          productThumb: product
+            ? (product.image || item.poster || '')
+            : (item.productThumb || item.poster || '')
+        };
+      });
     }
 
     res.render('home', {
@@ -1124,8 +1156,9 @@ app.post('/order/lookup/cancel-request', async (req, res) => {
   }
 });
 
-app.use('/admin', adminRoutes);
+app.use('/admin/products', adminProductsRoutes);
 app.use('/admin/shorts', adminShortsRoutes);
+app.use('/admin', adminRoutes);
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on ${BASE_URL}`);

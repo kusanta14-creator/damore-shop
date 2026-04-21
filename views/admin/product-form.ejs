@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%= typeof isEdit !== 'undefined' && isEdit ? '상품 수정' : '상품 등록' %> | DAMORE ADMIN</title>
+  <title><%= mode === 'edit' ? '상품 수정' : '상품 등록' %> | DAMORE ADMIN</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -16,7 +16,7 @@
       --gold: #9d8660;
       --shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
       --radius: 24px;
-      --max: 1460px;
+      --max: 1480px;
       --soft: #efe9df;
       --red: #b23a2c;
       --red-bg: #fff1ee;
@@ -111,7 +111,7 @@
 
     .admin-layout {
       display: grid;
-      grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.65fr);
+      grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.7fr);
       gap: 24px;
       align-items: start;
     }
@@ -131,6 +131,18 @@
     .section-title {
       font-size: 24px;
       margin-bottom: 18px;
+    }
+
+    .section-block + .section-block {
+      margin-top: 28px;
+      padding-top: 28px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section-label {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 14px;
     }
 
     .grid {
@@ -177,14 +189,8 @@
       box-shadow: 0 0 0 4px rgba(157, 134, 96, 0.12);
     }
 
-    select:disabled {
-      background: #f3f3f3;
-      color: #999;
-      cursor: not-allowed;
-    }
-
     textarea {
-      min-height: 140px;
+      min-height: 120px;
       resize: vertical;
     }
 
@@ -192,55 +198,6 @@
       margin-top: 6px;
       font-size: 12px;
       color: var(--muted);
-    }
-
-    .option-wrap {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 8px;
-    }
-
-    .option-btn {
-      min-width: 64px;
-      height: 46px;
-      padding: 0 18px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: #fff;
-      color: #111;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 800;
-      transition: all 0.2s ease;
-    }
-
-    .option-btn:hover {
-      border-color: rgba(157, 134, 96, 0.7);
-      background: #faf8f4;
-    }
-
-    .option-btn.active {
-      background: #111;
-      color: #fff;
-      border-color: #111;
-      box-shadow: 0 8px 20px rgba(17, 17, 17, 0.12);
-    }
-
-    .check-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-height: 52px;
-      padding: 0 14px;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: #fff;
-    }
-
-    .check-row input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
     }
 
     .preview-box {
@@ -262,11 +219,52 @@
 
     .preview-image-list {
       display: grid;
-      gap: 6px;
-      margin-top: 8px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
     }
 
-    .submit-row {
+    .preview-item {
+      overflow: hidden;
+      border-radius: 16px;
+      background: #fff;
+      border: 1px solid rgba(17, 17, 17, 0.06);
+    }
+
+    .preview-item img,
+    .preview-item video {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      display: block;
+      background: #ece8e1;
+    }
+
+    .preview-item .cap {
+      padding: 8px 10px;
+      font-size: 11px;
+      color: #666;
+      word-break: break-all;
+      background: #fff;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 52px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+    }
+
+    .check-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+    }
+
+    .actions {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
@@ -282,6 +280,9 @@
       cursor: pointer;
       font-size: 15px;
       font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .submit-btn-dark {
@@ -292,9 +293,58 @@
     .submit-btn-light {
       background: var(--soft);
       color: #111;
-      display: inline-flex;
+    }
+
+    .checkbox-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .checkbox-card {
+      display: flex;
+      gap: 10px;
       align-items: center;
-      justify-content: center;
+      border: 1px solid #eee;
+      border-radius: 14px;
+      padding: 10px;
+      background: #fafafa;
+      cursor: pointer;
+    }
+
+    .checkbox-card input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      padding: 0;
+      flex-shrink: 0;
+    }
+
+    .checkbox-card img {
+      width: 52px;
+      height: 52px;
+      object-fit: cover;
+      border-radius: 10px;
+      background: #ddd;
+      flex-shrink: 0;
+    }
+
+    .checkbox-card-text {
+      min-width: 0;
+    }
+
+    .checkbox-card-title {
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    .checkbox-card-price {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
     }
 
     .live-title {
@@ -344,7 +394,8 @@
       overflow: hidden;
     }
 
-    .product-thumb img {
+    .product-thumb img,
+    .product-thumb video {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -415,8 +466,15 @@
       font-size: 24px;
       font-weight: 800;
       line-height: 1.28;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       word-break: keep-all;
+    }
+
+    .product-summary {
+      color: #6f6a63;
+      font-size: 14px;
+      margin-bottom: 14px;
+      word-break: break-word;
     }
 
     .product-price-row {
@@ -501,10 +559,6 @@
       margin-top: 16px;
     }
 
-    .thumb-strip.two {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
     .mini-card {
       overflow: hidden;
       border-radius: 16px;
@@ -532,7 +586,8 @@
       overflow: hidden;
     }
 
-    .mini-card .mini-image img {
+    .mini-card .mini-image img,
+    .mini-card .mini-image video {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -568,7 +623,10 @@
     }
 
     @media (max-width: 760px) {
-      .grid {
+      .grid,
+      .checkbox-list,
+      .preview-image-list,
+      .thumb-strip {
         grid-template-columns: 1fr;
       }
 
@@ -588,105 +646,44 @@
       .page-head h1 {
         font-size: 32px;
       }
-
-      .thumb-strip,
-      .thumb-strip.two {
-        grid-template-columns: 1fr;
-      }
     }
   </style>
 </head>
 <body>
   <%
-    const safeIsEdit =
-      typeof isEdit !== 'undefined'
-        ? isEdit
-        : !!(typeof product !== 'undefined' && product && product._id);
+    const safeMode = typeof mode !== 'undefined' ? mode : (product && product._id ? 'edit' : 'create');
+    const safeProduct = typeof product !== 'undefined' && product ? product : null;
+    const safeAllProducts = typeof allProducts !== 'undefined' && Array.isArray(allProducts) ? allProducts : [];
+    const isEdit = safeMode === 'edit';
 
-    const safeProduct =
-      typeof product !== 'undefined' && product
-        ? product
-        : {};
-
-    const safeFormAction =
-      typeof formAction !== 'undefined' && formAction
-        ? formAction
-        : (safeIsEdit && safeProduct._id
-            ? `/admin/products/${safeProduct._id}/edit`
-            : '/admin/products');
-
-    const safeCategories =
-      typeof categoryList !== 'undefined' && Array.isArray(categoryList)
-        ? categoryList
-        : (typeof categories !== 'undefined' && Array.isArray(categories) ? categories : []);
-
-    const rawOptions =
-      Array.isArray(safeProduct.options)
-        ? safeProduct.options.join(',')
-        : (safeProduct.options || safeProduct.option || '');
-
-    const selectedOptions = String(rawOptions)
-      .split(',')
-      .map(function (v) { return v.trim(); })
-      .filter(Boolean);
-
-    const rawColors =
-      Array.isArray(safeProduct.colors)
-        ? safeProduct.colors.join(', ')
-        : (safeProduct.colors || '');
-
-    const safeDetailImages = Array.isArray(safeProduct.detailImages)
-      ? safeProduct.detailImages
+    const selectedAdditionalProducts = Array.isArray(safeProduct?.additionalProducts)
+      ? safeProduct.additionalProducts.map((item) => String(item))
       : [];
 
-    const safeStatus = safeProduct.status || 'active';
+    const optionGroup1 = safeProduct?.optionGroups?.[0] || { name: '', values: [] };
+    const optionGroup2 = safeProduct?.optionGroups?.[1] || { name: '', values: [] };
 
-    const safeCategoryText = (() => {
-      if (safeCategories.length > 0) {
-        const matched = safeCategories.find((category) => {
-          const value = category.slug || category.name || category;
-          return value === (safeProduct.category || '');
-        });
-        return matched ? (matched.name || matched.slug || matched) : (safeProduct.category || '');
-      }
-      return safeProduct.category || '';
-    })();
+    const optionGroup1Text = Array.isArray(optionGroup1.values)
+      ? optionGroup1.values.map((item) => item.value).join('\n')
+      : '';
 
-    const safeSelectedCategoryObj = safeCategories.find((category) => {
-      const value = category.slug || category.name || category;
-      return value === (safeProduct.category || '');
-    });
+    const optionGroup2Text = Array.isArray(optionGroup2.values)
+      ? optionGroup2.values.map((item) => item.value).join('\n')
+      : '';
 
-    const safeAvailableSubCategories =
-      safeSelectedCategoryObj && Array.isArray(safeSelectedCategoryObj.subCategories)
-        ? safeSelectedCategoryObj.subCategories
-        : [];
-
-    const safeSubCategoryText = safeProduct.subCategory || '';
-
-    const safeCategorySubMap = safeCategories.reduce((acc, category) => {
-      const key = category.slug || category.name || category;
-      acc[key] = Array.isArray(category.subCategories) ? category.subCategories : [];
-      return acc;
-    }, {});
-
-    const numericPrice = Number(safeProduct.price || 0);
-    const numericOldPrice = Number(safeProduct.oldPrice || 0);
+    const numericPrice = Number(safeProduct?.price || 0);
+    const numericOldPrice = Number(safeProduct?.oldPrice || 0);
     const discountPercent = numericOldPrice > numericPrice && numericOldPrice > 0
       ? Math.round(((numericOldPrice - numericPrice) / numericOldPrice) * 100)
       : 0;
-
-    const colorList = rawColors
-      ? rawColors.split(',').map(function (v) { return v.trim(); }).filter(Boolean)
-      : [];
   %>
 
   <main class="page">
     <div class="container">
       <div class="page-head">
         <small>Admin Product</small>
-        <h1><%= safeIsEdit ? '상품 수정' : '상품 등록' %></h1>
-        <p>기존 구조 유지 + 서브카테고리 자동 선택 + 옵션 버튼식 + 컬러 직접입력 + 대표/상세/추가 이미지 업로드 + 실시간 미리보기 버전입니다.</p>
+        <h1><%= isEdit ? '상품 수정' : '상품 등록' %></h1>
+        <p>기존 UI 느낌 유지 + 새 상품 구조 반영 버전입니다.</p>
       </div>
 
       <div class="top-actions">
@@ -698,271 +695,287 @@
         <div class="card">
           <h2 class="section-title">상품 정보 입력</h2>
 
-          <form method="POST" action="<%= safeFormAction %>" enctype="multipart/form-data" id="productForm">
-            <% if (safeIsEdit) { %>
-              <input type="hidden" name="_method" value="PUT" />
-            <% } %>
+          <form
+            method="POST"
+            enctype="multipart/form-data"
+            action="<%= isEdit ? `/admin/products/${safeProduct._id}/edit` : '/admin/products/new' %>"
+            id="productForm">
 
-            <div class="grid">
-              <div class="form-group">
-                <label for="name">상품명</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value="<%= safeProduct.name || '' %>"
-                  placeholder="상품명을 입력해주세요"
-                  required
-                />
-              </div>
+            <div class="section-block">
+              <div class="section-label">기본 정보</div>
 
-              <div class="form-group">
-                <label for="category">카테고리</label>
-                <% if (safeCategories.length > 0) { %>
-                  <select id="category" name="category" required>
-                    <option value="">카테고리 선택</option>
-                    <% safeCategories.forEach((category) => { %>
-                      <option
-                        value="<%= category.slug || category.name || category %>"
-                        <%= (safeProduct.category || '') === (category.slug || category.name || category) ? 'selected' : '' %>
-                      >
-                        <%= category.name || category.slug || category %>
-                      </option>
-                    <% }) %>
-                  </select>
-                <% } else { %>
-                  <input
-                    type="text"
-                    id="category"
-                    name="category"
-                    value="<%= safeProduct.category || '' %>"
-                    placeholder="카테고리를 입력해주세요"
-                    required
-                  />
-                <% } %>
-              </div>
-
-              <div class="form-group full">
-                <label for="subCategory">서브카테고리</label>
-                <select id="subCategory" name="subCategory" <%= safeAvailableSubCategories.length === 0 ? 'disabled' : '' %>>
-                  <option value="">서브카테고리 선택</option>
-                  <% safeAvailableSubCategories.forEach((sub) => { %>
-                    <option value="<%= sub %>" <%= safeProduct.subCategory === sub ? 'selected' : '' %>>
-                      <%= sub %>
-                    </option>
-                  <% }) %>
-                </select>
-
-                <div class="help">카테고리를 선택하면 해당 카테고리의 하위카테고리만 자동으로 표시됩니다.</div>
-
-                <div class="preview-box">
-                  현재 서브카테고리:
-                  <span class="preview-value" id="subCategoryPreview">
-                    <%= safeProduct.subCategory || '선택 없음' %>
-                  </span>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="price">가격</label>
-                <input
-                  type="number"
-                  id="price"
-                  name="price"
-                  value="<%= safeProduct.price || 0 %>"
-                  placeholder="가격을 입력해주세요"
-                  min="0"
-                  required
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="oldPrice">할인 전 가격</label>
-                <input
-                  type="number"
-                  id="oldPrice"
-                  name="oldPrice"
-                  value="<%= safeProduct.oldPrice || 0 %>"
-                  placeholder="없으면 0"
-                  min="0"
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="stock">재고</label>
-                <input
-                  type="number"
-                  id="stock"
-                  name="stock"
-                  value="<%= safeProduct.stock || 0 %>"
-                  placeholder="재고 수량을 입력해주세요"
-                  min="0"
-                  required
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="tag">태그 문구</label>
-                <input
-                  type="text"
-                  id="tag"
-                  name="tag"
-                  value="<%= safeProduct.tag || '' %>"
-                  placeholder="예: new / best / limited"
-                />
-              </div>
-
-              <div class="form-group full">
-                <label for="options">사이즈 옵션</label>
-                <input
-                  type="hidden"
-                  id="options"
-                  name="options"
-                  value="<%= selectedOptions.join(',') %>"
-                />
-
-                <div class="option-wrap" id="optionWrap">
-                  <% ['S', 'M', 'L', 'XL', 'F'].forEach((size) => { %>
-                    <button
-                      type="button"
-                      class="option-btn <%= selectedOptions.includes(size) ? 'active' : '' %>"
-                      data-size="<%= size %>"
-                    >
-                      <%= size %>
-                    </button>
-                  <% }) %>
+              <div class="grid">
+                <div class="form-group">
+                  <label for="name">상품명</label>
+                  <input type="text" id="name" name="name" value="<%= safeProduct?.name || '' %>" required />
                 </div>
 
-                <div class="help">여러 개 선택 가능합니다.</div>
-
-                <div class="preview-box">
-                  현재 선택 옵션:
-                  <span class="preview-value" id="selectedOptionsPreview">
-                    <%= selectedOptions.length ? selectedOptions.join(', ') : '선택 없음' %>
-                  </span>
+                <div class="form-group">
+                  <label for="category">카테고리</label>
+                  <input type="text" id="category" name="category" value="<%= safeProduct?.category || '' %>" />
                 </div>
-              </div>
 
-              <div class="form-group full">
-                <label for="colors">컬러 직접 입력</label>
-                <input
-                  type="text"
-                  id="colors"
-                  name="colors"
-                  value="<%= rawColors %>"
-                  placeholder="예: black, white, navy, beige"
-                />
-                <div class="help">쉼표(,)로 구분해서 입력하면 상품 상세페이지 컬러 선택에 그대로 노출됩니다.</div>
-
-                <div class="preview-box">
-                  현재 입력 컬러:
-                  <span class="preview-value" id="colorsPreview">
-                    <%= rawColors ? rawColors : '선택 없음' %>
-                  </span>
+                <div class="form-group full">
+                  <label for="summary">한줄 요약</label>
+                  <input type="text" id="summary" name="summary" value="<%= safeProduct?.summary || '' %>" placeholder="예: 여리핏 데일리 무드 셔츠" />
                 </div>
-              </div>
 
-              <div class="form-group full">
-                <label for="image">대표 이미지 업로드</label>
-                <input
-                  type="file"
-                  id="image"
-                  name="image"
-                  accept="image/*"
-                />
-                <% if (safeProduct.image) { %>
-                  <div class="preview-box">
-                    현재 대표 이미지:
-                    <span class="preview-value"><%= safeProduct.image %></span>
-                  </div>
-                <% } %>
-              </div>
-
-              <div class="form-group full">
-                <label for="detailImage">상세 대표 이미지 업로드</label>
-                <input
-                  type="file"
-                  id="detailImage"
-                  name="detailImage"
-                  accept="image/*"
-                />
-                <% if (safeProduct.detailImage) { %>
-                  <div class="preview-box">
-                    현재 상세 대표 이미지:
-                    <span class="preview-value"><%= safeProduct.detailImage %></span>
-                  </div>
-                <% } %>
-              </div>
-
-              <div class="form-group full">
-                <label for="detailImages">설명용 추가 이미지 여러 장 업로드</label>
-                <input
-                  type="file"
-                  id="detailImages"
-                  name="detailImages"
-                  accept="image/*"
-                  multiple
-                />
-                <div class="help">여러 장 선택 가능합니다.</div>
-
-                <% if (safeDetailImages.length > 0) { %>
-                  <div class="preview-box">
-                    현재 추가 이미지:
-                    <div class="preview-image-list">
-                      <% safeDetailImages.forEach((img) => { %>
-                        <span class="preview-value"><%= img %></span>
-                      <% }) %>
-                    </div>
-                  </div>
-                <% } %>
-              </div>
-
-              <div class="form-group full">
-                <label for="description">상품 설명</label>
-                <textarea
-                  id="description"
-                  name="description"
-                  placeholder="상품 설명을 입력해주세요"
-                ><%= safeProduct.description || safeProduct.desc || '' %></textarea>
-              </div>
-
-              <div class="form-group">
-                <label>BEST 상품 여부</label>
-                <div class="check-row">
-                  <input
-                    type="checkbox"
-                    id="isBest"
-                    name="isBest"
-                    value="true"
-                    <%= safeProduct.isBest ? 'checked' : '' %>
-                  />
-                  <label for="isBest" style="margin: 0;">BEST 상품으로 노출</label>
+                <div class="form-group full">
+                  <label for="desc">상품 설명</label>
+                  <textarea id="desc" name="desc"><%= safeProduct?.desc || '' %></textarea>
                 </div>
-              </div>
 
-              <div class="form-group">
-                <label>판매 상태</label>
-                <div class="check-row">
-                  <input
-                    type="checkbox"
-                    id="isActive"
-                    name="status"
-                    value="active"
-                    <%= !safeProduct.status || safeProduct.status === 'active' ? 'checked' : '' %>
-                  />
-                  <label for="isActive" style="margin: 0;">판매중 상태로 저장</label>
+                <div class="form-group">
+                  <label for="tag">태그</label>
+                  <input type="text" id="tag" name="tag" value="<%= safeProduct?.tag || '' %>" placeholder="NEW / BEST / MD추천" />
                 </div>
-                <div class="help">체크 해제 시 품절 상태 미리보기로 표시됩니다.</div>
+
+                <div class="form-group">
+                  <label for="shippingFeeText">배송비 문구</label>
+                  <input type="text" id="shippingFeeText" name="shippingFeeText" value="<%= safeProduct?.shippingFeeText || '무료배송' %>" />
+                </div>
               </div>
             </div>
 
-            <div class="submit-row">
+            <div class="section-block">
+              <div class="section-label">가격 / 혜택</div>
+
+              <div class="grid">
+                <div class="form-group">
+                  <label for="price">판매가</label>
+                  <input type="number" id="price" name="price" min="0" value="<%= safeProduct?.price ?? 0 %>" required />
+                </div>
+
+                <div class="form-group">
+                  <label for="oldPrice">정가</label>
+                  <input type="number" id="oldPrice" name="oldPrice" min="0" value="<%= safeProduct?.oldPrice ?? 0 %>" />
+                </div>
+
+                <div class="form-group">
+                  <label for="reviewCount">리뷰 수</label>
+                  <input type="number" id="reviewCount" name="reviewCount" min="0" value="<%= safeProduct?.reviewCount ?? 0 %>" />
+                </div>
+
+                <div class="form-group">
+                  <label for="status">상태</label>
+                  <select id="status" name="status">
+                    <option value="onsale" <%= safeProduct?.status !== 'soldout' ? 'selected' : '' %>>판매중</option>
+                    <option value="soldout" <%= safeProduct?.status === 'soldout' ? 'selected' : '' %>>품절</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="couponEnabled">쿠폰 노출 여부</label>
+                  <select id="couponEnabled" name="couponEnabled">
+                    <option value="false" <%= safeProduct?.couponDisplay?.enabled !== true ? 'selected' : '' %>>사용 안함</option>
+                    <option value="true" <%= safeProduct?.couponDisplay?.enabled === true ? 'selected' : '' %>>사용</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="couponLabel">쿠폰 문구</label>
+                  <input type="text" id="couponLabel" name="couponLabel" value="<%= safeProduct?.couponDisplay?.label || '' %>" placeholder="10% 할인쿠폰 다운로드" />
+                </div>
+
+                <div class="form-group full">
+                  <label>BEST 상품 여부</label>
+                  <div class="check-row">
+                    <input
+                      type="checkbox"
+                      id="isBest"
+                      name="isBest"
+                      value="true"
+                      <%= safeProduct?.isBest ? 'checked' : '' %> />
+                    <label for="isBest" style="margin:0;">BEST 상품으로 노출</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-block">
+              <div class="section-label">대표 미디어</div>
+
+              <div class="grid">
+                <div class="form-group full">
+                  <label for="imageFile">대표 이미지 업로드</label>
+                  <input type="file" id="imageFile" name="imageFile" accept="image/png,image/jpeg,image/jpg,image/webp" />
+                  <div class="help">홈 / 목록 / 상세 상단에서 메인으로 사용</div>
+
+                  <% if (safeProduct?.image) { %>
+                    <div class="preview-box">
+                      현재 대표 이미지:
+                      <span class="preview-value"><%= safeProduct.image %></span>
+                    </div>
+                  <% } %>
+                </div>
+
+                <div class="form-group full">
+                  <label for="image">대표 이미지 경로 직접 입력</label>
+                  <input type="text" id="image" name="image" value="<%= safeProduct?.image || '' %>" placeholder="/uploads/products/main.jpg" />
+                </div>
+
+                <div class="form-group full">
+                  <label for="videoFile">상품 영상 업로드</label>
+                  <input type="file" id="videoFile" name="videoFile" accept="video/mp4,video/webm,video/quicktime,video/x-m4v" />
+                  <div class="help">짧은 영상 1개 권장</div>
+
+                  <% if (safeProduct?.video) { %>
+                    <div class="preview-box">
+                      현재 상품 영상:
+                      <span class="preview-value"><%= safeProduct.video %></span>
+                    </div>
+                  <% } %>
+                </div>
+
+                <div class="form-group full">
+                  <label for="video">상품 영상 경로 직접 입력</label>
+                  <input type="text" id="video" name="video" value="<%= safeProduct?.video || '' %>" placeholder="/uploads/products/sample.mp4" />
+                </div>
+              </div>
+            </div>
+
+            <div class="section-block">
+              <div class="section-label">서브 이미지 / 상세 이미지</div>
+
+              <div class="form-group">
+                <label for="subImageFiles">서브 이미지 여러 장 업로드</label>
+                <input type="file" id="subImageFiles" name="subImageFiles" accept="image/png,image/jpeg,image/jpg,image/webp" multiple />
+                <div class="help">상세 상단 썸네일 / 슬라이드 영역</div>
+
+                <% if (safeProduct?.subImages?.length) { %>
+                  <div class="preview-image-list">
+                    <% safeProduct.subImages.forEach((img) => { %>
+                      <div class="preview-item">
+                        <img src="<%= img %>" alt="서브 이미지" />
+                        <div class="cap"><%= img %></div>
+                      </div>
+                      <input type="hidden" name="existingSubImages" value="<%= img %>" />
+                    <% }) %>
+                  </div>
+                <% } %>
+              </div>
+
+              <div class="form-group">
+                <label for="detailImageFiles">상세 이미지 여러 장 업로드</label>
+                <input type="file" id="detailImageFiles" name="detailImageFiles" accept="image/png,image/jpeg,image/jpg,image/webp" multiple />
+                <div class="help">상세 하단 긴 설명 영역</div>
+
+                <% if (safeProduct?.detailImages?.length) { %>
+                  <div class="preview-image-list">
+                    <% safeProduct.detailImages.forEach((img) => { %>
+                      <div class="preview-item">
+                        <img src="<%= img %>" alt="상세 이미지" />
+                        <div class="cap"><%= img %></div>
+                      </div>
+                      <input type="hidden" name="existingDetailImages" value="<%= img %>" />
+                    <% }) %>
+                  </div>
+                <% } %>
+              </div>
+            </div>
+
+            <div class="section-block">
+              <div class="section-label">옵션 드롭다운</div>
+
+              <div class="grid">
+                <div class="form-group">
+                  <label for="optionGroup1Name">옵션 그룹 1 이름</label>
+                  <input type="text" id="optionGroup1Name" name="optionGroup1Name" value="<%= optionGroup1.name || '' %>" placeholder="예: 컬러" />
+                </div>
+
+                <div class="form-group">
+                  <label for="optionGroup2Name">옵션 그룹 2 이름</label>
+                  <input type="text" id="optionGroup2Name" name="optionGroup2Name" value="<%= optionGroup2.name || '' %>" placeholder="예: 사이즈" />
+                </div>
+
+                <div class="form-group">
+                  <label for="optionGroup1Values">옵션 그룹 1 값</label>
+                  <textarea id="optionGroup1Values" name="optionGroup1Values" placeholder="한 줄에 하나씩 입력&#10;예: 크림&#10;블랙&#10;핑크"><%= optionGroup1Text %></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label for="optionGroup2Values">옵션 그룹 2 값</label>
+                  <textarea id="optionGroup2Values" name="optionGroup2Values" placeholder="한 줄에 하나씩 입력&#10;예: S&#10;M&#10;L"><%= optionGroup2Text %></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-block">
+              <div class="section-label">추가상품 연결</div>
+
+              <div class="form-group">
+                <label>추가상품 선택</label>
+                <div class="help">상세페이지에서 함께 보여줄 상품들</div>
+
+                <div class="checkbox-list">
+                  <% safeAllProducts.forEach((item) => { %>
+                    <% const checked = selectedAdditionalProducts.includes(String(item._id)); %>
+                    <label class="checkbox-card">
+                      <input
+                        type="checkbox"
+                        name="additionalProducts"
+                        value="<%= item._id %>"
+                        <%= checked ? 'checked' : '' %> />
+
+                      <% if (item.image) { %>
+                        <img src="<%= item.image %>" alt="<%= item.name %>" />
+                      <% } else { %>
+                        <img src="https://dummyimage.com/100x100/e5e5e5/999999&text=NO" alt="이미지 없음" />
+                      <% } %>
+
+                      <div class="checkbox-card-text">
+                        <div class="checkbox-card-title"><%= item.name %></div>
+                        <div class="checkbox-card-price">₩<%= Number(item.price || 0).toLocaleString() %></div>
+                      </div>
+                    </label>
+                  <% }) %>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-block">
+              <div class="section-label">가이드</div>
+
+              <div class="form-group">
+                <label for="washImageFile">세탁가이드 이미지 업로드</label>
+                <input type="file" id="washImageFile" name="washImageFile" accept="image/png,image/jpeg,image/jpg,image/webp" />
+                <% if (safeProduct?.guide?.washImage) { %>
+                  <input type="hidden" name="existingWashImage" value="<%= safeProduct.guide.washImage %>" />
+                  <div class="preview-box">
+                    현재 세탁가이드 이미지:
+                    <span class="preview-value"><%= safeProduct.guide.washImage %></span>
+                  </div>
+                <% } %>
+              </div>
+
+              <div class="form-group">
+                <label for="sizeGuideImageFile">사이즈 측정방법 이미지 업로드</label>
+                <input type="file" id="sizeGuideImageFile" name="sizeGuideImageFile" accept="image/png,image/jpeg,image/jpg,image/webp" />
+                <% if (safeProduct?.guide?.sizeGuideImage) { %>
+                  <input type="hidden" name="existingSizeGuideImage" value="<%= safeProduct.guide.sizeGuideImage %>" />
+                  <div class="preview-box">
+                    현재 사이즈가이드 이미지:
+                    <span class="preview-value"><%= safeProduct.guide.sizeGuideImage %></span>
+                  </div>
+                <% } %>
+              </div>
+
+              <div class="form-group">
+                <label for="copyrightNotice">이미지 저작권 안내</label>
+                <textarea id="copyrightNotice" name="copyrightNotice"><%= safeProduct?.guide?.copyrightNotice || '' %></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="shippingExchangeReturn">배송 / 교환 / 반품 안내</label>
+                <textarea id="shippingExchangeReturn" name="shippingExchangeReturn"><%= safeProduct?.guide?.shippingExchangeReturn || '' %></textarea>
+              </div>
+            </div>
+
+            <div class="actions">
               <button type="submit" class="submit-btn submit-btn-dark">
-                <%= safeIsEdit ? '상품 수정 완료' : '상품 등록하기' %>
+                <%= isEdit ? '상품 수정 완료' : '상품 등록하기' %>
               </button>
-              <a href="/admin/products" class="submit-btn submit-btn-light">
-                취소하고 목록으로
-              </a>
+              <a href="/admin/products" class="submit-btn submit-btn-light">취소하고 목록으로</a>
             </div>
           </form>
         </div>
@@ -979,51 +992,53 @@
                 <div class="product-thumb">
                   <img
                     id="liveMainImage"
-                    src="<%= safeProduct.image || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80' %>"
-                    alt="상품 대표 이미지"
-                  />
+                    src="<%= safeProduct?.image || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80' %>"
+                    alt="상품 대표 이미지" />
 
-                  <% if (safeProduct.isBest) { %>
-                    <div class="product-badge-best" id="liveBestBadge">BEST</div>
-                  <% } else { %>
-                    <div class="product-badge-best is-hidden" id="liveBestBadge">BEST</div>
-                  <% } %>
+                  <video
+                    id="liveVideo"
+                    class="<%= safeProduct?.video ? '' : 'is-hidden' %>"
+                    src="<%= safeProduct?.video || '' %>"
+                    muted
+                    loop
+                    playsinline
+                    controls
+                    style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; background:#000;">
+                  </video>
 
-                  <% if (safeStatus === 'active') { %>
-                    <div class="product-badge-status active" id="liveStatusBadge">판매중</div>
-                  <% } else { %>
-                    <div class="product-badge-status soldout" id="liveStatusBadge">품절</div>
-                  <% } %>
+                  <div class="product-badge-best <%= safeProduct?.isBest ? '' : 'is-hidden' %>" id="liveBestBadge">BEST</div>
+
+                  <div
+                    class="product-badge-status <%= safeProduct?.status === 'soldout' ? 'soldout' : 'active' %>"
+                    id="liveStatusBadge">
+                    <%= safeProduct?.status === 'soldout' ? '품절' : '판매중' %>
+                  </div>
                 </div>
 
                 <div class="product-body">
-                  <div class="product-category" id="liveCategory"><%= safeCategoryText || 'CATEGORY' %></div>
-                  <div class="product-category" id="liveSubCategory" style="margin-top:-4px; letter-spacing:0.08em; color:#7f725f;"><%= safeSubCategoryText || 'SUBCATEGORY' %></div>
-                  <div class="product-name" id="liveName"><%= safeProduct.name || '상품명이 여기에 표시됩니다.' %></div>
+                  <div class="product-category" id="liveCategory"><%= safeProduct?.category || 'CATEGORY' %></div>
+                  <div class="product-name" id="liveName"><%= safeProduct?.name || '상품명이 여기에 표시됩니다.' %></div>
+                  <div class="product-summary" id="liveSummary"><%= safeProduct?.summary || '한줄 요약이 여기에 표시됩니다.' %></div>
 
                   <div class="product-price-row">
-                    <div class="product-price" id="livePrice"><%= Number(safeProduct.price || 0).toLocaleString('ko-KR') %>원</div>
+                    <div class="product-price" id="livePrice"><%= Number(safeProduct?.price || 0).toLocaleString('ko-KR') %>원</div>
 
-                    <% if (numericOldPrice > 0) { %>
-                      <div class="product-old-price" id="liveOldPrice"><%= Number(numericOldPrice).toLocaleString('ko-KR') %>원</div>
-                    <% } else { %>
-                      <div class="product-old-price is-hidden" id="liveOldPrice"></div>
-                    <% } %>
+                    <div class="product-old-price <%= numericOldPrice > 0 ? '' : 'is-hidden' %>" id="liveOldPrice">
+                      <%= numericOldPrice > 0 ? Number(numericOldPrice).toLocaleString('ko-KR') + '원' : '' %>
+                    </div>
 
-                    <% if (discountPercent > 0) { %>
-                      <div class="product-discount" id="liveDiscount"><%= discountPercent %>% OFF</div>
-                    <% } else { %>
-                      <div class="product-discount is-hidden" id="liveDiscount"></div>
-                    <% } %>
+                    <div class="product-discount <%= discountPercent > 0 ? '' : 'is-hidden' %>" id="liveDiscount">
+                      <%= discountPercent > 0 ? discountPercent + '% OFF' : '' %>
+                    </div>
                   </div>
 
                   <div class="product-meta">
                     <div class="meta-block">
-                      <h3>옵션</h3>
-                      <div class="chip-list" id="liveOptions">
-                        <% if (selectedOptions.length > 0) { %>
-                          <% selectedOptions.forEach((option) => { %>
-                            <span class="chip"><%= option %></span>
+                      <h3>옵션 1</h3>
+                      <div class="chip-list" id="liveOptionGroup1">
+                        <% if (optionGroup1Text) { %>
+                          <% optionGroup1Text.split('\n').filter(Boolean).forEach((item) => { %>
+                            <span class="chip"><%= item %></span>
                           <% }) %>
                         <% } else { %>
                           <span class="chip empty">선택 없음</span>
@@ -1032,11 +1047,11 @@
                     </div>
 
                     <div class="meta-block">
-                      <h3>컬러</h3>
-                      <div class="chip-list" id="liveColors">
-                        <% if (colorList.length > 0) { %>
-                          <% colorList.forEach((color) => { %>
-                            <span class="chip"><%= color %></span>
+                      <h3>옵션 2</h3>
+                      <div class="chip-list" id="liveOptionGroup2">
+                        <% if (optionGroup2Text) { %>
+                          <% optionGroup2Text.split('\n').filter(Boolean).forEach((item) => { %>
+                            <span class="chip"><%= item %></span>
                           <% }) %>
                         <% } else { %>
                           <span class="chip empty">선택 없음</span>
@@ -1045,63 +1060,80 @@
                     </div>
 
                     <div class="meta-block">
-                      <h3>재고 / 태그</h3>
+                      <h3>혜택 / 태그</h3>
                       <div class="chip-list">
-                        <span class="chip" id="liveStock">재고 <%= safeProduct.stock || 0 %>개</span>
+                        <span class="chip" id="liveShipping"><%= safeProduct?.shippingFeeText || '무료배송' %></span>
 
-                        <% if (safeProduct.tag) { %>
-                          <span class="chip" id="liveTag"><%= safeProduct.tag %></span>
-                        <% } else { %>
-                          <span class="chip empty" id="liveTag">태그 없음</span>
-                        <% } %>
+                        <span class="chip <%= safeProduct?.couponDisplay?.enabled ? '' : 'empty' %>" id="liveCoupon">
+                          <%= safeProduct?.couponDisplay?.enabled ? (safeProduct?.couponDisplay?.label || '쿠폰 사용') : '쿠폰 없음' %>
+                        </span>
+
+                        <span class="chip <%= safeProduct?.tag ? '' : 'empty' %>" id="liveTag">
+                          <%= safeProduct?.tag || '태그 없음' %>
+                        </span>
                       </div>
                     </div>
                   </div>
 
-                  <div class="product-desc" id="liveDescription"><%= safeProduct.description || safeProduct.desc || '상품 설명이 여기에 표시됩니다.' %></div>
+                  <div class="product-desc" id="liveDescription"><%= safeProduct?.desc || '상품 설명이 여기에 표시됩니다.' %></div>
                 </div>
               </div>
 
-              <div class="thumb-strip two">
+              <div class="thumb-strip">
                 <div class="mini-card">
-                  <div class="mini-label">상세 대표 이미지</div>
+                  <div class="mini-label">대표 이미지</div>
                   <div class="mini-image">
                     <img
-                      id="liveDetailImage"
-                      src="<%= safeProduct.detailImage || 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=900&q=80' %>"
-                      alt="상세 대표 이미지"
-                    />
+                      id="liveMirrorMainImage"
+                      src="<%= safeProduct?.image || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80' %>"
+                      alt="대표 이미지 미리보기" />
                   </div>
                 </div>
 
                 <div class="mini-card">
-                  <div class="mini-label">대표 이미지 미리보기</div>
+                  <div class="mini-label">상품 영상</div>
                   <div class="mini-image">
-                    <img
-                      id="liveMirrorMainImage"
-                      src="<%= safeProduct.image || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80' %>"
-                      alt="대표 이미지 미리보기"
-                    />
+                    <% if (safeProduct?.video) { %>
+                      <video src="<%= safeProduct.video %>" muted loop playsinline controls></video>
+                    <% } else { %>
+                      <span>영상 없음</span>
+                    <% } %>
+                  </div>
+                </div>
+
+                <div class="mini-card">
+                  <div class="mini-label">서브 이미지</div>
+                  <div class="mini-image" id="liveSubImageFirst">
+                    <% if (safeProduct?.subImages?.[0]) { %>
+                      <img src="<%= safeProduct.subImages[0] %>" alt="서브 이미지 첫장" />
+                    <% } else { %>
+                      <span>없음</span>
+                    <% } %>
                   </div>
                 </div>
               </div>
 
               <div class="list-box">
-                <h3>추가 이미지 미리보기</h3>
+                <h3>상세 이미지 미리보기</h3>
                 <div class="thumb-strip" id="liveDetailImages">
-                  <% if (safeDetailImages.length > 0) { %>
-                    <% safeDetailImages.slice(0, 6).forEach((img, index) => { %>
+                  <% if (safeProduct?.detailImages?.length) { %>
+                    <% safeProduct.detailImages.slice(0, 6).forEach((img, index) => { %>
                       <div class="mini-card">
-                        <div class="mini-label">추가 이미지 <%= index + 1 %></div>
+                        <div class="mini-label">상세 이미지 <%= index + 1 %></div>
                         <div class="mini-image">
-                          <img src="<%= img %>" alt="추가 이미지 <%= index + 1 %>" />
+                          <img src="<%= img %>" alt="상세 이미지 <%= index + 1 %>" />
                         </div>
                       </div>
                     <% }) %>
                   <% } else { %>
-                    <div class="empty-text" id="liveDetailImagesEmpty">아직 추가 이미지가 없습니다.</div>
+                    <div class="empty-text" id="liveDetailImagesEmpty">아직 상세 이미지가 없습니다.</div>
                   <% } %>
                 </div>
+              </div>
+
+              <div class="list-box">
+                <h3>추가상품 연결 수</h3>
+                <div class="empty-text" id="liveAdditionalCount"><%= selectedAdditionalProducts.length %>개 선택됨</div>
               </div>
             </div>
           </div>
@@ -1110,156 +1142,83 @@
     </div>
   </main>
 
-  <script id="categorySubMapData" type="application/json"><%- JSON.stringify(safeCategorySubMap) %></script>
-
   <script>
     (function () {
-      const optionWrap = document.getElementById('optionWrap');
-      const hiddenOptionsInput = document.getElementById('options');
-      const previewOptionsEl = document.getElementById('selectedOptionsPreview');
-
-      const colorsInput = document.getElementById('colors');
-      const colorsPreview = document.getElementById('colorsPreview');
-
       const nameInput = document.getElementById('name');
       const categoryInput = document.getElementById('category');
-      const subCategoryInput = document.getElementById('subCategory');
-      const subCategoryPreview = document.getElementById('subCategoryPreview');
-
-      const categorySubMapEl = document.getElementById('categorySubMapData');
-      const categorySubMap = categorySubMapEl ? JSON.parse(categorySubMapEl.textContent) : {};
-
+      const summaryInput = document.getElementById('summary');
+      const descInput = document.getElementById('desc');
       const priceInput = document.getElementById('price');
       const oldPriceInput = document.getElementById('oldPrice');
-      const stockInput = document.getElementById('stock');
       const tagInput = document.getElementById('tag');
-      const descriptionInput = document.getElementById('description');
+      const shippingInput = document.getElementById('shippingFeeText');
+      const couponEnabledInput = document.getElementById('couponEnabled');
+      const couponLabelInput = document.getElementById('couponLabel');
+      const statusInput = document.getElementById('status');
       const bestInput = document.getElementById('isBest');
-      const activeInput = document.getElementById('isActive');
 
-      const imageInput = document.getElementById('image');
-      const detailImageInput = document.getElementById('detailImage');
-      const detailImagesInput = document.getElementById('detailImages');
+      const imageFileInput = document.getElementById('imageFile');
+      const imagePathInput = document.getElementById('image');
+      const videoFileInput = document.getElementById('videoFile');
+      const videoPathInput = document.getElementById('video');
+      const subImageFilesInput = document.getElementById('subImageFiles');
+      const detailImageFilesInput = document.getElementById('detailImageFiles');
+
+      const optionGroup1NameInput = document.getElementById('optionGroup1Name');
+      const optionGroup1ValuesInput = document.getElementById('optionGroup1Values');
+      const optionGroup2NameInput = document.getElementById('optionGroup2Name');
+      const optionGroup2ValuesInput = document.getElementById('optionGroup2Values');
 
       const liveName = document.getElementById('liveName');
       const liveCategory = document.getElementById('liveCategory');
-      const liveSubCategory = document.getElementById('liveSubCategory');
+      const liveSummary = document.getElementById('liveSummary');
       const livePrice = document.getElementById('livePrice');
       const liveOldPrice = document.getElementById('liveOldPrice');
       const liveDiscount = document.getElementById('liveDiscount');
       const liveDescription = document.getElementById('liveDescription');
       const liveBestBadge = document.getElementById('liveBestBadge');
       const liveStatusBadge = document.getElementById('liveStatusBadge');
-      const liveOptions = document.getElementById('liveOptions');
-      const liveColors = document.getElementById('liveColors');
-      const liveStock = document.getElementById('liveStock');
       const liveTag = document.getElementById('liveTag');
+      const liveShipping = document.getElementById('liveShipping');
+      const liveCoupon = document.getElementById('liveCoupon');
 
       const liveMainImage = document.getElementById('liveMainImage');
       const liveMirrorMainImage = document.getElementById('liveMirrorMainImage');
-      const liveDetailImage = document.getElementById('liveDetailImage');
+      const liveVideo = document.getElementById('liveVideo');
+      const liveSubImageFirst = document.getElementById('liveSubImageFirst');
       const liveDetailImages = document.getElementById('liveDetailImages');
+      const liveAdditionalCount = document.getElementById('liveAdditionalCount');
+
+      const liveOptionGroup1 = document.getElementById('liveOptionGroup1');
+      const liveOptionGroup2 = document.getElementById('liveOptionGroup2');
 
       function formatWon(value) {
-        const num = Number(value || 0);
-        return num.toLocaleString('ko-KR') + '원';
+        return Number(value || 0).toLocaleString('ko-KR') + '원';
       }
 
-      function getSelectedOptions() {
-        if (!optionWrap) return [];
-        return Array.from(optionWrap.querySelectorAll('.option-btn.active')).map(function (button) {
-          return button.dataset.size;
-        });
-      }
-
-      function syncOptions() {
-        const values = getSelectedOptions();
-        hiddenOptionsInput.value = values.join(',');
-        previewOptionsEl.textContent = values.length ? values.join(', ') : '선택 없음';
-
-        if (!values.length) {
-          liveOptions.innerHTML = '<span class="chip empty">선택 없음</span>';
-          return;
+      function buildChips(values) {
+        const list = (values || []).filter(Boolean);
+        if (!list.length) {
+          return '<span class="chip empty">선택 없음</span>';
         }
-
-        liveOptions.innerHTML = values.map(function (value) {
-          return '<span class="chip">' + value + '</span>';
-        }).join('');
+        return list.map((value) => '<span class="chip">' + value + '</span>').join('');
       }
 
-      function getColors() {
-        return colorsInput.value
-          .split(',')
-          .map(function (value) { return value.trim(); })
+      function splitLines(value) {
+        return String(value || '')
+          .split('\n')
+          .map((item) => item.trim())
           .filter(Boolean);
       }
 
-      function syncColorsPreview() {
-        const raw = colorsInput.value.trim();
-        const values = getColors();
-
-        colorsPreview.textContent = raw ? raw : '선택 없음';
-
-        if (!values.length) {
-          liveColors.innerHTML = '<span class="chip empty">선택 없음</span>';
-          return;
-        }
-
-        liveColors.innerHTML = values.map(function (value) {
-          return '<span class="chip">' + value + '</span>';
-        }).join('');
-      }
-
-      function syncSubCategoryOptions() {
-        const categoryValue = categoryInput.value || '';
-        const subCategories = categorySubMap[categoryValue] || [];
-        const prevValue = subCategoryInput.value || '';
-
-        subCategoryInput.innerHTML = '<option value="">서브카테고리 선택</option>';
-
-        subCategories.forEach(function (sub) {
-          const option = document.createElement('option');
-          option.value = sub;
-          option.textContent = sub;
-          if (sub === prevValue) {
-            option.selected = true;
-          }
-          subCategoryInput.appendChild(option);
-        });
-
-        if (subCategories.length === 0) {
-          subCategoryInput.disabled = true;
-          subCategoryInput.value = '';
-        } else {
-          subCategoryInput.disabled = false;
-
-          if (!subCategories.includes(prevValue)) {
-            subCategoryInput.value = '';
-          }
-        }
-
-        subCategoryPreview.textContent = subCategoryInput.value || '선택 없음';
-      }
-
       function syncBasicPreview() {
-        liveName.textContent = nameInput.value.trim() || '상품명이 여기에 표시됩니다.';
-
-        if (categoryInput.tagName === 'SELECT') {
-          const selectedText = categoryInput.options[categoryInput.selectedIndex]
-            ? categoryInput.options[categoryInput.selectedIndex].text
-            : '';
-          liveCategory.textContent = selectedText && selectedText !== '카테고리 선택' ? selectedText : 'CATEGORY';
-        } else {
-          liveCategory.textContent = categoryInput.value.trim() || 'CATEGORY';
-        }
-
-        const subValue = subCategoryInput.value || '';
-        subCategoryPreview.textContent = subValue || '선택 없음';
-        liveSubCategory.textContent = subValue || 'SUBCATEGORY';
-
         const priceValue = Number(priceInput.value || 0);
         const oldPriceValue = Number(oldPriceInput.value || 0);
 
+        liveName.textContent = nameInput.value.trim() || '상품명이 여기에 표시됩니다.';
+        liveCategory.textContent = categoryInput.value.trim() || 'CATEGORY';
+        liveSummary.textContent = summaryInput.value.trim() || '한줄 요약이 여기에 표시됩니다.';
+        liveDescription.textContent = descInput.value.trim() || '상품 설명이 여기에 표시됩니다.';
         livePrice.textContent = formatWon(priceValue);
 
         if (oldPriceValue > 0) {
@@ -1279,35 +1238,41 @@
           liveDiscount.textContent = '';
         }
 
-        liveDescription.textContent = descriptionInput.value.trim() || '상품 설명이 여기에 표시됩니다.';
-        liveStock.textContent = '재고 ' + (stockInput.value || 0) + '개';
-
         const tagValue = tagInput.value.trim();
         liveTag.textContent = tagValue || '태그 없음';
-        if (tagValue) {
-          liveTag.classList.remove('empty');
+        liveTag.classList.toggle('empty', !tagValue);
+
+        liveShipping.textContent = shippingInput.value.trim() || '무료배송';
+
+        if (couponEnabledInput.value === 'true') {
+          liveCoupon.textContent = couponLabelInput.value.trim() || '쿠폰 사용';
+          liveCoupon.classList.remove('empty');
         } else {
-          liveTag.classList.add('empty');
+          liveCoupon.textContent = '쿠폰 없음';
+          liveCoupon.classList.add('empty');
         }
 
-        if (bestInput.checked) {
-          liveBestBadge.classList.remove('is-hidden');
-        } else {
-          liveBestBadge.classList.add('is-hidden');
-        }
+        liveBestBadge.classList.toggle('is-hidden', !bestInput.checked);
 
-        if (activeInput.checked) {
-          liveStatusBadge.textContent = '판매중';
-          liveStatusBadge.classList.remove('soldout');
-          liveStatusBadge.classList.add('active');
-        } else {
+        if (statusInput.value === 'soldout') {
           liveStatusBadge.textContent = '품절';
           liveStatusBadge.classList.remove('active');
           liveStatusBadge.classList.add('soldout');
+        } else {
+          liveStatusBadge.textContent = '판매중';
+          liveStatusBadge.classList.remove('soldout');
+          liveStatusBadge.classList.add('active');
         }
       }
 
-      function readFileToImage(file, callback) {
+      function syncOptionPreview() {
+        liveOptionGroup1.previousElementSibling.textContent = optionGroup1NameInput.value.trim() || '옵션 1';
+        liveOptionGroup2.previousElementSibling.textContent = optionGroup2NameInput.value.trim() || '옵션 2';
+        liveOptionGroup1.innerHTML = buildChips(splitLines(optionGroup1ValuesInput.value));
+        liveOptionGroup2.innerHTML = buildChips(splitLines(optionGroup2ValuesInput.value));
+      }
+
+      function readImage(file, callback) {
         if (!file) return;
         const reader = new FileReader();
         reader.onload = function (event) {
@@ -1317,26 +1282,53 @@
       }
 
       function syncMainImagePreview() {
-        const file = imageInput.files && imageInput.files[0];
-        if (!file) return;
+        const file = imageFileInput.files && imageFileInput.files[0];
+        if (file) {
+          readImage(file, function (src) {
+            liveMainImage.src = src;
+            liveMirrorMainImage.src = src;
+          });
+          return;
+        }
 
-        readFileToImage(file, function (src) {
-          liveMainImage.src = src;
-          liveMirrorMainImage.src = src;
-        });
+        const path = imagePathInput.value.trim();
+        if (path) {
+          liveMainImage.src = path;
+          liveMirrorMainImage.src = path;
+        }
       }
 
-      function syncDetailImagePreview() {
-        const file = detailImageInput.files && detailImageInput.files[0];
-        if (!file) return;
+      function syncVideoPreview() {
+        const file = videoFileInput.files && videoFileInput.files[0];
+        if (file) {
+          const url = URL.createObjectURL(file);
+          liveVideo.src = url;
+          liveVideo.classList.remove('is-hidden');
+          return;
+        }
 
-        readFileToImage(file, function (src) {
-          liveDetailImage.src = src;
+        const path = videoPathInput.value.trim();
+        if (path) {
+          liveVideo.src = path;
+          liveVideo.classList.remove('is-hidden');
+        } else {
+          liveVideo.src = '';
+          liveVideo.classList.add('is-hidden');
+        }
+      }
+
+      function syncSubImagePreview() {
+        const files = subImageFilesInput.files ? Array.from(subImageFilesInput.files) : [];
+        if (!files.length) return;
+
+        const first = files[0];
+        readImage(first, function (src) {
+          liveSubImageFirst.innerHTML = '<img src="' + src + '" alt="서브 이미지 첫장">';
         });
       }
 
       function syncDetailImagesPreview() {
-        const files = detailImagesInput.files ? Array.from(detailImagesInput.files) : [];
+        const files = detailImageFilesInput.files ? Array.from(detailImageFilesInput.files) : [];
         if (!files.length) return;
 
         liveDetailImages.innerHTML = '';
@@ -1346,8 +1338,8 @@
           reader.onload = function (event) {
             const html = [
               '<div class="mini-card">',
-              '<div class="mini-label">추가 이미지 ' + (index + 1) + '</div>',
-              '<div class="mini-image"><img src="' + event.target.result + '" alt="추가 이미지 ' + (index + 1) + '"></div>',
+              '<div class="mini-label">상세 이미지 ' + (index + 1) + '</div>',
+              '<div class="mini-image"><img src="' + event.target.result + '" alt="상세 이미지 ' + (index + 1) + '"></div>',
               '</div>'
             ].join('');
             liveDetailImages.insertAdjacentHTML('beforeend', html);
@@ -1356,44 +1348,51 @@
         });
       }
 
-      if (optionWrap) {
-        optionWrap.addEventListener('click', function (event) {
-          const button = event.target.closest('.option-btn');
-          if (!button) return;
-
-          button.classList.toggle('active');
-          syncOptions();
-        });
+      function syncAdditionalCount() {
+        const checked = document.querySelectorAll('input[name="additionalProducts"]:checked').length;
+        liveAdditionalCount.textContent = checked + '개 선택됨';
       }
 
-      colorsInput.addEventListener('input', syncColorsPreview);
-      nameInput.addEventListener('input', syncBasicPreview);
-
-      categoryInput.addEventListener('change', function () {
-        syncSubCategoryOptions();
-        syncBasicPreview();
+      [
+        nameInput,
+        categoryInput,
+        summaryInput,
+        descInput,
+        priceInput,
+        oldPriceInput,
+        tagInput,
+        shippingInput,
+        couponEnabledInput,
+        couponLabelInput,
+        statusInput,
+        bestInput
+      ].forEach(function (el) {
+        if (!el) return;
+        el.addEventListener('input', syncBasicPreview);
+        el.addEventListener('change', syncBasicPreview);
       });
 
-      if (subCategoryInput) {
-        subCategoryInput.addEventListener('change', syncBasicPreview);
-      }
+      [optionGroup1NameInput, optionGroup1ValuesInput, optionGroup2NameInput, optionGroup2ValuesInput].forEach(function (el) {
+        if (!el) return;
+        el.addEventListener('input', syncOptionPreview);
+        el.addEventListener('change', syncOptionPreview);
+      });
 
-      priceInput.addEventListener('input', syncBasicPreview);
-      oldPriceInput.addEventListener('input', syncBasicPreview);
-      stockInput.addEventListener('input', syncBasicPreview);
-      tagInput.addEventListener('input', syncBasicPreview);
-      descriptionInput.addEventListener('input', syncBasicPreview);
-      bestInput.addEventListener('change', syncBasicPreview);
-      activeInput.addEventListener('change', syncBasicPreview);
+      imageFileInput.addEventListener('change', syncMainImagePreview);
+      imagePathInput.addEventListener('input', syncMainImagePreview);
+      videoFileInput.addEventListener('change', syncVideoPreview);
+      videoPathInput.addEventListener('input', syncVideoPreview);
+      subImageFilesInput.addEventListener('change', syncSubImagePreview);
+      detailImageFilesInput.addEventListener('change', syncDetailImagesPreview);
 
-      imageInput.addEventListener('change', syncMainImagePreview);
-      detailImageInput.addEventListener('change', syncDetailImagePreview);
-      detailImagesInput.addEventListener('change', syncDetailImagesPreview);
+      document.querySelectorAll('input[name="additionalProducts"]').forEach(function (checkbox) {
+        checkbox.addEventListener('change', syncAdditionalCount);
+      });
 
-      syncOptions();
-      syncColorsPreview();
-      syncSubCategoryOptions();
       syncBasicPreview();
+      syncOptionPreview();
+      syncVideoPreview();
+      syncAdditionalCount();
     })();
   </script>
 </body>

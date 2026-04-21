@@ -3,13 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>관리자 대시보드</title>
+  <title>관리자 대시보드 | DAMORE ADMIN</title>
   <style>
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background: #f7f7f7;
       padding: 40px;
+      color: #111;
     }
 
     .wrap {
@@ -18,17 +21,18 @@
     }
 
     h1 {
-      margin-top: 0;
-      margin-bottom: 24px;
+      margin: 0 0 24px;
+      font-size: 36px;
     }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 20px;
     }
 
     .card {
+      display: block;
       background: white;
       border-radius: 12px;
       padding: 24px;
@@ -37,6 +41,7 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
       transition: 0.2s ease;
       border: 1px solid #eee;
+      min-height: 140px;
     }
 
     .card:hover {
@@ -56,11 +61,10 @@
       line-height: 1.6;
     }
 
-    /* ⭐ 슬라이드 카드도 동일한 스타일 */
     .card.primary {
       background: white;
       color: #111;
-      border: 2px solid #111; /* 살짝 강조만 */
+      border: 2px solid #111;
     }
 
     .logout {
@@ -71,17 +75,26 @@
       color: white;
       padding: 12px 16px;
       border-radius: 8px;
+      font-weight: 700;
     }
 
     @media (max-width: 1000px) {
       .grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
     @media (max-width: 600px) {
+      body {
+        padding: 24px 16px;
+      }
+
       .grid {
         grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 30px;
       }
     }
   </style>
@@ -91,8 +104,6 @@
     <h1>관리자 대시보드</h1>
 
     <div class="grid">
-
-      <!-- 메인 슬라이드 -->
       <a href="/admin/hero-slides" class="card primary">
         <strong>메인 슬라이드</strong>
         <p>홈 배너 이미지 / 링크 / 문구 관리</p>
@@ -110,7 +121,7 @@
 
       <a href="/admin/categories" class="card">
         <strong>카테고리 관리</strong>
-        <p>카테고리 추가/삭제</p>
+        <p>카테고리 추가 / 삭제</p>
       </a>
 
       <a href="/admin/orders" class="card">
@@ -122,9 +133,16 @@
         <strong>사이트 관리</strong>
         <p>메인 이미지, 소개글, 문구 수정</p>
       </a>
-       
-      <a href="/admin/shorts">숏폼 관리</a>
 
+      <a href="/admin/shorts" class="card">
+        <strong>숏폼 관리</strong>
+        <p>숏폼 등록, 수정, 노출 상태 관리</p>
+      </a>
+
+      <a href="/admin/shorts/new" class="card">
+        <strong>숏폼 등록</strong>
+        <p>새 숏폼 추가 및 상품 연결</p>
+      </a>
     </div>
 
     <a href="/admin/logout" class="logout">로그아웃</a>

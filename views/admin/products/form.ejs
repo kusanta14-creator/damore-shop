@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>상품 등록 | DAMORE ADMIN</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Pretendard;background:#f5f3ef;color:#111;}
+
+.container{max-width:1200px;margin:40px auto;padding:0 20px;}
+.card{background:#fff;border-radius:20px;padding:30px;box-shadow:0 10px 30px rgba(0,0,0,0.05);}
+
+h1{margin-bottom:20px;}
+label{display:block;margin:12px 0 6px;font-weight:700;}
+input,textarea,select{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #ddd;
+}
+
+button{
+  margin-top:20px;
+  padding:14px;
+  width:100%;
+  border:none;
+  background:#111;
+  color:#fff;
+  font-weight:700;
+  border-radius:12px;
+  cursor:pointer;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+.full{grid-column:1/-1;}
+
+.preview{
+  margin-top:30px;
+  padding:20px;
+  background:#faf8f4;
+  border-radius:16px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<div class="card">
+
+<h1><%= mode === 'edit' ? '상품 수정' : '상품 등록' %></h1>
+
+<form method="POST"
+action="<%= mode === 'edit' ? '/admin/products/' + product._id + '/edit' : '/admin/products/new' %>"
+enctype="multipart/form-data">
+
+<div class="grid">
+
+<!-- 상품명 -->
+<div>
+<label>상품명</label>
+<input name="name" value="<%= product?.name || '' %>" required>
+</div>
+
+<!-- 카테고리 -->
+<div>
+<label>카테고리</label>
+<input name="category" value="<%= product?.category || '' %>">
+</div>
+
+<!-- 가격 -->
+<div>
+<label>가격</label>
+<input type="number" name="price" value="<%= product?.price || 0 %>">
+</div>
+
+<!-- 할인전 -->
+<div>
+<label>할인전 가격</label>
+<input type="number" name="oldPrice" value="<%= product?.oldPrice || 0 %>">
+</div>
+
+<!-- 요약 -->
+<div class="full">
+<label>한줄 요약</label>
+<input name="summary" value="<%= product?.summary || '' %>">
+</div>
+
+<!-- 설명 -->
+<div class="full">
+<label>설명</label>
+<textarea name="desc"><%= product?.desc || '' %></textarea>
+</div>
+
+<!-- 태그 -->
+<div>
+<label>태그</label>
+<input name="tag" value="<%= product?.tag || '' %>">
+</div>
+
+<!-- 상태 -->
+<div>
+<label>상태</label>
+<select name="status">
+<option value="onsale" <%= product?.status !== 'soldout' ? 'selected' : '' %>>판매중</option>
+<option value="soldout" <%= product?.status === 'soldout' ? 'selected' : '' %>>품절</option>
+</select>
+</div>
+
+<!-- 대표이미지 -->
+<div class="full">
+<label>대표 이미지</label>
+<input type="file" name="imageFile">
+<input type="hidden" name="image" value="<%= product?.image || '' %>">
+</div>
+
+<!-- 영상 -->
+<div class="full">
+<label>상품 영상</label>
+<input type="file" name="videoFile">
+<input type="hidden" name="video" value="<%= product?.video || '' %>">
+</div>
+
+<!-- 서브 이미지 -->
+<div class="full">
+<label>서브 이미지 (여러개)</label>
+<input type="file" name="subImageFiles" multiple>
+<% if(product?.subImages){ product.subImages.forEach(img=>{ %>
+<input type="hidden" name="existingSubImages" value="<%= img %>">
+<% }) } %>
+</div>
+
+<!-- 상세 이미지 -->
+<div class="full">
+<label>상세 이미지</label>
+<input type="file" name="detailImageFiles" multiple>
+<% if(product?.detailImages){ product.detailImages.forEach(img=>{ %>
+<input type="hidden" name="existingDetailImages" value="<%= img %>">
+<% }) } %>
+</div>
+
+<!-- 옵션1 -->
+<div>
+<label>옵션1 이름</label>
+<input name="optionGroup1Name">
+</div>
+
+<div>
+<label>옵션1 값 (엔터로 구분)</label>
+<textarea name="optionGroup1Values"></textarea>
+</div>
+
+<!-- 옵션2 -->
+<div>
+<label>옵션2 이름</label>
+<input name="optionGroup2Name">
+</div>
+
+<div>
+<label>옵션2 값</label>
+<textarea name="optionGroup2Values"></textarea>
+</div>
+
+<!-- 추가상품 -->
+<div class="full">
+<label>추가상품 선택</label>
+<select name="additionalProducts" multiple>
+<% allProducts.forEach(p=>{ %>
+<option value="<%= p._id %>"><%= p.name %></option>
+<% }) %>
+</select>
+</div>
+
+<!-- 쿠폰 -->
+<div>
+<label>쿠폰 사용</label>
+<select name="couponEnabled">
+<option value="true">사용</option>
+<option value="false">미사용</option>
+</select>
+</div>
+
+<div>
+<label>쿠폰 문구</label>
+<input name="couponLabel">
+</div>
+
+<!-- 배송 -->
+<div class="full">
+<label>배송 안내</label>
+<input name="shippingFeeText" value="<%= product?.shippingFeeText || '무료배송' %>">
+</div>
+
+<!-- 가이드 -->
+<div class="full">
+<label>세탁 이미지</label>
+<input type="file" name="washImageFile">
+<input type="hidden" name="existingWashImage" value="<%= product?.guide?.washImage || '' %>">
+</div>
+
+<div class="full">
+<label>사이즈 가이드</label>
+<input type="file" name="sizeGuideImageFile">
+<input type="hidden" name="existingSizeGuideImage" value="<%= product?.guide?.sizeGuideImage || '' %>">
+</div>
+
+<div class="full">
+<label>저작권 안내</label>
+<textarea name="copyrightNotice"><%= product?.guide?.copyrightNotice || '' %></textarea>
+</div>
+
+<div class="full">
+<label>배송/교환/반품</label>
+<textarea name="shippingExchangeReturn"><%= product?.guide?.shippingExchangeReturn || '' %></textarea>
+</div>
+
+</div>
+
+<button type="submit">저장하기</button>
+
+</form>
+
+</div>
+</div>
+
+</body>
+</html>
