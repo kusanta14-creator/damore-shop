@@ -4,13 +4,19 @@
   const safePrice = Number(safeProduct.price || 0);
   const safeSummary = safeProduct.summary || '상품 설명이 없습니다.';
   const safeImage = safeProduct.image || '';
+  const safeDesc = safeProduct.desc || '등록된 상세 정보가 없습니다.';
 %>
 
 <%- include('partials/header') %>
 
 <style>
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
 
   :root {
     --bg: #f5f3ef;
@@ -19,6 +25,7 @@
     --text: #1f1f1f;
     --muted: #7a7268;
     --line: rgba(17, 17, 17, 0.08);
+    --gold: #bfa68a;
     --max: 1280px;
   }
 
@@ -197,7 +204,7 @@
   .page {
     max-width: 1120px;
     margin: 0 auto;
-    padding: 32px 24px 90px;
+    padding: 34px 24px 90px;
   }
 
   .layout {
@@ -233,6 +240,16 @@
 
   .purchase-box {
     padding-top: 8px;
+  }
+
+  .product-label {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: var(--gold);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
   }
 
   .product-title {
@@ -345,9 +362,17 @@
   }
 
   @media (max-width: 760px) {
-    .container { padding: 0 16px; }
-    .nav { display: none; }
-    .header-actions { display: none; }
+    .container {
+      padding: 0 16px;
+    }
+
+    .nav {
+      display: none;
+    }
+
+    .header-actions {
+      display: none;
+    }
 
     .page {
       padding: 20px 16px 72px;
@@ -376,6 +401,7 @@
     </div>
 
     <div class="purchase-box">
+      <div class="product-label">DAMORE ITEM</div>
       <h1 class="product-title"><%= safeName %></h1>
       <div class="product-price"><%= safePrice.toLocaleString() %>원</div>
       <div class="product-summary"><%= safeSummary %></div>
@@ -394,7 +420,7 @@
     <section class="content-section" id="detail">
       <div class="content-title">제품상세</div>
       <div class="content-text">
-        <%= safeProduct.desc ? safeProduct.desc : '등록된 상세 정보가 없습니다.' %>
+        <%= safeDesc %>
       </div>
     </section>
 
