@@ -514,8 +514,9 @@ app.get('/about', async (req, res) => {
 });
 
 // 상품 상세
-// 상품 상세
 app.get('/products/:id', async (req, res) => {
+  return res.send('PRODUCT DETAIL ROUTE TEST 12345');
+});
   try {
     const product = await Product.findById(req.params.id).lean();
 
