@@ -1,5 +1,22 @@
 <%- include('partials/header') %>
 
-<div style="padding:40px;">상품 상세 테스트</div>
+<div class="page">
+  <div class="layout">
+    <div class="gallery-col">
+      <div class="gallery-main">
+        <% if (product && product.image) { %>
+          <img src="<%= product.image %>" alt="<%= product.name || '상품' %>">
+        <% } else { %>
+          <div>이미지 없음</div>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="purchase-col">
+      <h1><%= product && product.name ? product.name : '상품명' %></h1>
+      <div>가격: <%= Number(product && product.price ? product.price : 0).toLocaleString() %>원</div>
+    </div>
+  </div>
+</div>
 
 <%- include('partials/footer') %>
