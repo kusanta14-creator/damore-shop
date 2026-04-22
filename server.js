@@ -576,8 +576,7 @@ app.get('/products/:id', async (req, res) => {
   } catch (error) {
     console.error('상품 상세 페이지 오류 >>>', error);
     res.status(500).send(error.stack || error.message || '상품 상세 페이지 오류');
-  }
-});
+   };
 
 // 장바구니 담기
 app.post('/cart/add', async (req, res) => {
