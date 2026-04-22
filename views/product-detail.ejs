@@ -1,20 +1,79 @@
 <%- include('partials/header') %>
 
+<style>
+  .page {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 28px 18px 90px;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 520px 360px;
+    gap: 40px;
+    justify-content: center;
+    align-items: start;
+  }
+
+  .gallery-main {
+    width: 100%;
+    aspect-ratio: 4 / 5.4;
+    background: #e7e0d5;
+    overflow: hidden;
+  }
+
+  .gallery-main img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .purchase-box h1 {
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
+
+  .price {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .summary {
+    color: #666;
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 980px) {
+    .layout {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
 <div class="page">
   <div class="layout">
-    <div class="gallery-col">
+    <div>
       <div class="gallery-main">
         <% if (product && product.image) { %>
           <img src="<%= product.image %>" alt="<%= product.name || '상품' %>">
         <% } else { %>
-          <div>이미지 없음</div>
+          <div style="padding:40px;">이미지 없음</div>
         <% } %>
       </div>
     </div>
 
-    <div class="purchase-col">
+    <div class="purchase-box">
       <h1><%= product && product.name ? product.name : '상품명' %></h1>
-      <div>가격: <%= Number(product && product.price ? product.price : 0).toLocaleString() %>원</div>
+
+      <div class="price">
+        <%= Number(product && product.price ? product.price : 0).toLocaleString() %>원
+      </div>
+
+      <div class="summary">
+        <%= product && product.summary ? product.summary : '상품 설명이 없습니다.' %>
+      </div>
     </div>
   </div>
 </div>
