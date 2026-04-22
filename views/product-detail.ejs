@@ -1,10 +1,53 @@
+<%
+  const safeProduct = product || {};
+  const safeName = safeProduct.name || '상품명';
+  const safePrice = Number(safeProduct.price || 0);
+  const safeOldPrice = Number(safeProduct.oldPrice || safeProduct.price || 0);
+  const safeStock = Number(safeProduct.stock || 0);
+  const safeStatus = safeProduct.status || '';
+  const safeSummary = safeProduct.summary || '';
+  const safeDesc = safeProduct.desc || safeProduct.description || '';
+  const safeSubImages = Array.isArray(safeProduct.subImages) ? safeProduct.subImages.filter(Boolean) : [];
+  const safeDetailImages = Array.isArray(safeProduct.detailImages) ? safeProduct.detailImages.filter(Boolean) : [];
+  const safeOptionGroups = Array.isArray(safeProduct.optionGroups) ? safeProduct.optionGroups.filter(Boolean) : [];
+  const safeGuide = safeProduct.guide || {};
+  const safeAddOnProducts = Array.isArray(addOnProducts) ? addOnProducts.filter(Boolean) : [];
+
+  let colorGroup = null;
+  let sizeGroup = null;
+
+  if (safeOptionGroups.length >= 1) colorGroup = safeOptionGroups[0];
+  if (safeOptionGroups.length >= 2) sizeGroup = safeOptionGroups[1];
+
+  const galleryItems = [];
+  if (safeProduct.image) galleryItems.push({ type: 'image', src: safeProduct.image });
+  if (safeProduct.video) galleryItems.push({ type: 'video', src: safeProduct.video });
+
+  safeSubImages.forEach((img) => {
+    if (!galleryItems.find((item) => item.src === img)) {
+      galleryItems.push({ type: 'image', src: img });
+    }
+  });
+
+  const discountRate =
+    safeOldPrice > safePrice && safeOldPrice > 0
+      ? Math.round((1 - safePrice / safeOldPrice) * 100)
+      : 0;
+
+  const rewardPoint = Math.floor(safePrice * 0.01);
+  const interestCount = Math.max(Number(safeProduct.likeCount || 0), 238);
+  const isSoldOut = safeStatus === 'soldout' || safeStock <= 0;
+  const modelInfo = safeProduct.modelInfo || '신혜성 178cm / 70kg (상의 100~105 / 하의 30~31)';
+  const shippingText = safeProduct.shippingFeeText || '무료배송';
+  const hasColorGroup = !!(colorGroup && Array.isArray(colorGroup.values) && colorGroup.values.length > 0);
+  const hasSizeGroup = !!(sizeGroup && Array.isArray(sizeGroup.values) && sizeGroup.values.length > 0);
+%>
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%= (product && product.name ? product.name : '상품') %> | DAMORE</title>
+  <title><%= safeName %> | DAMORE</title>
   <style>
     * {
       margin: 0;
@@ -57,43 +100,6 @@
       max-width: 100%;
     }
 
-    .site-header {
-      background: var(--white);
-      border-bottom: 1px solid var(--line);
-    }
-
-    .site-header-inner {
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 14px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 18px;
-    }
-
-    .logo {
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-    }
-
-    .gnb {
-      display: flex;
-      gap: 18px;
-      flex-wrap: wrap;
-      font-size: 13px;
-      color: #444;
-    }
-
-    .gnb a {
-      transition: opacity .2s ease;
-    }
-
-    .gnb a:hover {
-      opacity: .65;
-    }
-
     .page {
       max-width: var(--max);
       margin: 0 auto;
@@ -140,6 +146,14 @@
       flex-wrap: nowrap;
       overflow-x: auto;
       padding-bottom: 4px;
+    }
+
+    .thumbs::-webkit-scrollbar {
+      height: 5px;
+    }
+
+    .thumbs::-webkit-scrollbar-thumb {
+      background: #cfc6ba;
     }
 
     .thumb-btn {
@@ -656,11 +670,6 @@
     }
 
     @media (max-width: 640px) {
-      .site-header-inner {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
       .page {
         padding: 14px 12px 92px;
       }
@@ -721,77 +730,8 @@
     }
   </style>
 </head>
-
 <body>
-  <%
-    const safeProduct = product || {};
-    const safeName = safeProduct.name || '상품명';
-    const safePrice = Number(safeProduct.price || 0);
-    const safeOldPrice = Number(safeProduct.oldPrice || safeProduct.price || 0);
-    const safeStock = Number(safeProduct.stock || 0);
-    const safeStatus = safeProduct.status || '';
-    const safeSummary = safeProduct.summary || '';
-    const safeDesc = safeProduct.desc || safeProduct.description || '';
-    const safeSubImages = Array.isArray(safeProduct.subImages) ? safeProduct.subImages.filter(Boolean) : [];
-    const safeDetailImages = Array.isArray(safeProduct.detailImages) ? safeProduct.detailImages.filter(Boolean) : [];
-    const safeOptionGroups = Array.isArray(safeProduct.optionGroups) ? safeProduct.optionGroups.filter(Boolean) : [];
-    const safeGuide = safeProduct.guide || {};
-
-    let colorGroup = null;
-    let sizeGroup = null;
-
-    if (safeOptionGroups.length >= 1) colorGroup = safeOptionGroups[0];
-    if (safeOptionGroups.length >= 2) sizeGroup = safeOptionGroups[1];
-
-    const galleryItems = [];
-    if (safeProduct.image) galleryItems.push({ type: 'image', src: safeProduct.image });
-    if (safeProduct.video) galleryItems.push({ type: 'video', src: safeProduct.video });
-
-    safeSubImages.forEach((img) => {
-      if (!galleryItems.find((item) => item.src === img)) {
-        galleryItems.push({ type: 'image', src: img });
-      }
-    });
-
-    const discountRate =
-      safeOldPrice > safePrice && safeOldPrice > 0
-        ? Math.round((1 - safePrice / safeOldPrice) * 100)
-        : 0;
-
-    const rewardPoint = Math.floor(safePrice * 0.01);
-    const interestCount = Math.max(Number(safeProduct.likeCount || 0), 238);
-    const isSoldOut = safeStatus === 'soldout' || safeStock <= 0;
-    const modelInfo = safeProduct.modelInfo || '신혜성 178cm / 70kg (상의 100~105 / 하의 30~31)';
-    const shippingText = safeProduct.shippingFeeText || '무료배송';
-    const hasColorGroup = !!(colorGroup && Array.isArray(colorGroup.values) && colorGroup.values.length > 0);
-    const hasSizeGroup = !!(sizeGroup && Array.isArray(sizeGroup.values) && sizeGroup.values.length > 0);
-  %>
-
-  <header class="site-header">
-    <div class="site-header-inner">
-      <a href="/" class="logo">DAMORE</a>
-
-      <% if (typeof routes !== 'undefined') { %>
-        <nav class="gnb">
-          <a href="<%= routes.home || '/' %>">HOME</a>
-          <a href="<%= routes.outer || '/category/outer' %>">OUTER</a>
-          <a href="<%= routes.top || '/category/top' %>">TOP</a>
-          <a href="<%= routes.bottom || '/category/bottom' %>">BOTTOM</a>
-          <a href="<%= routes.dress || '/category/dress' %>">DRESS</a>
-          <a href="<%= routes.acc || '/category/acc' %>">ACC</a>
-        </nav>
-      <% } else { %>
-        <nav class="gnb">
-          <a href="/">HOME</a>
-          <a href="/category/outer">OUTER</a>
-          <a href="/category/top">TOP</a>
-          <a href="/category/bottom">BOTTOM</a>
-          <a href="/category/dress">DRESS</a>
-          <a href="/category/acc">ACC</a>
-        </nav>
-      <% } %>
-    </div>
-  </header>
+  <%- include('../partials/header') %>
 
   <div id="productData"
     data-price="<%= safePrice %>"
@@ -1061,6 +1001,8 @@
     </div>
   </div>
 
+  <%- include('../partials/footer') %>
+
   <div class="mobile-buybar">
     <button type="button" class="mobile-cart" id="mobileCartBtn" <%= isSoldOut ? 'disabled' : '' %>>장바구니</button>
     <button type="button" class="mobile-buy" id="mobileBuyBtn" <%= isSoldOut ? 'disabled' : '' %>><%= isSoldOut ? '품절' : '바로구매' %></button>
@@ -1273,5 +1215,4 @@
     setActiveSection();
   </script>
 </body>
-
 </html>
