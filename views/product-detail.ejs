@@ -86,6 +86,14 @@
       color: #444;
     }
 
+    .gnb a {
+      transition: opacity .2s ease;
+    }
+
+    .gnb a:hover {
+      opacity: .65;
+    }
+
     .page {
       max-width: var(--max);
       margin: 0 auto;
@@ -132,14 +140,6 @@
       flex-wrap: nowrap;
       overflow-x: auto;
       padding-bottom: 4px;
-    }
-
-    .thumbs::-webkit-scrollbar {
-      height: 5px;
-    }
-
-    .thumbs::-webkit-scrollbar-thumb {
-      background: #cfc6ba;
     }
 
     .thumb-btn {
@@ -397,149 +397,6 @@
       font-weight: 700;
     }
 
-    .with-section {
-      margin: 16px 0 12px;
-      border-top: 1px solid var(--line);
-      padding-top: 14px;
-    }
-
-    .with-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .with-sub {
-      font-size: 11px;
-      color: var(--danger);
-      margin-bottom: 10px;
-    }
-
-    .with-wrap {
-      position: relative;
-    }
-
-    .with-viewport {
-      overflow: hidden;
-    }
-
-    .with-track {
-      display: flex;
-      gap: 8px;
-      transition: transform .25s ease;
-      will-change: transform;
-    }
-
-    .with-card {
-      min-width: 76px;
-      max-width: 76px;
-      flex: 0 0 76px;
-    }
-
-    .with-thumb {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 1 / 1.25;
-      background: #e8e1d6;
-      overflow: hidden;
-      margin-bottom: 5px;
-    }
-
-    .with-rank {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 16px;
-      height: 16px;
-      background: rgba(0, 0, 0, 0.68);
-      color: #fff;
-      font-size: 9px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .with-thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .with-name {
-      font-size: 9px;
-      line-height: 1.35;
-      min-height: 28px;
-      color: #333;
-      margin-bottom: 4px;
-      word-break: keep-all;
-    }
-
-    .with-price-row {
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
-      margin-bottom: 6px;
-    }
-
-    .with-sale {
-      color: var(--danger);
-      font-size: 9px;
-      font-weight: 700;
-    }
-
-    .with-price {
-      font-size: 10px;
-      font-weight: 800;
-    }
-
-    .with-old {
-      color: #9a9288;
-      text-decoration: line-through;
-      font-size: 9px;
-    }
-
-    .with-btn {
-      width: 100%;
-      height: 18px;
-      border: 0;
-      background: #fb625f;
-      color: #fff;
-      font-size: 9px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .with-btn.selected {
-      background: #111;
-    }
-
-    .with-nav {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .with-arrow {
-      width: 16px;
-      height: 16px;
-      border: 1px solid #d8d0c4;
-      background: transparent;
-      color: #777;
-      cursor: pointer;
-      line-height: 1;
-      font-size: 10px;
-    }
-
-    .with-page {
-      font-size: 10px;
-      color: #555;
-      min-width: 28px;
-      text-align: center;
-    }
-
     .selected-box {
       background: transparent;
       border-top: 1px solid var(--line);
@@ -678,15 +535,18 @@
       margin-bottom: 26px;
       font-size: 11px;
       color: #7d766e;
+      text-align: center;
     }
 
     .content-nav a {
       position: relative;
-      padding: 0 12px;
+      padding: 0 14px;
       font-weight: 500;
+      transition: color .2s ease;
     }
 
-    .content-nav a:first-child {
+    .content-nav a:hover,
+    .content-nav a.active {
       color: #111;
       font-weight: 700;
     }
@@ -706,6 +566,7 @@
       padding: 26px 0;
       border-top: 1px solid var(--line);
       background: transparent;
+      scroll-margin-top: 110px;
     }
 
     .content-section:first-of-type {
@@ -718,12 +579,14 @@
       font-weight: 800;
       margin-bottom: 12px;
       letter-spacing: -0.01em;
+      text-align: center;
     }
 
     .content-section-sub {
       font-size: 11px;
       color: #7a746c;
       margin-bottom: 18px;
+      text-align: center;
     }
 
     .detail-images {
@@ -765,6 +628,7 @@
       font-size: 12px;
       color: #6f675d;
       line-height: 1.8;
+      text-align: center;
     }
 
     .mobile-buybar {
@@ -814,14 +678,12 @@
         gap: 10px;
       }
 
-      .with-card {
-        min-width: 82px;
-        max-width: 82px;
-        flex-basis: 82px;
-      }
-
       .content-wrap {
         margin-top: 40px;
+      }
+
+      .content-nav {
+        row-gap: 8px;
       }
 
       .mobile-buybar {
@@ -874,7 +736,6 @@
     const safeDetailImages = Array.isArray(safeProduct.detailImages) ? safeProduct.detailImages.filter(Boolean) : [];
     const safeOptionGroups = Array.isArray(safeProduct.optionGroups) ? safeProduct.optionGroups.filter(Boolean) : [];
     const safeGuide = safeProduct.guide || {};
-    const safeAddOnProducts = Array.isArray(addOnProducts) ? addOnProducts.filter(Boolean) : [];
 
     let colorGroup = null;
     let sizeGroup = null;
@@ -909,14 +770,26 @@
   <header class="site-header">
     <div class="site-header-inner">
       <a href="/" class="logo">DAMORE</a>
-      <nav class="gnb">
-        <a href="/">HOME</a>
-        <a href="/category/outer">OUTER</a>
-        <a href="/category/top">TOP</a>
-        <a href="/category/bottom">BOTTOM</a>
-        <a href="/category/dress">DRESS</a>
-        <a href="/category/acc">ACC</a>
-      </nav>
+
+      <% if (typeof routes !== 'undefined') { %>
+        <nav class="gnb">
+          <a href="<%= routes.home || '/' %>">HOME</a>
+          <a href="<%= routes.outer || '/category/outer' %>">OUTER</a>
+          <a href="<%= routes.top || '/category/top' %>">TOP</a>
+          <a href="<%= routes.bottom || '/category/bottom' %>">BOTTOM</a>
+          <a href="<%= routes.dress || '/category/dress' %>">DRESS</a>
+          <a href="<%= routes.acc || '/category/acc' %>">ACC</a>
+        </nav>
+      <% } else { %>
+        <nav class="gnb">
+          <a href="/">HOME</a>
+          <a href="/category/outer">OUTER</a>
+          <a href="/category/top">TOP</a>
+          <a href="/category/bottom">BOTTOM</a>
+          <a href="/category/dress">DRESS</a>
+          <a href="/category/acc">ACC</a>
+        </nav>
+      <% } %>
     </div>
   </header>
 
@@ -975,9 +848,7 @@
           <div class="price-lines">
             <div class="price-line">
               <div class="price-label">소비자가</div>
-              <div>
-                <span class="price-old"><%= safeOldPrice.toLocaleString() %>원</span>
-              </div>
+              <div><span class="price-old"><%= safeOldPrice.toLocaleString() %>원</span></div>
             </div>
 
             <div class="price-line">
@@ -1000,9 +871,7 @@
             <div class="detail-row">
               <div class="detail-row-label">SIZE(cm)</div>
               <div class="detail-row-value">
-                <%= hasSizeGroup
-                  ? sizeGroup.values.map(v => v.value).join(' / ')
-                  : '-' %>
+                <%= hasSizeGroup ? sizeGroup.values.map(v => v.value).join(' / ') : '-' %>
               </div>
             </div>
 
@@ -1038,9 +907,6 @@
             <input type="hidden" name="option" id="legacyOptionInput" value="">
             <input type="hidden" name="selectedColor" id="selectedColorInput" value="">
             <input type="hidden" name="quantity" id="quantityHidden" value="1">
-            <input type="hidden" name="selectedAddOnIds" id="selectedAddOnIdsInput" value="">
-            <input type="hidden" name="selectedAddOnNames" id="selectedAddOnNamesInput" value="">
-            <input type="hidden" name="selectedAddOnTotal" id="selectedAddOnTotalInput" value="0">
 
             <div class="option-wrap">
               <% if (hasColorGroup) { %>
@@ -1079,68 +945,6 @@
                 </div>
               <% } %>
             </div>
-
-            <% if (safeAddOnProducts.length > 0) { %>
-              <div class="with-section">
-                <div class="with-title">Weekly Best</div>
-                <div class="with-sub">70,000원 이상 구매 시 배송비 무료</div>
-
-                <div class="with-wrap">
-                  <div class="with-viewport">
-                    <div class="with-track" id="withTrack">
-                      <% safeAddOnProducts.forEach((item, index) => { 
-                        const addOnName = item && item.name ? item.name : '추가상품';
-                        const addOnPrice = Number(item && item.price ? item.price : 0);
-                        const addOnOldPrice = Number(item && item.oldPrice ? item.oldPrice : 0);
-                        const addOnImage = item && item.image ? item.image : '';
-                        const addOnId = item && item._id ? item._id : '';
-                        const addOnDiscount = addOnOldPrice > addOnPrice && addOnOldPrice > 0
-                          ? Math.round((1 - addOnPrice / addOnOldPrice) * 100)
-                          : 0;
-                      %>
-                        <div class="with-card">
-                          <div class="with-thumb">
-                            <div class="with-rank"><%= index + 1 %></div>
-                            <% if (addOnImage) { %>
-                              <img src="<%= addOnImage %>" alt="<%= addOnName %>">
-                            <% } else { %>
-                              <div class="empty-text" style="height:100%; display:flex; align-items:center; justify-content:center;">이미지 없음</div>
-                            <% } %>
-                          </div>
-
-                          <div class="with-name"><%= addOnName %></div>
-
-                          <div class="with-price-row">
-                            <% if (addOnDiscount > 0) { %>
-                              <span class="with-sale"><%= addOnDiscount %>%</span>
-                              <span class="with-price"><%= addOnPrice.toLocaleString() %>원</span>
-                              <span class="with-old"><%= addOnOldPrice.toLocaleString() %>원</span>
-                            <% } else { %>
-                              <span class="with-price"><%= addOnPrice.toLocaleString() %>원</span>
-                            <% } %>
-                          </div>
-
-                          <button
-                            type="button"
-                            class="with-btn add-on-select-btn"
-                            data-id="<%= addOnId %>"
-                            data-name="<%= addOnName %>"
-                            data-price="<%= addOnPrice %>">
-                            선택
-                          </button>
-                        </div>
-                      <% }) %>
-                    </div>
-                  </div>
-
-                  <div class="with-nav">
-                    <button type="button" class="with-arrow" id="withPrev">‹</button>
-                    <span class="with-page" id="withPage">1/1</span>
-                    <button type="button" class="with-arrow" id="withNext">›</button>
-                  </div>
-                </div>
-              </div>
-            <% } %>
 
             <div class="selected-box">
               <div class="selected-name"><%= safeName %></div>
@@ -1185,11 +989,11 @@
     </div>
 
     <div class="content-wrap">
-      <div class="content-nav">
-        <a href="#product-detail">상세보기</a>
-        <a href="#product-info">구매안내</a>
-        <a href="#product-review">상품후기</a>
-        <a href="#product-qna">상품문의</a>
+      <div class="content-nav" id="contentNav">
+        <a href="#product-detail" class="section-link active">상세보기</a>
+        <a href="#product-info" class="section-link">구매안내</a>
+        <a href="#product-review" class="section-link">상품후기</a>
+        <a href="#product-qna" class="section-link">상품문의</a>
       </div>
 
       <section class="content-section" id="product-detail">
@@ -1282,11 +1086,6 @@
     const optionError = document.getElementById('optionError');
     const colorError = document.getElementById('colorError');
 
-    const addOnSelectButtons = document.querySelectorAll('.add-on-select-btn');
-    const selectedAddOnIdsInput = document.getElementById('selectedAddOnIdsInput');
-    const selectedAddOnNamesInput = document.getElementById('selectedAddOnNamesInput');
-    const selectedAddOnTotalInput = document.getElementById('selectedAddOnTotalInput');
-
     const qtyInput = document.getElementById('qtyInput');
     const quantityHidden = document.getElementById('quantityHidden');
     const minusBtn = document.getElementById('minusBtn');
@@ -1303,14 +1102,6 @@
     const galleryStage = document.getElementById('galleryStage');
     const thumbs = document.getElementById('thumbs');
 
-    const withTrack = document.getElementById('withTrack');
-    const withPrev = document.getElementById('withPrev');
-    const withNext = document.getElementById('withNext');
-    const withPage = document.getElementById('withPage');
-
-    let selectedAddOns = [];
-    let withIndex = 0;
-
     function syncSelections() {
       const colorValue = selectedColorInput ? selectedColorInput.value : '';
       const sizeValue = selectedOptionInput ? selectedOptionInput.value : '';
@@ -1318,25 +1109,10 @@
       const metaParts = [];
       if (colorValue) metaParts.push(`색상: ${colorValue}`);
       if (sizeValue) metaParts.push(`사이즈: ${sizeValue}`);
-      if (selectedAddOns.length) {
-        metaParts.push(`추가상품: ${selectedAddOns.map(item => item.name).join(', ')}`);
-      }
 
       if (selectedMetaText) {
         selectedMetaText.textContent = metaParts.length ? metaParts.join(' / ') : '옵션을 선택해주세요.';
       }
-    }
-
-    function syncAddOnInputs() {
-      const ids = selectedAddOns.map(item => item.id);
-      const names = selectedAddOns.map(item => item.name);
-      const total = selectedAddOns.reduce((sum, item) => sum + item.price, 0);
-
-      if (selectedAddOnIdsInput) selectedAddOnIdsInput.value = ids.join(',');
-      if (selectedAddOnNamesInput) selectedAddOnNamesInput.value = names.join(',');
-      if (selectedAddOnTotalInput) selectedAddOnTotalInput.value = String(total);
-
-      return total;
     }
 
     function updateTotal() {
@@ -1349,11 +1125,7 @@
 
       qtyInput.value = qty;
       if (quantityHidden) quantityHidden.value = qty;
-
-      const addOnTotal = syncAddOnInputs();
-      const finalTotal = (price * qty) + addOnTotal;
-
-      if (totalPrice) totalPrice.textContent = finalTotal.toLocaleString();
+      if (totalPrice) totalPrice.textContent = (price * qty).toLocaleString();
 
       syncSelections();
     }
@@ -1384,28 +1156,6 @@
         if (optionError) optionError.textContent = '';
 
         syncSelections();
-      });
-    });
-
-    addOnSelectButtons.forEach((button) => {
-      button.addEventListener('click', function () {
-        const id = button.dataset.id || '';
-        const name = button.dataset.name || '';
-        const priceValue = Number(button.dataset.price || 0);
-
-        const exists = selectedAddOns.find(item => item.id === id);
-
-        if (exists) {
-          selectedAddOns = selectedAddOns.filter(item => item.id !== id);
-          button.textContent = '선택';
-          button.classList.remove('selected');
-        } else {
-          selectedAddOns.push({ id, name, price: priceValue });
-          button.textContent = '선택됨';
-          button.classList.add('selected');
-        }
-
-        updateTotal();
       });
     });
 
@@ -1484,34 +1234,43 @@
       });
     }
 
-    function moveWith(direction) {
-      if (!withTrack) return;
+    const sectionLinks = document.querySelectorAll('.section-link');
+    const contentSections = document.querySelectorAll('.content-section');
 
-      const cards = withTrack.querySelectorAll('.with-card');
-      if (!cards.length) return;
+    function setActiveSection() {
+      let currentId = '';
 
-      const cardWidth = cards[0].offsetWidth + 8;
-      const viewport = withTrack.parentElement;
-      const visibleCount = Math.max(Math.floor(viewport.offsetWidth / cardWidth), 1);
-      const totalPages = Math.max(Math.ceil(cards.length / visibleCount), 1);
-      const maxIndex = Math.max(cards.length - visibleCount, 0);
+      contentSections.forEach((section) => {
+        const top = section.getBoundingClientRect().top;
+        if (top <= 140) {
+          currentId = section.id;
+        }
+      });
 
-      withIndex += direction;
-      if (withIndex < 0) withIndex = 0;
-      if (withIndex > maxIndex) withIndex = maxIndex;
+      if (!currentId && contentSections.length) {
+        currentId = contentSections[0].id;
+      }
 
-      withTrack.style.transform = `translateX(-${withIndex * cardWidth}px)`;
-
-      const currentPage = Math.min(Math.floor(withIndex / visibleCount) + 1, totalPages);
-      if (withPage) withPage.textContent = `${currentPage}/${totalPages}`;
+      sectionLinks.forEach((link) => {
+        link.classList.remove('active');
+        const href = link.getAttribute('href') || '';
+        if (href === `#${currentId}`) {
+          link.classList.add('active');
+        }
+      });
     }
 
-    if (withPrev) withPrev.addEventListener('click', () => moveWith(-1));
-    if (withNext) withNext.addEventListener('click', () => moveWith(1));
-    window.addEventListener('resize', () => moveWith(0));
+    sectionLinks.forEach((link) => {
+      link.addEventListener('click', function () {
+        sectionLinks.forEach((item) => item.classList.remove('active'));
+        link.classList.add('active');
+      });
+    });
+
+    window.addEventListener('scroll', setActiveSection);
 
     updateTotal();
-    moveWith(0);
+    setActiveSection();
   </script>
 </body>
 
