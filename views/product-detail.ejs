@@ -325,13 +325,13 @@
   }
 
   .option-wrap {
-    margin-bottom: 10px;
+    margin-bottom: 14px;
     border-top: 1px solid #ddd6cb;
     padding-top: 12px;
   }
 
   .option-group {
-    margin-bottom: 12px;
+    margin-bottom: 16px;
   }
 
   .option-title {
@@ -383,130 +383,8 @@
     font-weight: 700;
   }
 
-  .selected-box {
-    background: transparent;
-    border-top: 1px solid #ddd6cb;
-    padding-top: 12px;
-    margin-bottom: 12px;
-  }
-
-  .selected-name {
-    font-size: 11px;
-    font-weight: 700;
-    margin-bottom: 6px;
-  }
-
-  .selected-meta {
-    font-size: 10px;
-    color: #6f675d;
-    margin-bottom: 10px;
-    min-height: 16px;
-  }
-
-  .qty-total-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  .qty-row {
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-    background: transparent;
-    height: 28px;
-  }
-
-  .qty-btn {
-    width: 22px;
-    height: 22px;
-    border: 1px solid #ddd6cb;
-    background: #f2ede6;
-    font-size: 11px;
-    cursor: pointer;
-    color: #555;
-  }
-
-  .qty-input {
-    width: 28px;
-    height: 22px;
-    border: 1px solid #ddd6cb;
-    background: #f2ede6;
-    text-align: center;
-    outline: none;
-    font-size: 10px;
-    color: #444;
-  }
-
-  .total-box {
-    text-align: right;
-    font-size: 10px;
-    color: #666;
-  }
-
-  .total-price {
-    display: block;
-    font-size: 14px;
-    color: #111;
-    font-weight: 900;
-    margin-top: 2px;
-  }
-
-  .btn-grid-main {
-    display: grid;
-    grid-template-columns: 1fr 36px 36px;
-    gap: 6px;
-    margin-top: 10px;
-  }
-
-  .btn-grid-sub {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 6px;
-    margin-top: 6px;
-  }
-
-  .action-btn {
-    border: 0;
-    font-size: 10px;
-    font-weight: 800;
-    cursor: pointer;
-  }
-
-  .action-btn:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-  }
-
-  .btn-buy {
-    background: #876f57;
-    color: #fff;
-    height: 32px;
-  }
-
-  .btn-cart-icon,
-  .btn-wish-icon {
-    background: #f3eee7;
-    color: #444;
-    border: 1px solid #d8d0c4;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    height: 32px;
-  }
-
-  .btn-npay {
-    background: #03c75a;
-    color: #fff;
-    height: 30px;
-    font-size: 10px;
-  }
-
   .weekly-best-wrap {
-    margin: 20px 0 14px;
+    margin: 10px 0 16px;
     padding-top: 18px;
     border-top: 1px solid #ddd6cb;
   }
@@ -656,6 +534,128 @@
     color: #555;
     min-width: 28px;
     text-align: center;
+  }
+
+  .selected-box {
+    background: transparent;
+    border-top: 1px solid #ddd6cb;
+    padding-top: 12px;
+    margin-bottom: 12px;
+  }
+
+  .selected-name {
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .selected-meta {
+    font-size: 10px;
+    color: #6f675d;
+    margin-bottom: 10px;
+    min-height: 16px;
+  }
+
+  .qty-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .qty-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    background: transparent;
+    height: 28px;
+  }
+
+  .qty-btn {
+    width: 22px;
+    height: 22px;
+    border: 1px solid #ddd6cb;
+    background: #f2ede6;
+    font-size: 11px;
+    cursor: pointer;
+    color: #555;
+  }
+
+  .qty-input {
+    width: 28px;
+    height: 22px;
+    border: 1px solid #ddd6cb;
+    background: #f2ede6;
+    text-align: center;
+    outline: none;
+    font-size: 10px;
+    color: #444;
+  }
+
+  .total-box {
+    text-align: right;
+    font-size: 10px;
+    color: #666;
+  }
+
+  .total-price {
+    display: block;
+    font-size: 14px;
+    color: #111;
+    font-weight: 900;
+    margin-top: 2px;
+  }
+
+  .btn-grid-main {
+    display: grid;
+    grid-template-columns: 1fr 36px 36px;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .btn-grid-sub {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  .action-btn {
+    border: 0;
+    font-size: 10px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .action-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .btn-buy {
+    background: #876f57;
+    color: #fff;
+    height: 32px;
+  }
+
+  .btn-cart-icon,
+  .btn-wish-icon {
+    background: #f3eee7;
+    color: #444;
+    border: 1px solid #d8d0c4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    height: 32px;
+  }
+
+  .btn-npay {
+    background: #03c75a;
+    color: #fff;
+    height: 30px;
+    font-size: 10px;
   }
 
   .content-wrap {
@@ -1019,6 +1019,56 @@
             <% } %>
           </div>
 
+          <% if (weeklyProducts.length > 0) { %>
+            <div class="weekly-best-wrap">
+              <div class="weekly-best-title">Weekly Best</div>
+              <div class="weekly-best-sub">70,000원 이상 구매 시 배송비 무료</div>
+
+              <div class="weekly-best-grid">
+                <% weeklyProducts.forEach((item, index) => { %>
+                  <div class="weekly-card">
+                    <a href="/products/<%= item._id %>" class="weekly-card-thumb">
+                      <span class="weekly-card-rank"><%= index + 1 %></span>
+
+                      <% if (item.image) { %>
+                        <img src="<%= item.image %>" alt="<%= item.name %>">
+                      <% } else { %>
+                        <div class="weekly-card-thumb-empty">이미지 없음</div>
+                      <% } %>
+                    </a>
+
+                    <div class="weekly-card-body">
+                      <div class="weekly-card-name"><%= item.name %></div>
+
+                      <% if (item.discountRate > 0) { %>
+                        <div class="weekly-card-discount"><%= item.discountRate %>%</div>
+                      <% } %>
+
+                      <% if (item.originalPrice > item.price) { %>
+                        <div class="weekly-card-oldprice"><%= Number(item.originalPrice).toLocaleString() %>원</div>
+                      <% } %>
+
+                      <div class="weekly-card-price"><%= Number(item.price).toLocaleString() %>원</div>
+
+                      <button
+                        type="button"
+                        class="weekly-card-btn"
+                        onclick="location.href='/products/<%= item._id %>'">
+                        선택
+                      </button>
+                    </div>
+                  </div>
+                <% }) %>
+              </div>
+
+              <div class="weekly-best-nav">
+                <button type="button" class="weekly-best-arrow">‹</button>
+                <span class="weekly-best-page">1/1</span>
+                <button type="button" class="weekly-best-arrow">›</button>
+              </div>
+            </div>
+          <% } %>
+
           <div class="selected-box">
             <div class="selected-name"><%= safeName %></div>
             <div class="selected-meta" id="selectedMetaText">옵션을 선택해주세요.</div>
@@ -1057,56 +1107,6 @@
             </button>
           </div>
         </form>
-
-        <% if (weeklyProducts.length > 0) { %>
-          <div class="weekly-best-wrap">
-            <div class="weekly-best-title">Weekly Best</div>
-            <div class="weekly-best-sub">70,000원 이상 구매 시 배송비 무료</div>
-
-            <div class="weekly-best-grid">
-              <% weeklyProducts.forEach((item, index) => { %>
-                <div class="weekly-card">
-                  <a href="/products/<%= item._id %>" class="weekly-card-thumb">
-                    <span class="weekly-card-rank"><%= index + 1 %></span>
-
-                    <% if (item.image) { %>
-                      <img src="<%= item.image %>" alt="<%= item.name %>">
-                    <% } else { %>
-                      <div class="weekly-card-thumb-empty">이미지 없음</div>
-                    <% } %>
-                  </a>
-
-                  <div class="weekly-card-body">
-                    <div class="weekly-card-name"><%= item.name %></div>
-
-                    <% if (item.discountRate > 0) { %>
-                      <div class="weekly-card-discount"><%= item.discountRate %>%</div>
-                    <% } %>
-
-                    <% if (item.originalPrice > item.price) { %>
-                      <div class="weekly-card-oldprice"><%= Number(item.originalPrice).toLocaleString() %>원</div>
-                    <% } %>
-
-                    <div class="weekly-card-price"><%= Number(item.price).toLocaleString() %>원</div>
-
-                    <button
-                      type="button"
-                      class="weekly-card-btn"
-                      onclick="location.href='/products/<%= item._id %>'">
-                      선택
-                    </button>
-                  </div>
-                </div>
-              <% }) %>
-            </div>
-
-            <div class="weekly-best-nav">
-              <button type="button" class="weekly-best-arrow">‹</button>
-              <span class="weekly-best-page">1/1</span>
-              <button type="button" class="weekly-best-arrow">›</button>
-            </div>
-          </div>
-        <% } %>
       </div>
     </div>
   </div>
