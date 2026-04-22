@@ -1,16 +1,21 @@
 <%
-  const safeProduct = typeof product !== 'undefined' && product ? product : {};
+  const safeProduct = (typeof product !== 'undefined' && product) ? product : {};
+  const safeAddOnProducts =
+    (typeof addOnProducts !== 'undefined' && Array.isArray(addOnProducts))
+      ? addOnProducts.filter(Boolean)
+      : [];
+
   const safeName = safeProduct.name || '상품명';
   const safePrice = Number(safeProduct.price || 0);
-  const safeOldPrice = Number(safeProduct.oldPrice || 0);
-  const safeSummary = safeProduct.summary || '상품 설명이 없습니다.';
-  const safeDesc = safeProduct.desc || '등록된 상세 정보가 없습니다.';
-  const safeImage = safeProduct.image || '';
+  const safeOldPrice = Number(safeProduct.oldPrice || safeProduct.price || 0);
+  const safeStock = Number(safeProduct.stock || 0);
+  const safeStatus = safeProduct.status || '';
+  const safeSummary = safeProduct.summary || '';
+  const safeDesc = safeProduct.desc || safeProduct.description || '';
   const safeSubImages = Array.isArray(safeProduct.subImages) ? safeProduct.subImages.filter(Boolean) : [];
   const safeDetailImages = Array.isArray(safeProduct.detailImages) ? safeProduct.detailImages.filter(Boolean) : [];
-  const safeGuide = safeProduct.guide || {};
-  const safeAddOnProducts = Array.isArray(addOnProducts) ? addOnProducts.filter(Boolean) : [];
   const safeOptionGroups = Array.isArray(safeProduct.optionGroups) ? safeProduct.optionGroups.filter(Boolean) : [];
+  const safeGuide = safeProduct.guide || {};
 
   let colorGroup = null;
   let sizeGroup = null;
@@ -19,261 +24,141 @@
   if (safeOptionGroups.length >= 2) sizeGroup = safeOptionGroups[1];
 
   const galleryItems = [];
-  if (safeImage) galleryItems.push(safeImage);
+  if (safeProduct.image) galleryItems.push({ type: 'image', src: safeProduct.image });
+  if (safeProduct.video) galleryItems.push({ type: 'video', src: safeProduct.video });
+
   safeSubImages.forEach((img) => {
-    if (!galleryItems.includes(img)) galleryItems.push(img);
+    if (!galleryItems.find((item) => item.src === img)) {
+      galleryItems.push({ type: 'image', src: img });
+    }
   });
 
-  const hasDiscount = safeOldPrice > safePrice && safeOldPrice > 0;
-  const discountPercent = hasDiscount
-    ? Math.round((1 - safePrice / safeOldPrice) * 100)
-    : 0;
+  const discountRate =
+    safeOldPrice > safePrice && safeOldPrice > 0
+      ? Math.round((1 - safePrice / safeOldPrice) * 100)
+      : 0;
+
+  const rewardPoint = Math.floor(safePrice * 0.01);
+  const interestCount = Math.max(Number(safeProduct.likeCount || 0), 238);
+  const isSoldOut = safeStatus === 'soldout' || safeStock <= 0;
+  const modelInfo = safeProduct.modelInfo || '신혜성 178cm / 70kg (상의 100~105 / 하의 30~31)';
+  const shippingText = safeProduct.shippingFeeText || '무료배송';
+  const hasColorGroup = !!(colorGroup && Array.isArray(colorGroup.values) && colorGroup.values.length > 0);
+  const hasSizeGroup = !!(sizeGroup && Array.isArray(sizeGroup.values) && sizeGroup.values.length > 0);
 %>
 
 <%- include('partials/header') %>
 
 <style>
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg: #f5f3ef;
+    --bg: #f4f1eb;
     --white: #ffffff;
-    --black: #111111;
-    --text: #1f1f1f;
-    --muted: #7a7268;
-    --line: rgba(17, 17, 17, 0.08);
-    --gold: #bfa68a;
-    --max: 1280px;
-    --shadow: 0 16px 40px rgba(0,0,0,0.06);
+    --text: #222222;
+    --muted: #7a746c;
+    --line: #ddd6cb;
+    --soft: #f8f5f0;
+    --soft-2: #f2ede6;
+    --brown: #9d856c;
+    --brown-dark: #876f57;
+    --green: #03c75a;
+    --danger: #ef625d;
+    --icon: #f3eee7;
+    --max: 1120px;
   }
 
+  html { scroll-behavior: smooth; }
+
   body {
-    margin: 0;
-    font-family: "Pretendard", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: "Pretendard", "Noto Sans KR", Arial, sans-serif;
     background: var(--bg);
     color: var(--text);
     line-height: 1.6;
-    word-break: keep-all;
   }
 
-  a {
-    text-decoration: none;
-    color: inherit;
+  a { color: inherit; text-decoration: none; }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
   }
 
-  img {
+  img,
+  video {
     display: block;
-    width: 100%;
-  }
-
-  .container {
-    width: 100%;
-    max-width: var(--max);
-    margin: 0 auto;
-    padding: 0 24px;
-  }
-
-  header {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    background: rgba(245, 243, 239, 0.88);
-    backdrop-filter: blur(14px);
-    border-bottom: 1px solid var(--line);
-  }
-
-  .header-inner {
-    min-height: 82px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    padding: 16px 0;
-  }
-
-  .brand {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .brand-logo {
-    font-size: 30px;
-    font-weight: 800;
-    letter-spacing: 0.24em;
-    color: var(--black);
-  }
-
-  .brand-sub {
-    font-size: 10px;
-    letter-spacing: 0.32em;
-    color: var(--muted);
-    text-transform: uppercase;
-  }
-
-  .nav {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .nav-item {
-    position: relative;
-    display: flex;
-    align-items: center;
-    height: 48px;
-    padding-bottom: 14px;
-    margin-bottom: -14px;
-  }
-
-  .nav a,
-  .nav-link {
-    font-size: 14px;
-    color: #312d29;
-    position: relative;
-    text-transform: uppercase;
-  }
-
-  .nav-link {
-    display: inline-flex;
-    align-items: center;
-    height: 48px;
-  }
-
-  .nav a::after,
-  .nav-link::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -6px;
-    width: 0;
-    height: 1px;
-    background: var(--black);
-    transition: 0.25s ease;
-  }
-
-  .nav a:hover::after,
-  .nav a.active::after,
-  .nav-link:hover::after,
-  .nav-link.active::after {
-    width: 100%;
-  }
-
-  .dropdown-menu {
-    position: absolute;
-    top: calc(100% - 2px);
-    left: 50%;
-    transform: translateX(-50%);
-    min-width: 140px;
-    padding: 14px 0;
-    background: #e8e1d8;
-    display: flex;
-    flex-direction: column;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.18s ease, visibility 0.18s ease;
-    z-index: 999;
-    box-shadow: 0 10px 24px rgba(0,0,0,0.08);
-  }
-
-  .dropdown-menu a {
-    display: block;
-    padding: 8px 16px;
-    text-align: center;
-    font-size: 13px;
-    color: #111;
-    text-transform: none;
-    white-space: nowrap;
-  }
-
-  .dropdown-menu a::after { display: none; }
-
-  .dropdown-menu a:hover {
-    background: rgba(255,255,255,0.28);
-  }
-
-  .nav-item:hover .dropdown-menu,
-  .nav-item:focus-within .dropdown-menu {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-  }
-
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    font-size: 14px;
-    color: var(--muted);
-    flex-wrap: wrap;
-    justify-content: flex-end;
-  }
-
-  .user-name {
-    font-weight: 700;
-    color: var(--black);
+    max-width: 100%;
   }
 
   .page {
-    max-width: 1180px;
+    max-width: var(--max);
     margin: 0 auto;
-    padding: 34px 24px 90px;
+    padding: 28px 18px 90px;
   }
 
   .layout {
     display: grid;
-    grid-template-columns: 620px 1fr;
-    gap: 48px;
+    grid-template-columns: 520px 360px;
+    gap: 40px;
+    justify-content: center;
     align-items: start;
+  }
+
+  .gallery-col {
+    width: 100%;
+    max-width: 520px;
   }
 
   .gallery-main {
     width: 100%;
-    aspect-ratio: 4 / 5;
+    max-width: 520px;
+    margin: 0 auto;
+    aspect-ratio: 4 / 5.4;
     background: #e7e0d5;
     overflow: hidden;
-    box-shadow: var(--shadow);
   }
 
-  .gallery-main img {
+  .gallery-main img,
+  .gallery-main video {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    background: #e7e0d5;
   }
 
-  .gallery-empty {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #888;
-    font-size: 14px;
-    background: #e7e0d5;
+  .thumbs-wrap {
+    margin-top: 10px;
   }
 
   .thumbs {
     display: flex;
-    gap: 8px;
-    margin-top: 10px;
+    gap: 6px;
+    flex-wrap: nowrap;
     overflow-x: auto;
     padding-bottom: 4px;
   }
 
+  .thumbs::-webkit-scrollbar {
+    height: 5px;
+  }
+
+  .thumbs::-webkit-scrollbar-thumb {
+    background: #cfc6ba;
+  }
+
   .thumb-btn {
-    width: 72px;
-    height: 90px;
-    min-width: 72px;
-    border: 1px solid #ddd6cb;
+    width: 58px;
+    height: 72px;
+    min-width: 58px;
+    border: 1px solid #d8d0c4;
     background: #fff;
-    padding: 0;
-    cursor: pointer;
     overflow: hidden;
-    opacity: .75;
+    cursor: pointer;
+    padding: 0;
+    opacity: .72;
+    transition: .2s ease;
   }
 
   .thumb-btn.active {
@@ -281,7 +166,8 @@
     opacity: 1;
   }
 
-  .thumb-btn img {
+  .thumb-btn img,
+  .thumb-btn video {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -289,113 +175,212 @@
 
   .purchase-box {
     position: sticky;
-    top: 110px;
+    top: 18px;
+    background: transparent;
   }
 
-  .product-label {
-    display: inline-block;
+  .interest-bubble {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border: 1px solid #d9d1c6;
+    border-radius: 999px;
+    background: #f8f5ef;
+    color: #62594f;
+    font-size: 10px;
+    font-weight: 600;
     margin-bottom: 10px;
-    color: var(--gold);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
   }
 
-  .product-title {
-    font-size: 30px;
-    font-weight: 800;
-    line-height: 1.2;
-    letter-spacing: -0.03em;
-    margin-bottom: 14px;
-    color: #111;
-  }
-
-  .price-row {
+  .title-row {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: wrap;
-    margin-bottom: 16px;
+    margin-bottom: 8px;
   }
 
-  .product-price {
-    font-size: 28px;
+  .title {
+    font-size: 21px;
+    line-height: 1.35;
     font-weight: 800;
-    color: #111;
+    word-break: keep-all;
   }
 
-  .old-price {
-    font-size: 15px;
-    color: #9f978d;
-    text-decoration: line-through;
-  }
-
-  .discount {
-    color: #d64c4c;
-    font-size: 15px;
-    font-weight: 800;
-  }
-
-  .product-summary {
-    font-size: 15px;
-    color: #6f675d;
-    line-height: 1.9;
-    margin-bottom: 24px;
-    white-space: pre-line;
-  }
-
-  .info-box {
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-    padding: 14px 0;
-    margin-bottom: 18px;
-  }
-
-  .info-row {
-    display: grid;
-    grid-template-columns: 92px 1fr;
-    gap: 12px;
-    padding: 6px 0;
-    font-size: 13px;
-  }
-
-  .info-label {
-    color: #7a7268;
+  .new-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 18px;
+    padding: 0 5px;
+    background: #f6b21a;
+    color: #fff;
+    font-size: 10px;
     font-weight: 700;
   }
 
-  .info-value {
-    color: #222;
+  .summary-top {
+    font-size: 12px;
+    color: #61594f;
+    margin-bottom: 12px;
+    white-space: pre-line;
+    word-break: keep-all;
+    line-height: 1.7;
+  }
+
+  .price-lines {
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 12px;
+  }
+
+  .price-line {
+    min-height: 38px;
+    display: grid;
+    grid-template-columns: 86px 1fr;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+    font-size: 11px;
+  }
+
+  .price-line:last-child {
+    border-bottom: 0;
+  }
+
+  .price-label {
+    color: #70685f;
+    font-weight: 700;
+  }
+
+  .price-old {
+    color: #8b847a;
+    text-decoration: line-through;
+    margin-right: 10px;
+    font-size: 11px;
+  }
+
+  .price-main {
+    font-size: 18px;
+    font-weight: 900;
+  }
+
+  .price-discount {
+    color: var(--danger);
+    margin-left: 6px;
+    font-weight: 800;
+    font-size: 11px;
+  }
+
+  .detail-info {
+    margin-bottom: 12px;
+  }
+
+  .detail-row {
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr);
+    gap: 12px;
+    padding: 4px 0;
+    font-size: 11px;
+    align-items: start;
+  }
+
+  .detail-row-label {
+    color: #6f675d;
+    font-weight: 700;
+    white-space: nowrap;
+    line-height: 1.65;
+  }
+
+  .detail-row-value {
+    color: #2b2b2b;
+    font-weight: 500;
+    line-height: 1.65;
+    word-break: keep-all;
+    text-align: left;
+  }
+
+  .coupon-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+  }
+
+  .coupon-btn {
+    height: 30px;
+    padding: 0 14px;
+    border: 0;
+    background: var(--brown);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .benefit-box {
+    border: 1px solid var(--line);
+    background: transparent;
+    margin-bottom: 14px;
+  }
+
+  .benefit-line {
+    min-height: 38px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid var(--line);
+    font-size: 11px;
+  }
+
+  .benefit-line:last-child {
+    border-bottom: 0;
+  }
+
+  .benefit-label,
+  .benefit-value {
+    font-weight: 700;
+  }
+
+  .option-wrap {
+    margin-bottom: 10px;
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
   }
 
   .option-group {
-    margin-bottom: 14px;
+    margin-bottom: 12px;
   }
 
   .option-title {
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 700;
-    color: #444;
-    margin-bottom: 8px;
+    color: #6f675d;
+    margin-bottom: 7px;
   }
 
   .option-values {
     display: flex;
-    gap: 8px;
     flex-wrap: wrap;
+    gap: 6px;
   }
 
   .option-chip {
-    min-width: 44px;
-    height: 34px;
+    min-width: 34px;
+    height: 30px;
     padding: 0 12px;
-    border: 1px solid #ddd6cb;
+    border: 1px solid #d2cabf;
     background: #fff;
-    cursor: pointer;
-    font-size: 12px;
+    color: #444;
+    font-size: 11px;
     font-weight: 700;
-    color: #333;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: .2s ease;
   }
 
   .option-chip.active {
@@ -405,97 +390,288 @@
   }
 
   .option-chip.soldout {
-    opacity: .45;
+    opacity: 0.45;
     cursor: not-allowed;
     text-decoration: line-through;
   }
 
+  .error-text {
+    min-height: 14px;
+    margin-top: 4px;
+    color: var(--danger);
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .with-section {
+    margin: 16px 0 12px;
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+  }
+
+  .with-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .with-sub {
+    font-size: 11px;
+    color: var(--danger);
+    margin-bottom: 10px;
+  }
+
+  .with-wrap {
+    position: relative;
+  }
+
+  .with-viewport {
+    overflow: hidden;
+  }
+
+  .with-track {
+    display: flex;
+    gap: 8px;
+    transition: transform .25s ease;
+    will-change: transform;
+  }
+
+  .with-card {
+    min-width: 76px;
+    max-width: 76px;
+    flex: 0 0 76px;
+  }
+
+  .with-thumb {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1.25;
+    background: #e8e1d6;
+    overflow: hidden;
+    margin-bottom: 5px;
+  }
+
+  .with-rank {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 16px;
+    height: 16px;
+    background: rgba(0, 0, 0, 0.68);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .with-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .with-name {
+    font-size: 9px;
+    line-height: 1.35;
+    min-height: 28px;
+    color: #333;
+    margin-bottom: 4px;
+    word-break: keep-all;
+  }
+
+  .with-price-row {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    margin-bottom: 6px;
+  }
+
+  .with-sale {
+    color: var(--danger);
+    font-size: 9px;
+    font-weight: 700;
+  }
+
+  .with-price {
+    font-size: 10px;
+    font-weight: 800;
+  }
+
+  .with-old {
+    color: #9a9288;
+    text-decoration: line-through;
+    font-size: 9px;
+  }
+
+  .with-btn {
+    width: 100%;
+    height: 18px;
+    border: 0;
+    background: #fb625f;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .with-btn.selected {
+    background: #111;
+  }
+
+  .with-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .with-arrow {
+    width: 16px;
+    height: 16px;
+    border: 1px solid #d8d0c4;
+    background: transparent;
+    color: #777;
+    cursor: pointer;
+    line-height: 1;
+    font-size: 10px;
+  }
+
+  .with-page {
+    font-size: 10px;
+    color: #555;
+    min-width: 28px;
+    text-align: center;
+  }
+
   .selected-box {
-    margin-top: 20px;
-    padding: 16px;
-    background: #fff;
-    border: 1px solid var(--line);
+    background: transparent;
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+    margin-bottom: 12px;
+  }
+
+  .selected-name {
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 6px;
   }
 
   .selected-meta {
-    font-size: 13px;
-    color: #666;
-    margin-bottom: 12px;
+    font-size: 10px;
+    color: #6f675d;
+    margin-bottom: 10px;
+    min-height: 16px;
   }
 
   .qty-total-row {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    gap: 14px;
+    gap: 12px;
     flex-wrap: wrap;
   }
 
   .qty-row {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
+    background: transparent;
+    height: 28px;
   }
 
   .qty-btn {
-    width: 28px;
-    height: 28px;
+    width: 22px;
+    height: 22px;
     border: 1px solid #ddd6cb;
-    background: #fff;
+    background: var(--soft-2);
+    font-size: 11px;
     cursor: pointer;
+    color: #555;
   }
 
   .qty-input {
-    width: 40px;
-    height: 28px;
+    width: 28px;
+    height: 22px;
     border: 1px solid #ddd6cb;
+    background: var(--soft-2);
     text-align: center;
+    outline: none;
+    font-size: 10px;
+    color: #444;
   }
 
   .total-box {
     text-align: right;
-    font-size: 11px;
-    color: #777;
+    font-size: 10px;
+    color: #666;
   }
 
   .total-price {
     display: block;
-    font-size: 22px;
+    font-size: 14px;
     color: #111;
-    font-weight: 800;
+    font-weight: 900;
     margin-top: 2px;
   }
 
-  .btn-grid {
+  .btn-grid-main {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 18px;
+    grid-template-columns: 1fr 36px 36px;
+    gap: 6px;
+    margin-top: 10px;
   }
 
-  .buy-btn,
-  .cart-btn {
-    height: 54px;
+  .btn-grid-sub {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  .action-btn {
     border: 0;
-    font-size: 15px;
+    font-size: 10px;
     font-weight: 800;
     cursor: pointer;
   }
 
-  .buy-btn {
-    background: #111;
-    color: #fff;
+  .action-btn:disabled {
+    opacity: .55;
+    cursor: not-allowed;
   }
 
-  .cart-btn {
-    background: #d9c2a4;
-    color: #111;
+  .btn-buy {
+    background: var(--brown-dark);
+    color: #fff;
+    height: 32px;
+  }
+
+  .btn-cart-icon,
+  .btn-wish-icon {
+    background: var(--icon);
+    color: #444;
+    border: 1px solid #d8d0c4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    height: 32px;
+  }
+
+  .btn-npay {
+    background: var(--green);
+    color: #fff;
+    height: 30px;
+    font-size: 10px;
   }
 
   .content-wrap {
-    max-width: 940px;
-    margin: 72px auto 0;
-    padding-top: 20px;
+    max-width: 820px;
+    margin: 80px auto 0;
+    padding-top: 18px;
     border-top: 1px solid var(--line);
   }
 
@@ -503,23 +679,25 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 0;
     flex-wrap: wrap;
-    margin-bottom: 28px;
+    gap: 0;
+    margin-bottom: 26px;
+    font-size: 11px;
+    color: #7d766e;
     text-align: center;
   }
 
   .content-nav a {
     position: relative;
     padding: 0 14px;
-    font-size: 12px;
-    color: #7d766e;
-    font-weight: 600;
+    font-weight: 500;
+    transition: color .2s ease;
   }
 
+  .content-nav a:hover,
   .content-nav a.active {
     color: #111;
-    font-weight: 800;
+    font-weight: 700;
   }
 
   .content-nav a:not(:last-child)::after {
@@ -534,9 +712,10 @@
   }
 
   .content-section {
-    padding: 28px 0;
+    padding: 26px 0;
     border-top: 1px solid var(--line);
-    scroll-margin-top: 120px;
+    background: transparent;
+    scroll-margin-top: 110px;
   }
 
   .content-section:first-of-type {
@@ -544,19 +723,18 @@
     padding-top: 0;
   }
 
-  .content-title {
-    font-size: 18px;
+  .content-section-title {
+    font-size: 16px;
     font-weight: 800;
-    text-align: center;
     margin-bottom: 12px;
-    color: #111;
+    letter-spacing: -0.01em;
+    text-align: center;
   }
 
-  .content-text {
-    font-size: 14px;
-    color: #555;
-    line-height: 1.9;
-    white-space: pre-line;
+  .content-section-sub {
+    font-size: 11px;
+    color: #7a746c;
+    margin-bottom: 18px;
     text-align: center;
   }
 
@@ -567,295 +745,516 @@
 
   .detail-images img {
     width: 100%;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
   }
 
-  .add-on-wrap {
-    margin-top: 18px;
-    padding-top: 18px;
-    border-top: 1px solid var(--line);
+  .guide-text {
+    font-size: 12px;
+    color: #555;
+    white-space: pre-line;
+    word-break: keep-all;
+    line-height: 1.9;
   }
 
-  .add-on-title {
-    font-size: 14px;
+  .guide-block {
+    margin-top: 22px;
+  }
+
+  .guide-block:first-child {
+    margin-top: 0;
+  }
+
+  .guide-heading {
+    font-size: 13px;
     font-weight: 800;
     margin-bottom: 10px;
+    color: #222;
   }
 
-  .add-on-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-  }
-
-  .add-on-card {
-    display: block;
-    background: #fff;
-    border: 1px solid var(--line);
-    overflow: hidden;
-  }
-
-  .add-on-card img {
-    aspect-ratio: 1 / 1.15;
-    object-fit: cover;
-  }
-
-  .add-on-body {
-    padding: 10px;
-  }
-
-  .add-on-name {
+  .empty-text {
     font-size: 12px;
-    font-weight: 700;
-    line-height: 1.5;
-    min-height: 36px;
-    margin-bottom: 6px;
+    color: #6f675d;
+    line-height: 1.8;
+    text-align: center;
   }
 
-  .add-on-price {
-    font-size: 12px;
-    font-weight: 800;
+  .mobile-buybar {
+    display: none;
   }
 
-  @media (max-width: 1100px) {
+  @media (max-width: 980px) {
     .layout {
       grid-template-columns: 1fr;
-      gap: 28px;
+      gap: 22px;
+    }
+
+    .gallery-col,
+    .gallery-main {
+      max-width: 100%;
     }
 
     .purchase-box {
       position: static;
     }
 
-    .add-on-grid {
-      grid-template-columns: repeat(2, 1fr);
+    .content-wrap {
+      margin-top: 56px;
     }
   }
 
-  @media (max-width: 760px) {
-    .container {
-      padding: 0 16px;
-    }
-
-    .nav {
-      display: none;
-    }
-
-    .header-actions {
-      display: none;
-    }
-
+  @media (max-width: 640px) {
     .page {
-      padding: 20px 16px 72px;
+      padding: 14px 12px 92px;
     }
 
-    .product-title {
-      font-size: 24px;
+    .title {
+      font-size: 20px;
     }
 
-    .product-price {
-      font-size: 24px;
+    .price-main {
+      font-size: 16px;
     }
 
-    .add-on-grid {
+    .detail-row {
+      grid-template-columns: 82px minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    .content-wrap {
+      margin-top: 40px;
+    }
+
+    .content-nav {
+      row-gap: 8px;
+    }
+
+    .mobile-buybar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 50;
+      display: grid;
       grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+      background: rgba(255, 255, 255, 0.96);
+      border-top: 1px solid #ddd6cb;
+      backdrop-filter: blur(6px);
+    }
+
+    .mobile-buybar button {
+      height: 44px;
+      border: 0;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .mobile-cart {
+      background: var(--icon);
+      color: #333;
+      border: 1px solid #d8d0c4 !important;
+    }
+
+    .mobile-buy {
+      background: var(--brown-dark);
+      color: #fff;
     }
   }
 </style>
 
+<div id="productData"
+  data-price="<%= safePrice %>"
+  data-stock="<%= safeStock %>"
+  data-has-color="<%= hasColorGroup ? 'true' : 'false' %>"
+  data-has-size="<%= hasSizeGroup ? 'true' : 'false' %>">
+</div>
+
 <div class="page">
   <div class="layout">
-    <div>
+    <div class="gallery-col">
       <div class="gallery-main" id="galleryStage">
-        <% if (safeImage) { %>
-          <img src="<%= safeImage %>" alt="<%= safeName %>">
+        <% if (galleryItems.length > 0) { %>
+          <% if (galleryItems[0].type === 'video') { %>
+            <video src="<%= galleryItems[0].src %>" controls playsinline preload="metadata"></video>
+          <% } else { %>
+            <img src="<%= galleryItems[0].src %>" alt="<%= safeName %>">
+          <% } %>
         <% } else { %>
-          <div class="gallery-empty">이미지 없음</div>
+          <div class="empty-text" style="height:100%; display:flex; align-items:center; justify-content:center;">등록된 상품 이미지가 없습니다.</div>
         <% } %>
       </div>
 
       <% if (galleryItems.length > 1) { %>
-        <div class="thumbs" id="thumbs">
-          <% galleryItems.forEach((img, index) => { %>
-            <button type="button" class="thumb-btn <%= index === 0 ? 'active' : '' %>" data-src="<%= img %>">
-              <img src="<%= img %>" alt="썸네일">
-            </button>
-          <% }) %>
+        <div class="thumbs-wrap">
+          <div class="thumbs" id="thumbs">
+            <% galleryItems.forEach((item, index) => { %>
+              <button type="button" class="thumb-btn <%= index === 0 ? 'active' : '' %>" data-type="<%= item.type %>" data-src="<%= item.src %>">
+                <% if (item.type === 'video') { %>
+                  <video src="<%= item.src %>" muted playsinline preload="metadata"></video>
+                <% } else { %>
+                  <img src="<%= item.src %>" alt="썸네일">
+                <% } %>
+              </button>
+            <% }) %>
+          </div>
         </div>
       <% } %>
     </div>
 
-    <div class="purchase-box">
-      <div class="product-label">DAMORE ITEM</div>
-      <h1 class="product-title"><%= safeName %></h1>
+    <div class="purchase-col">
+      <div class="purchase-box">
+        <div class="interest-bubble">🔔 <%= interestCount.toLocaleString() %>명이 이 상품을 관심상품에 담아두었어요.</div>
 
-      <div class="price-row">
-        <div class="product-price"><%= safePrice.toLocaleString() %>원</div>
-        <% if (hasDiscount) { %>
-          <div class="old-price"><%= safeOldPrice.toLocaleString() %>원</div>
-          <div class="discount"><%= discountPercent %>%</div>
+        <div class="title-row">
+          <div class="title"><%= safeName %></div>
+          <div class="new-badge">NEW</div>
+        </div>
+
+        <% if (safeSummary) { %>
+          <div class="summary-top"><%= safeSummary %></div>
         <% } %>
-      </div>
 
-      <div class="product-summary"><%= safeSummary %></div>
-
-      <div class="info-box">
-        <div class="info-row">
-          <div class="info-label">상품명</div>
-          <div class="info-value"><%= safeName %></div>
-        </div>
-        <div class="info-row">
-          <div class="info-label">배송</div>
-          <div class="info-value"><%= safeProduct.shippingFeeText || '무료배송' %></div>
-        </div>
-        <div class="info-row">
-          <div class="info-label">상태</div>
-          <div class="info-value"><%= (safeProduct.status === 'soldout' || Number(safeProduct.stock || 0) <= 0) ? '품절' : '판매중' %></div>
-        </div>
-      </div>
-
-      <% if (colorGroup && Array.isArray(colorGroup.values) && colorGroup.values.length > 0) { %>
-        <div class="option-group">
-          <div class="option-title"><%= colorGroup.name || '색상' %></div>
-          <div class="option-values" id="colorWrap">
-            <% colorGroup.values.forEach((item) => { %>
-              <button
-                type="button"
-                class="option-chip <%= item && item.isSoldOut ? 'soldout' : '' %>"
-                data-color="<%= item && item.value ? item.value : '' %>"
-                data-soldout="<%= item && item.isSoldOut ? 'true' : 'false' %>">
-                <%= item && item.value ? item.value : '-' %>
-              </button>
-            <% }) %>
-          </div>
-        </div>
-      <% } %>
-
-      <% if (sizeGroup && Array.isArray(sizeGroup.values) && sizeGroup.values.length > 0) { %>
-        <div class="option-group">
-          <div class="option-title"><%= sizeGroup.name || '사이즈' %></div>
-          <div class="option-values" id="sizeWrap">
-            <% sizeGroup.values.forEach((item) => { %>
-              <button
-                type="button"
-                class="option-chip <%= item && item.isSoldOut ? 'soldout' : '' %>"
-                data-size="<%= item && item.value ? item.value : '' %>"
-                data-soldout="<%= item && item.isSoldOut ? 'true' : 'false' %>">
-                <%= item && item.value ? item.value : '-' %>
-              </button>
-            <% }) %>
-          </div>
-        </div>
-      <% } %>
-
-      <div class="selected-box">
-        <div class="selected-meta" id="selectedMetaText">옵션을 선택해주세요.</div>
-
-        <div class="qty-total-row">
-          <div class="qty-row">
-            <button type="button" class="qty-btn" id="minusBtn">-</button>
-            <input type="number" id="qtyInput" class="qty-input" value="1" min="1">
-            <button type="button" class="qty-btn" id="plusBtn">+</button>
+        <div class="price-lines">
+          <div class="price-line">
+            <div class="price-label">소비자가</div>
+            <div><span class="price-old"><%= safeOldPrice.toLocaleString() %>원</span></div>
           </div>
 
-          <div class="total-box">
-            TOTAL
-            <span class="total-price" id="totalPrice"><%= safePrice.toLocaleString() %>원</span>
+          <div class="price-line">
+            <div class="price-label">회원판매가</div>
+            <div>
+              <span class="price-main">KRW <%= safePrice.toLocaleString() %></span>
+              <% if (discountRate > 0) { %>
+                <span class="price-discount">(<%= discountRate %>% off)</span>
+              <% } %>
+            </div>
           </div>
         </div>
 
-        <div class="btn-grid">
-          <button type="button" class="cart-btn">장바구니</button>
-          <button type="button" class="buy-btn">바로구매</button>
-        </div>
-      </div>
+        <div class="detail-info">
+          <div class="detail-row">
+            <div class="detail-row-label">상품간략설명</div>
+            <div class="detail-row-value"><%= safeSummary || '-' %></div>
+          </div>
 
-      <% if (safeAddOnProducts.length > 0) { %>
-        <div class="add-on-wrap">
-          <div class="add-on-title">추천 상품</div>
-          <div class="add-on-grid">
-            <% safeAddOnProducts.slice(0, 4).forEach((item) => { %>
-              <a href="/products/<%= item._id %>" class="add-on-card">
-                <% if (item.image) { %>
-                  <img src="<%= item.image %>" alt="<%= item.name %>">
-                <% } %>
-                <div class="add-on-body">
-                  <div class="add-on-name"><%= item.name || '상품명' %></div>
-                  <div class="add-on-price"><%= Number(item.price || 0).toLocaleString() %>원</div>
+          <div class="detail-row">
+            <div class="detail-row-label">SIZE(cm)</div>
+            <div class="detail-row-value"><%= hasSizeGroup ? sizeGroup.values.map(v => v.value).join(' / ') : '-' %></div>
+          </div>
+
+          <div class="detail-row">
+            <div class="detail-row-label">MODEL</div>
+            <div class="detail-row-value"><%= modelInfo %></div>
+          </div>
+
+          <div class="detail-row">
+            <div class="detail-row-label">배송비(비회원)</div>
+            <div class="detail-row-value"><%= shippingText %></div>
+          </div>
+        </div>
+
+        <div class="coupon-row">
+          <button type="button" class="coupon-btn" onclick="alert('쿠폰 다운로드 기능은 다음 단계에서 연결')">쿠폰 확인</button>
+        </div>
+
+        <div class="benefit-box">
+          <div class="benefit-line">
+            <div class="benefit-label">예상 최저가ⓘ</div>
+            <div class="benefit-value"><%= safePrice.toLocaleString() %>원</div>
+          </div>
+          <div class="benefit-line">
+            <div class="benefit-label">최대 적립 혜택</div>
+            <div class="benefit-value"><%= rewardPoint.toLocaleString() %>P</div>
+          </div>
+        </div>
+
+        <form id="productForm" method="POST">
+          <input type="hidden" name="productId" value="<%= safeProduct._id || '' %>">
+          <input type="hidden" name="selectedOption" id="selectedOptionInput" value="">
+          <input type="hidden" name="option" id="legacyOptionInput" value="">
+          <input type="hidden" name="selectedColor" id="selectedColorInput" value="">
+          <input type="hidden" name="quantity" id="quantityHidden" value="1">
+
+          <div class="option-wrap">
+            <% if (hasColorGroup) { %>
+              <div class="option-group">
+                <div class="option-title">색상</div>
+                <div class="option-values" id="colorWrap">
+                  <% colorGroup.values.forEach((item) => { %>
+                    <button
+                      type="button"
+                      class="option-chip <%= item && item.isSoldOut ? 'soldout' : '' %>"
+                      data-color="<%= item && item.value ? item.value : '' %>"
+                      data-soldout="<%= item && item.isSoldOut ? 'true' : 'false' %>">
+                      <%= item && item.value ? item.value : '-' %>
+                    </button>
+                  <% }) %>
                 </div>
-              </a>
-            <% }) %>
+                <div class="error-text" id="colorError"></div>
+              </div>
+            <% } %>
+
+            <% if (hasSizeGroup) { %>
+              <div class="option-group">
+                <div class="option-title">사이즈</div>
+                <div class="option-values" id="sizeWrap">
+                  <% sizeGroup.values.forEach((item) => { %>
+                    <button
+                      type="button"
+                      class="option-chip <%= item && item.isSoldOut ? 'soldout' : '' %>"
+                      data-size="<%= item && item.value ? item.value : '' %>"
+                      data-soldout="<%= item && item.isSoldOut ? 'true' : 'false' %>">
+                      <%= item && item.value ? item.value : '-' %>
+                    </button>
+                  <% }) %>
+                </div>
+                <div class="error-text" id="optionError"></div>
+              </div>
+            <% } %>
           </div>
-        </div>
-      <% } %>
+
+          <% if (safeAddOnProducts.length > 0) { %>
+            <div class="with-section">
+              <div class="with-title">Weekly Best</div>
+              <div class="with-sub">70,000원 이상 구매 시 배송비 무료</div>
+
+              <div class="with-wrap">
+                <div class="with-viewport">
+                  <div class="with-track" id="withTrack">
+                    <% safeAddOnProducts.forEach((item, index) => { 
+                      const addOnName = item && item.name ? item.name : '추가상품';
+                      const addOnPrice = Number(item && item.price ? item.price : 0);
+                      const addOnOldPrice = Number(item && item.oldPrice ? item.oldPrice : 0);
+                      const addOnImage = item && item.image ? item.image : '';
+                      const addOnId = item && item._id ? item._id : '';
+                      const addOnDiscount = addOnOldPrice > addOnPrice && addOnOldPrice > 0
+                        ? Math.round((1 - addOnPrice / addOnOldPrice) * 100)
+                        : 0;
+                    %>
+                      <div class="with-card">
+                        <div class="with-thumb">
+                          <div class="with-rank"><%= index + 1 %></div>
+                          <% if (addOnImage) { %>
+                            <img src="<%= addOnImage %>" alt="<%= addOnName %>">
+                          <% } else { %>
+                            <div class="empty-text" style="height:100%; display:flex; align-items:center; justify-content:center;">이미지 없음</div>
+                          <% } %>
+                        </div>
+
+                        <div class="with-name"><%= addOnName %></div>
+
+                        <div class="with-price-row">
+                          <% if (addOnDiscount > 0) { %>
+                            <span class="with-sale"><%= addOnDiscount %>%</span>
+                            <span class="with-price"><%= addOnPrice.toLocaleString() %>원</span>
+                            <span class="with-old"><%= addOnOldPrice.toLocaleString() %>원</span>
+                          <% } else { %>
+                            <span class="with-price"><%= addOnPrice.toLocaleString() %>원</span>
+                          <% } %>
+                        </div>
+
+                        <button
+                          type="button"
+                          class="with-btn add-on-select-btn"
+                          data-id="<%= addOnId %>"
+                          data-name="<%= addOnName %>"
+                          data-price="<%= addOnPrice %>">
+                          선택
+                        </button>
+                      </div>
+                    <% }) %>
+                  </div>
+                </div>
+
+                <div class="with-nav">
+                  <button type="button" class="with-arrow" id="withPrev">‹</button>
+                  <span class="with-page" id="withPage">1/1</span>
+                  <button type="button" class="with-arrow" id="withNext">›</button>
+                </div>
+              </div>
+            </div>
+          <% } %>
+
+          <div class="selected-box">
+            <div class="selected-name"><%= safeName %></div>
+            <div class="selected-meta" id="selectedMetaText">옵션을 선택해주세요.</div>
+
+            <div class="qty-total-row">
+              <div class="qty-row">
+                <button type="button" class="qty-btn" id="minusBtn">-</button>
+                <input type="number" id="qtyInput" class="qty-input" value="1" min="1" max="<%= Math.max(safeStock, 1) %>" />
+                <button type="button" class="qty-btn" id="plusBtn">+</button>
+              </div>
+
+              <div class="total-box">
+                TOTAL
+                <span class="total-price" id="totalPrice"><%= safePrice.toLocaleString() %></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="btn-grid-main">
+            <button type="button" class="action-btn btn-buy" id="buyBtn" <%= isSoldOut ? 'disabled' : '' %>>
+              <%= isSoldOut ? '품절' : '바로구매' %>
+            </button>
+
+            <button type="button" class="action-btn btn-cart-icon" id="cartBtn" aria-label="장바구니" <%= isSoldOut ? 'disabled' : '' %>>
+              🛒
+            </button>
+
+            <button type="button" class="action-btn btn-wish-icon" aria-label="찜" onclick="alert('찜 기능은 다음 단계에서 연결')">
+              ♡
+            </button>
+          </div>
+
+          <div class="btn-grid-sub">
+            <button type="button" class="action-btn btn-npay" onclick="alert('네이버페이 구매는 다음 단계에서 연결')" <%= isSoldOut ? 'disabled' : '' %>>
+              Npay 구매
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 
   <div class="content-wrap">
     <div class="content-nav" id="contentNav">
-      <a href="#detail" class="section-link active">상세보기</a>
-      <a href="#guide" class="section-link">구매안내</a>
-      <a href="#review" class="section-link">상품후기</a>
-      <a href="#qna" class="section-link">상품문의</a>
+      <a href="#product-detail" class="section-link active">상세보기</a>
+      <a href="#product-info" class="section-link">구매안내</a>
+      <a href="#product-review" class="section-link">상품후기</a>
+      <a href="#product-qna" class="section-link">상품문의</a>
     </div>
 
-    <section class="content-section" id="detail">
-      <div class="content-title">제품상세</div>
+    <section class="content-section" id="product-detail">
+      <div class="content-section-title">제품상세</div>
+      <div class="content-section-sub">상품의 상세 정보를 확인해보세요.</div>
 
       <% if (safeDetailImages.length > 0) { %>
         <div class="detail-images">
-          <% safeDetailImages.forEach((img) => { %>
-            <img src="<%= img %>" alt="상세 이미지">
+          <% safeDetailImages.forEach((img, index) => { %>
+            <img src="<%= img %>" alt="상세 이미지 <%= index + 1 %>">
           <% }) %>
         </div>
+      <% } else if (safeDesc) { %>
+        <div class="guide-text"><%= safeDesc %></div>
       <% } else { %>
-        <div class="content-text"><%= safeDesc %></div>
+        <div class="empty-text">등록된 상세 정보가 없습니다.</div>
       <% } %>
     </section>
 
-    <section class="content-section" id="guide">
-      <div class="content-title">구매안내</div>
-      <div class="content-text"><%= safeGuide.shippingExchangeReturn || '배송 / 교환 / 반품 안내가 준비중입니다.' %></div>
+    <section class="content-section" id="product-info">
+      <div class="content-section-title">구매안내</div>
+      <div class="content-section-sub">사이즈 / 세탁 / 배송 정보를 확인해보세요.</div>
+
+      <% if (safeGuide && safeGuide.sizeGuideImage) { %>
+        <div class="guide-block">
+          <div class="guide-heading">사이즈 가이드</div>
+          <img src="<%= safeGuide.sizeGuideImage %>" alt="사이즈 가이드" style="width:100%;">
+        </div>
+      <% } %>
+
+      <% if (safeGuide && safeGuide.washImage) { %>
+        <div class="guide-block">
+          <div class="guide-heading">세탁 안내</div>
+          <img src="<%= safeGuide.washImage %>" alt="세탁 안내" style="width:100%;">
+        </div>
+      <% } %>
+
+      <% if (safeGuide && safeGuide.shippingExchangeReturn) { %>
+        <div class="guide-block">
+          <div class="guide-heading">배송 / 교환 / 반품 안내</div>
+          <div class="guide-text"><%= safeGuide.shippingExchangeReturn %></div>
+        </div>
+      <% } %>
+
+      <% if (
+        !(safeGuide && safeGuide.sizeGuideImage) &&
+        !(safeGuide && safeGuide.washImage) &&
+        !(safeGuide && safeGuide.shippingExchangeReturn)
+      ) { %>
+        <div class="empty-text">등록된 안내 정보가 없습니다.</div>
+      <% } %>
     </section>
 
-    <section class="content-section" id="review">
-      <div class="content-title">상품후기</div>
-      <div class="content-text">리뷰 영역은 다음 단계에서 연결됩니다.</div>
+    <section class="content-section" id="product-review">
+      <div class="content-section-title">상품후기</div>
+      <div class="content-section-sub">고객 리뷰 영역입니다.</div>
+      <div class="empty-text">리뷰 영역은 다음 단계에서 연결</div>
     </section>
 
-    <section class="content-section" id="qna">
-      <div class="content-title">상품문의</div>
-      <div class="content-text">Q&amp;A 영역은 다음 단계에서 연결됩니다.</div>
+    <section class="content-section" id="product-qna">
+      <div class="content-section-title">상품문의</div>
+      <div class="content-section-sub">상품 문의 영역입니다.</div>
+      <div class="empty-text">Q&amp;A 영역은 다음 단계에서 연결</div>
     </section>
   </div>
 </div>
 
 <%- include('partials/footer') %>
 
+<div class="mobile-buybar">
+  <button type="button" class="mobile-cart" id="mobileCartBtn" <%= isSoldOut ? 'disabled' : '' %>>장바구니</button>
+  <button type="button" class="mobile-buy" id="mobileBuyBtn" <%= isSoldOut ? 'disabled' : '' %>><%= isSoldOut ? '품절' : '바로구매' %></button>
+</div>
+
 <script>
-  const galleryStage = document.getElementById('galleryStage');
-  const thumbs = document.getElementById('thumbs');
-  const qtyInput = document.getElementById('qtyInput');
-  const minusBtn = document.getElementById('minusBtn');
-  const plusBtn = document.getElementById('plusBtn');
-  const totalPrice = document.getElementById('totalPrice');
-  const selectedMetaText = document.getElementById('selectedMetaText');
+  const productDataEl = document.getElementById('productData');
+
+  const price = Number(productDataEl ? productDataEl.dataset.price : 0);
+  const stock = Number(productDataEl ? productDataEl.dataset.stock : 0);
+  const hasColor = productDataEl ? productDataEl.dataset.hasColor === 'true' : false;
+  const hasSize = productDataEl ? productDataEl.dataset.hasSize === 'true' : false;
 
   const colorWrap = document.getElementById('colorWrap');
   const sizeWrap = document.getElementById('sizeWrap');
   const colorButtons = colorWrap ? colorWrap.querySelectorAll('.option-chip') : [];
   const sizeButtons = sizeWrap ? sizeWrap.querySelectorAll('.option-chip') : [];
 
-  const sectionLinks = document.querySelectorAll('.section-link');
-  const contentSections = document.querySelectorAll('.content-section');
+  const selectedOptionInput = document.getElementById('selectedOptionInput');
+  const legacyOptionInput = document.getElementById('legacyOptionInput');
+  const selectedColorInput = document.getElementById('selectedColorInput');
 
-  const basePrice = Number("<%= safePrice %>");
-  let selectedColor = '';
-  let selectedSize = '';
+  const optionError = document.getElementById('optionError');
+  const colorError = document.getElementById('colorError');
 
-  function updateMeta() {
+  const addOnSelectButtons = document.querySelectorAll('.add-on-select-btn');
+  const qtyInput = document.getElementById('qtyInput');
+  const quantityHidden = document.getElementById('quantityHidden');
+  const minusBtn = document.getElementById('minusBtn');
+  const plusBtn = document.getElementById('plusBtn');
+  const totalPrice = document.getElementById('totalPrice');
+  const selectedMetaText = document.getElementById('selectedMetaText');
+
+  const productForm = document.getElementById('productForm');
+  const cartBtn = document.getElementById('cartBtn');
+  const buyBtn = document.getElementById('buyBtn');
+  const mobileCartBtn = document.getElementById('mobileCartBtn');
+  const mobileBuyBtn = document.getElementById('mobileBuyBtn');
+
+  const galleryStage = document.getElementById('galleryStage');
+  const thumbs = document.getElementById('thumbs');
+
+  const withTrack = document.getElementById('withTrack');
+  const withPrev = document.getElementById('withPrev');
+  const withNext = document.getElementById('withNext');
+  const withPage = document.getElementById('withPage');
+
+  let selectedAddOns = [];
+  let withIndex = 0;
+
+  function syncSelections() {
+    const colorValue = selectedColorInput ? selectedColorInput.value : '';
+    const sizeValue = selectedOptionInput ? selectedOptionInput.value : '';
+
     const metaParts = [];
-    if (selectedColor) metaParts.push(`색상: ${selectedColor}`);
-    if (selectedSize) metaParts.push(`사이즈: ${selectedSize}`);
+    if (colorValue) metaParts.push('색상: ' + colorValue);
+    if (sizeValue) metaParts.push('사이즈: ' + sizeValue);
+    if (selectedAddOns.length) {
+      metaParts.push('추가상품: ' + selectedAddOns.map(function (item) { return item.name; }).join(', '));
+    }
 
     if (selectedMetaText) {
       selectedMetaText.textContent = metaParts.length ? metaParts.join(' / ') : '옵션을 선택해주세요.';
@@ -863,50 +1262,79 @@
   }
 
   function updateTotal() {
-    if (!qtyInput || !totalPrice) return;
+    if (!qtyInput) return;
+
     let qty = Number(qtyInput.value || 1);
+
     if (qty < 1) qty = 1;
+    if (stock > 0 && qty > stock) qty = stock;
+
     qtyInput.value = qty;
-    totalPrice.textContent = (basePrice * qty).toLocaleString() + '원';
+    if (quantityHidden) quantityHidden.value = qty;
+
+    const addOnTotal = selectedAddOns.reduce(function (sum, item) {
+      return sum + item.price;
+    }, 0);
+
+    if (totalPrice) totalPrice.textContent = ((price * qty) + addOnTotal).toLocaleString();
+
+    syncSelections();
   }
 
-  if (thumbs && galleryStage) {
-    thumbs.addEventListener('click', function (e) {
-      const btn = e.target.closest('.thumb-btn');
-      if (!btn) return;
-
-      const src = btn.dataset.src || '';
-      if (!src) return;
-
-      galleryStage.innerHTML = `<img src="${src}" alt="상품 이미지">`;
-
-      thumbs.querySelectorAll('.thumb-btn').forEach((item) => item.classList.remove('active'));
-      btn.classList.add('active');
-    });
-  }
-
-  colorButtons.forEach((button) => {
+  colorButtons.forEach(function (button) {
     button.addEventListener('click', function () {
       if (button.dataset.soldout === 'true') return;
-      colorButtons.forEach((btn) => btn.classList.remove('active'));
+
+      colorButtons.forEach(function (btn) { btn.classList.remove('active'); });
       button.classList.add('active');
-      selectedColor = button.dataset.color || '';
-      updateMeta();
+
+      if (selectedColorInput) selectedColorInput.value = button.dataset.color || '';
+      if (colorError) colorError.textContent = '';
+
+      syncSelections();
     });
   });
 
-  sizeButtons.forEach((button) => {
+  sizeButtons.forEach(function (button) {
     button.addEventListener('click', function () {
       if (button.dataset.soldout === 'true') return;
-      sizeButtons.forEach((btn) => btn.classList.remove('active'));
+
+      sizeButtons.forEach(function (btn) { btn.classList.remove('active'); });
       button.classList.add('active');
-      selectedSize = button.dataset.size || '';
-      updateMeta();
+
+      if (selectedOptionInput) selectedOptionInput.value = button.dataset.size || '';
+      if (legacyOptionInput) legacyOptionInput.value = button.dataset.size || '';
+      if (optionError) optionError.textContent = '';
+
+      syncSelections();
+    });
+  });
+
+  addOnSelectButtons.forEach(function (button) {
+    button.addEventListener('click', function () {
+      const id = button.dataset.id || '';
+      const name = button.dataset.name || '';
+      const priceValue = Number(button.dataset.price || 0);
+
+      const exists = selectedAddOns.find(function (item) { return item.id === id; });
+
+      if (exists) {
+        selectedAddOns = selectedAddOns.filter(function (item) { return item.id !== id; });
+        button.textContent = '선택';
+        button.classList.remove('selected');
+      } else {
+        selectedAddOns.push({ id: id, name: name, price: priceValue });
+        button.textContent = '선택됨';
+        button.classList.add('selected');
+      }
+
+      updateTotal();
     });
   });
 
   if (minusBtn) {
     minusBtn.addEventListener('click', function () {
+      if (!qtyInput) return;
       qtyInput.value = Math.max(Number(qtyInput.value || 1) - 1, 1);
       updateTotal();
     });
@@ -914,19 +1342,104 @@
 
   if (plusBtn) {
     plusBtn.addEventListener('click', function () {
-      qtyInput.value = Number(qtyInput.value || 1) + 1;
+      if (!qtyInput) return;
+      const next = Number(qtyInput.value || 1) + 1;
+      qtyInput.value = stock > 0 ? Math.min(next, stock) : next;
       updateTotal();
     });
   }
 
-  if (qtyInput) {
-    qtyInput.addEventListener('input', updateTotal);
+  if (qtyInput) qtyInput.addEventListener('input', updateTotal);
+
+  function validateForm() {
+    syncSelections();
+
+    if (hasColor && selectedColorInput && !selectedColorInput.value) {
+      if (colorError) colorError.textContent = '색상을 선택해주세요.';
+      return false;
+    }
+
+    if (hasSize && selectedOptionInput && !selectedOptionInput.value) {
+      if (optionError) optionError.textContent = '사이즈를 선택해주세요.';
+      return false;
+    }
+
+    return true;
   }
+
+  function submitCart() {
+    if (!validateForm()) return;
+    if (!productForm) return;
+    productForm.action = '/cart/add';
+    productForm.submit();
+  }
+
+  function submitBuy() {
+    if (!validateForm()) return;
+    if (!productForm) return;
+    productForm.action = '/buy-now';
+    productForm.submit();
+  }
+
+  if (cartBtn) cartBtn.addEventListener('click', submitCart);
+  if (buyBtn) buyBtn.addEventListener('click', submitBuy);
+  if (mobileCartBtn) mobileCartBtn.addEventListener('click', submitCart);
+  if (mobileBuyBtn) mobileBuyBtn.addEventListener('click', submitBuy);
+
+  if (thumbs && galleryStage) {
+    thumbs.addEventListener('click', function (e) {
+      const thumb = e.target.closest('.thumb-btn');
+      if (!thumb) return;
+
+      const type = thumb.dataset.type;
+      const src = thumb.dataset.src;
+
+      const stageMedia = type === 'video'
+        ? '<video src="' + src + '" controls playsinline preload="metadata"></video>'
+        : '<img src="' + src + '" alt="상품 이미지">';
+
+      galleryStage.innerHTML = stageMedia;
+
+      thumbs.querySelectorAll('.thumb-btn').forEach(function (item) {
+        item.classList.remove('active');
+      });
+      thumb.classList.add('active');
+    });
+  }
+
+  function moveWith(direction) {
+    if (!withTrack) return;
+
+    const cards = withTrack.querySelectorAll('.with-card');
+    if (!cards.length) return;
+
+    const cardWidth = cards[0].offsetWidth + 8;
+    const viewport = withTrack.parentElement;
+    const visibleCount = Math.max(Math.floor(viewport.offsetWidth / cardWidth), 1);
+    const totalPages = Math.max(Math.ceil(cards.length / visibleCount), 1);
+    const maxIndex = Math.max(cards.length - visibleCount, 0);
+
+    withIndex += direction;
+    if (withIndex < 0) withIndex = 0;
+    if (withIndex > maxIndex) withIndex = maxIndex;
+
+    withTrack.style.transform = 'translateX(-' + (withIndex * cardWidth) + 'px)';
+
+    const currentPage = Math.min(Math.floor(withIndex / visibleCount) + 1, totalPages);
+    if (withPage) withPage.textContent = currentPage + '/' + totalPages;
+  }
+
+  if (withPrev) withPrev.addEventListener('click', function () { moveWith(-1); });
+  if (withNext) withNext.addEventListener('click', function () { moveWith(1); });
+  window.addEventListener('resize', function () { moveWith(0); });
+
+  const sectionLinks = document.querySelectorAll('.section-link');
+  const contentSections = document.querySelectorAll('.content-section');
 
   function setActiveSection() {
     let currentId = '';
 
-    contentSections.forEach((section) => {
+    contentSections.forEach(function (section) {
       const top = section.getBoundingClientRect().top;
       if (top <= 140) {
         currentId = section.id;
@@ -937,18 +1450,25 @@
       currentId = contentSections[0].id;
     }
 
-    sectionLinks.forEach((link) => {
+    sectionLinks.forEach(function (link) {
       link.classList.remove('active');
       const href = link.getAttribute('href') || '';
-      if (href === `#${currentId}`) {
+      if (href === '#' + currentId) {
         link.classList.add('active');
       }
     });
   }
 
+  sectionLinks.forEach(function (link) {
+    link.addEventListener('click', function () {
+      sectionLinks.forEach(function (item) { item.classList.remove('active'); });
+      link.classList.add('active');
+    });
+  });
+
   window.addEventListener('scroll', setActiveSection);
 
-  updateMeta();
   updateTotal();
+  moveWith(0);
   setActiveSection();
 </script>
