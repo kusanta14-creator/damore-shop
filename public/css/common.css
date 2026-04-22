@@ -211,6 +211,13 @@ footer {
   align-items: start;
 }
 
+.footer-brand,
+.footer-bank,
+.footer-business,
+.footer-customer {
+  min-width: 0;
+}
+
 .footer-brand h3,
 .footer-cs-label,
 .footer-title,
@@ -219,7 +226,7 @@ footer {
 }
 
 .footer-title {
-  font-size: 13px;
+  font-size: clamp(12px, 0.95vw, 13px);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   margin-bottom: 18px;
@@ -227,17 +234,19 @@ footer {
 }
 
 .footer-brand h3 {
-  font-size: 28px;
+  font-size: clamp(24px, 2vw, 28px);
   letter-spacing: 0.22em;
   margin-bottom: 14px;
 }
 
 .footer-brand-desc {
   max-width: 260px;
-  font-size: 14px;
-  line-height: 1.85;
+  font-size: clamp(12px, 0.95vw, 14px);
+  line-height: clamp(1.6, 1.8vw, 1.85);
   color: rgba(255, 255, 255, 0.62);
   margin-bottom: 20px;
+  overflow-wrap: break-word;
+  word-break: keep-all;
 }
 
 .footer-cs-box {
@@ -245,21 +254,23 @@ footer {
 }
 
 .footer-cs-label {
-  font-size: 14px;
+  font-size: clamp(13px, 0.95vw, 14px);
   margin-bottom: 8px;
 }
 
 .footer-cs-phone {
-  font-size: 20px;
+  font-size: clamp(18px, 1.5vw, 20px);
   font-weight: 800;
   letter-spacing: 0.02em;
   margin-bottom: 10px;
 }
 
 .footer-cs-time {
-  font-size: 13px;
-  line-height: 1.7;
+  font-size: clamp(12px, 0.95vw, 13px);
+  line-height: clamp(1.55, 1.7vw, 1.7);
   color: rgba(255, 255, 255, 0.62);
+  overflow-wrap: break-word;
+  word-break: keep-all;
 }
 
 .footer-socials {
@@ -296,34 +307,39 @@ footer {
 
 .footer-bank-list {
   display: grid;
-  gap: 5px;
+  gap: clamp(4px, 0.6vw, 6px);
   margin-bottom: 14px;
 }
 
 .footer-bank-list p {
-  font-size: 14px;
-  line-height: 1.7;
+  font-size: clamp(12px, 0.95vw, 14px);
+  line-height: clamp(1.55, 1.7vw, 1.7);
   color: rgba(255, 255, 255, 0.66);
+  margin: 0;
+  overflow-wrap: break-word;
+  word-break: keep-all;
 }
 
 .footer-bank-notice {
-  font-size: 13px;
-  line-height: 1.8;
+  font-size: clamp(12px, 0.95vw, 13px);
+  line-height: clamp(1.6, 1.75vw, 1.8);
   color: rgba(255, 255, 255, 0.5);
   max-width: 280px;
+  overflow-wrap: break-word;
+  word-break: keep-all;
 }
 
 .footer-business-list {
   display: grid;
-  gap: 6px;
+  gap: clamp(4px, 0.8vw, 7px);
 }
 
 .footer-business-list p {
   display: grid;
   grid-template-columns: 92px 1fr;
-  gap: 6px;
-  font-size: 13px;
-  line-height: 1.65;
+  gap: 8px;
+  font-size: clamp(12px, 0.95vw, 13px);
+  line-height: clamp(1.5, 1.75vw, 1.65);
   color: rgba(255, 255, 255, 0.66);
   margin: 0;
 }
@@ -332,22 +348,28 @@ footer {
   min-width: 0;
   color: rgba(255, 255, 255, 0.66);
   font-weight: 700;
+  overflow-wrap: break-word;
 }
 
 .footer-business-list span {
   color: rgba(255, 255, 255, 0.66);
+  overflow-wrap: break-word;
+  word-break: keep-all;
 }
 
 .footer-links {
   display: grid;
-  gap: 12px;
+  gap: clamp(8px, 1vw, 12px);
   justify-content: start;
 }
 
 .footer-links a {
-  font-size: 14px;
+  font-size: clamp(12px, 0.95vw, 14px);
+  line-height: clamp(1.45, 1.7vw, 1.6);
   color: rgba(255, 255, 255, 0.66);
   transition: color 0.2s ease;
+  overflow-wrap: break-word;
+  word-break: keep-all;
 }
 
 .footer-links a:hover {
@@ -370,7 +392,7 @@ footer {
 }
 
 .footer-copyright {
-  font-size: 13px;
+  font-size: clamp(12px, 0.95vw, 13px);
   color: rgba(255, 255, 255, 0.46);
 }
 
@@ -382,7 +404,7 @@ footer {
 }
 
 .footer-policy a {
-  font-size: 13px;
+  font-size: clamp(12px, 0.95vw, 13px);
   color: rgba(255, 255, 255, 0.46);
   transition: color 0.2s ease;
   white-space: nowrap;
@@ -398,7 +420,7 @@ footer {
 }
 
 .footer-slogan {
-  font-size: 13px;
+  font-size: clamp(12px, 0.95vw, 13px);
   color: rgba(255, 255, 255, 0.56);
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -440,16 +462,9 @@ footer {
     max-width: 100%;
   }
 
-  .footer-business-list {
-    display: grid;
-    gap: 0;
-  }
-
   .footer-business-list p {
     grid-template-columns: 92px 1fr;
-    gap: 6px;
-    line-height: 1.35;
-    margin: 0;
+    gap: 8px;
   }
 
   .footer-bottom-top,
