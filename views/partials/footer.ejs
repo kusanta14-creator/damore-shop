@@ -1,33 +1,36 @@
 <footer>
   <%
-    const footerBrandName = siteContent.footerBrandName || 'DAMORE';
-    const footerDesc = siteContent.footerDesc || '더 많은 스타일, 더 많은 확장성, 그리고 오래 남는 무드를 만드는 브랜드.';
-    const footerCsLabel = siteContent.footerCsLabel || '고객센터';
-    const footerCsPhone = siteContent.footerCsPhone || '1644-4370';
-    const footerCsTime1 = siteContent.footerCsTime1 || '평일 AM 09:00 ~ PM 16:00 / 점심 PM 12:00 ~ PM 1:00';
-    const footerCsTime2 = siteContent.footerCsTime2 || '토/일요일/공휴일 휴무';
-    const footerBankTitle = siteContent.footerBankTitle || 'BANK ACCOUNT';
-    const footerBank1 = siteContent.footerBank1 || '국민은행 371137-04-009969';
-    const footerBank2 = siteContent.footerBank2 || '하나은행 112-910016-50404';
-    const footerBank3 = siteContent.footerBank3 || '우리은행 1005-204-805182';
-    const footerDepositor = siteContent.footerDepositor || '예금주 : (주)문파크';
-    const footerBankNotice = siteContent.footerBankNotice || '※ 주문자명과 입금자명이 다를 경우에 입금확인이 지연될 수 있습니다';
-    const footerBizTitle = siteContent.footerBizTitle || 'BUSINESS INFO';
-    const footerBizName = siteContent.footerBizName || '주식회사 다모어';
-    const footerBizOwner = siteContent.footerBizOwner || '홍길동';
-    const footerBizAddress = siteContent.footerBizAddress || '서울특별시 강남구 예시로 123, 5층';
-    const footerBizNumber = siteContent.footerBizNumber || '123-45-67890';
-    const footerBizOnline = siteContent.footerBizOnline || '제2026-서울강남-0000호';
-    const footerBizPrivacyManager = siteContent.footerBizPrivacyManager || '홍길동';
-    const footerCustomerTitle = siteContent.footerCustomerTitle || 'CUSTOMER';
-    const footerTermsLink = siteContent.footerTermsLink || '#';
-    const footerPrivacyLink = siteContent.footerPrivacyLink || '#';
-    const footerBizInfoLink = siteContent.footerBizInfoLink || '#';
-    const footerCopyright = siteContent.footerCopyright || '© 2026 DAMORE. All rights reserved.';
-    const footerSlogan = siteContent.footerSlogan || 'THE MORE, THE MOOD.';
+    const safeSiteContent = typeof siteContent !== 'undefined' && siteContent ? siteContent : {};
+    const safeCurrentUser = typeof currentUser !== 'undefined' ? currentUser : null;
 
-    const footerSns = Array.isArray(siteContent.footerSns) && siteContent.footerSns.length > 0
-      ? siteContent.footerSns
+    const footerBrandName = safeSiteContent.footerBrandName || 'DAMORE';
+    const footerDesc = safeSiteContent.footerDesc || '더 많은 스타일, 더 많은 확장성, 그리고 오래 남는 무드를 만드는 브랜드.';
+    const footerCsLabel = safeSiteContent.footerCsLabel || '고객센터';
+    const footerCsPhone = safeSiteContent.footerCsPhone || '1644-4370';
+    const footerCsTime1 = safeSiteContent.footerCsTime1 || '평일 AM 09:00 ~ PM 16:00 / 점심 PM 12:00 ~ PM 1:00';
+    const footerCsTime2 = safeSiteContent.footerCsTime2 || '토/일요일/공휴일 휴무';
+    const footerBankTitle = safeSiteContent.footerBankTitle || 'BANK ACCOUNT';
+    const footerBank1 = safeSiteContent.footerBank1 || '국민은행 371137-04-009969';
+    const footerBank2 = safeSiteContent.footerBank2 || '하나은행 112-910016-50404';
+    const footerBank3 = safeSiteContent.footerBank3 || '우리은행 1005-204-805182';
+    const footerDepositor = safeSiteContent.footerDepositor || '예금주 : (주)문파크';
+    const footerBankNotice = safeSiteContent.footerBankNotice || '※ 주문자명과 입금자명이 다를 경우에 입금확인이 지연될 수 있습니다';
+    const footerBizTitle = safeSiteContent.footerBizTitle || 'BUSINESS INFO';
+    const footerBizName = safeSiteContent.footerBizName || '주식회사 다모어';
+    const footerBizOwner = safeSiteContent.footerBizOwner || '홍길동';
+    const footerBizAddress = safeSiteContent.footerBizAddress || '서울특별시 강남구 예시로 123, 5층';
+    const footerBizNumber = safeSiteContent.footerBizNumber || '123-45-67890';
+    const footerBizOnline = safeSiteContent.footerBizOnline || '제2026-서울강남-0000호';
+    const footerBizPrivacyManager = safeSiteContent.footerBizPrivacyManager || '홍길동';
+    const footerCustomerTitle = safeSiteContent.footerCustomerTitle || 'CUSTOMER';
+    const footerTermsLink = safeSiteContent.footerTermsLink || '#';
+    const footerPrivacyLink = safeSiteContent.footerPrivacyLink || '#';
+    const footerBizInfoLink = safeSiteContent.footerBizInfoLink || '#';
+    const footerCopyright = safeSiteContent.footerCopyright || '© 2026 DAMORE. All rights reserved.';
+    const footerSlogan = safeSiteContent.footerSlogan || 'THE MORE, THE MOOD.';
+
+    const footerSns = Array.isArray(safeSiteContent.footerSns) && safeSiteContent.footerSns.length > 0
+      ? safeSiteContent.footerSns
       : [
           { type: 'instagram', url: '#', label: 'Instagram' },
           { type: 'kakao', url: '#', label: 'KakaoTalk' }
@@ -124,7 +127,7 @@
         <div class="footer-links">
           <a href="/order/lookup">주문조회</a>
 
-          <% if (currentUser) { %>
+          <% if (safeCurrentUser) { %>
             <a href="/my-orders">내 주문내역</a>
             <a href="/logout">로그아웃</a>
           <% } else { %>
@@ -173,7 +176,6 @@
     align-items: start;
   }
 
-  /* 흰색 유지 대상만 */
   .footer-brand h3,
   .footer-cs-label,
   .footer-title,
@@ -195,7 +197,6 @@
     margin-bottom: 14px;
   }
 
-  /* 나머지는 전부 회색 */
   .footer-brand-desc {
     max-width: 230px;
     font-size: 14px;
@@ -290,7 +291,6 @@
     color: rgba(255,255,255,0.66);
   }
 
-  /* 사업자명/대표자명 포함 전부 회색 */
   .footer-business-list strong {
     min-width: 112px;
     color: rgba(255,255,255,0.66);

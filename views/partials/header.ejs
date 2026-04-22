@@ -1,3 +1,12 @@
+<%
+  const safeCategories = Array.isArray(typeof categories !== 'undefined' ? categories : []) ? categories : [];
+  const safeCategory = typeof category !== 'undefined' ? category : '';
+  const safeCurrentPath = typeof currentPath !== 'undefined' ? currentPath : '';
+  const safeIsAdmin = typeof isAdmin !== 'undefined' ? isAdmin : false;
+  const safeCurrentUser = typeof currentUser !== 'undefined' ? currentUser : null;
+  const safeCartCount = typeof cartCount !== 'undefined' ? cartCount : 0;
+%>
+
 <header>
   <div class="container">
     <div class="header-inner">
@@ -7,12 +16,12 @@
       </a>
 
       <nav class="nav">
-        <a href="/" class="<%= (typeof currentPath !== 'undefined' && currentPath === '/') ? 'active' : '' %>">all</a>
+        <a href="/" class="<%= safeCurrentPath === '/' ? 'active' : '' %>">all</a>
 
-        <% if (categories && categories.length > 0) { %>
-          <% categories.forEach(item => { %>
+        <% if (safeCategories.length > 0) { %>
+          <% safeCategories.forEach(item => { %>
             <div class="nav-item">
-              <a href="/category/<%= item.name %>" class="nav-link <%= category === item.name ? 'active' : '' %>">
+              <a href="/category/<%= item.name %>" class="nav-link <%= safeCategory === item.name ? 'active' : '' %>">
                 <%= item.name %>
               </a>
 
@@ -29,15 +38,15 @@
           <% }) %>
         <% } %>
 
-        <a href="/about" class="<%= (typeof currentPath !== 'undefined' && currentPath === '/about') ? 'active' : '' %>">about</a>
+        <a href="/about" class="<%= safeCurrentPath === '/about' ? 'active' : '' %>">about</a>
       </nav>
 
       <div class="header-actions">
-        <% if (typeof isAdmin !== 'undefined' && isAdmin) { %>
+        <% if (safeIsAdmin) { %>
           <a href="/admin/dashboard">관리자 수정</a>
           <a href="/logout">로그아웃</a>
-        <% } else if (currentUser) { %>
-          <span class="user-name"><%= currentUser.name %>님</span>
+        <% } else if (safeCurrentUser) { %>
+          <span class="user-name"><%= safeCurrentUser.name %>님</span>
           <a href="/my-orders">내 주문내역</a>
           <a href="/logout">로그아웃</a>
         <% } else { %>
@@ -45,7 +54,7 @@
           <a href="/auth">로그인 / 회원가입</a>
         <% } %>
 
-        <a href="/cart">장바구니 <%= typeof cartCount !== 'undefined' ? cartCount : 0 %></a>
+        <a href="/cart">장바구니 <%= safeCartCount %></a>
       </div>
     </div>
   </div>
