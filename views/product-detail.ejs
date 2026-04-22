@@ -1,23 +1,215 @@
+<%
+  const safeProduct = typeof product !== 'undefined' && product ? product : {};
+  const safeName = safeProduct.name || '상품명';
+  const safePrice = Number(safeProduct.price || 0);
+  const safeSummary = safeProduct.summary || '상품 설명이 없습니다.';
+  const safeImage = safeProduct.image || '';
+%>
+
 <%- include('partials/header') %>
 
 <style>
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  :root {
+    --bg: #f5f3ef;
+    --white: #ffffff;
+    --black: #111111;
+    --text: #1f1f1f;
+    --muted: #7a7268;
+    --line: rgba(17, 17, 17, 0.08);
+    --max: 1280px;
+  }
+
+  body {
+    margin: 0;
+    font-family: "Pretendard", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    word-break: keep-all;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+  }
+
+  .container {
+    width: 100%;
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(245, 243, 239, 0.88);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .header-inner {
+    min-height: 82px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 16px 0;
+  }
+
+  .brand {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .brand-logo {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: 0.24em;
+    color: var(--black);
+  }
+
+  .brand-sub {
+    font-size: 10px;
+    letter-spacing: 0.32em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .nav {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nav-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 48px;
+    padding-bottom: 14px;
+    margin-bottom: -14px;
+  }
+
+  .nav a,
+  .nav-link {
+    font-size: 14px;
+    color: #312d29;
+    position: relative;
+    text-transform: uppercase;
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    height: 48px;
+  }
+
+  .nav a::after,
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 0;
+    height: 1px;
+    background: var(--black);
+    transition: 0.25s ease;
+  }
+
+  .nav a:hover::after,
+  .nav a.active::after,
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    width: 100%;
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    top: calc(100% - 2px);
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 140px;
+    padding: 14px 0;
+    background: #e8e1d8;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.18s ease, visibility 0.18s ease;
+    z-index: 999;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+  }
+
+  .dropdown-menu a {
+    display: block;
+    padding: 8px 16px;
+    text-align: center;
+    font-size: 13px;
+    color: #111;
+    text-transform: none;
+    white-space: nowrap;
+  }
+
+  .dropdown-menu a::after {
+    display: none;
+  }
+
+  .dropdown-menu a:hover {
+    background: rgba(255,255,255,0.28);
+  }
+
+  .nav-item:hover .dropdown-menu,
+  .nav-item:focus-within .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 14px;
+    color: var(--muted);
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .user-name {
+    font-weight: 700;
+    color: var(--black);
+  }
+
   .page {
     max-width: 1120px;
     margin: 0 auto;
-    padding: 28px 18px 90px;
+    padding: 32px 24px 90px;
   }
 
   .layout {
     display: grid;
-    grid-template-columns: 520px 360px;
-    gap: 40px;
-    justify-content: center;
+    grid-template-columns: 560px 1fr;
+    gap: 44px;
     align-items: start;
   }
 
   .gallery-main {
     width: 100%;
-    aspect-ratio: 4 / 5.4;
+    aspect-ratio: 4 / 5;
     background: #e7e0d5;
     overflow: hidden;
   }
@@ -28,26 +220,145 @@
     object-fit: cover;
   }
 
-  .purchase-box h1 {
-    font-size: 24px;
-    margin-bottom: 12px;
+  .gallery-empty {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    font-size: 14px;
+    background: #e7e0d5;
   }
 
-  .price {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 10px;
+  .purchase-box {
+    padding-top: 8px;
   }
 
-  .summary {
-    color: #666;
-    line-height: 1.7;
+  .product-title {
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+    margin-bottom: 14px;
+    color: #111;
+  }
+
+  .product-price {
+    font-size: 28px;
+    font-weight: 800;
+    color: #111;
     margin-bottom: 16px;
+  }
+
+  .product-summary {
+    font-size: 15px;
+    color: #6f675d;
+    line-height: 1.9;
+    margin-bottom: 24px;
+    white-space: pre-line;
+  }
+
+  .buy-btn {
+    width: 100%;
+    height: 54px;
+    border: 0;
+    background: #111;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .content-wrap {
+    max-width: 900px;
+    margin: 72px auto 0;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+
+  .content-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+    text-align: center;
+  }
+
+  .content-nav a {
+    position: relative;
+    padding: 0 14px;
+    font-size: 12px;
+    color: #7d766e;
+    font-weight: 600;
+  }
+
+  .content-nav a:first-child {
+    color: #111;
+    font-weight: 800;
+  }
+
+  .content-nav a:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 1px;
+    height: 10px;
+    background: #cfc6ba;
+    transform: translateY(-50%);
+  }
+
+  .content-section {
+    padding: 24px 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .content-section:first-of-type {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .content-title {
+    font-size: 18px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 12px;
+    color: #111;
+  }
+
+  .content-text {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.9;
+    white-space: pre-line;
+    text-align: center;
   }
 
   @media (max-width: 980px) {
     .layout {
       grid-template-columns: 1fr;
+      gap: 24px;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .container { padding: 0 16px; }
+    .nav { display: none; }
+    .header-actions { display: none; }
+
+    .page {
+      padding: 20px 16px 72px;
+    }
+
+    .product-title {
+      font-size: 24px;
+    }
+
+    .product-price {
+      font-size: 24px;
     }
   }
 </style>
@@ -56,25 +367,51 @@
   <div class="layout">
     <div>
       <div class="gallery-main">
-        <% if (product && product.image) { %>
-          <img src="<%= product.image %>" alt="<%= product.name || '상품' %>">
+        <% if (safeImage) { %>
+          <img src="<%= safeImage %>" alt="<%= safeName %>">
         <% } else { %>
-          <div style="padding:40px;">이미지 없음</div>
+          <div class="gallery-empty">이미지 없음</div>
         <% } %>
       </div>
     </div>
 
     <div class="purchase-box">
-      <h1><%= product && product.name ? product.name : '상품명' %></h1>
-
-      <div class="price">
-        <%= Number(product && product.price ? product.price : 0).toLocaleString() %>원
-      </div>
-
-      <div class="summary">
-        <%= product && product.summary ? product.summary : '상품 설명이 없습니다.' %>
-      </div>
+      <h1 class="product-title"><%= safeName %></h1>
+      <div class="product-price"><%= safePrice.toLocaleString() %>원</div>
+      <div class="product-summary"><%= safeSummary %></div>
+      <button type="button" class="buy-btn">바로구매</button>
     </div>
+  </div>
+
+  <div class="content-wrap">
+    <div class="content-nav">
+      <a href="#detail">상세보기</a>
+      <a href="#guide">구매안내</a>
+      <a href="#review">상품후기</a>
+      <a href="#qna">상품문의</a>
+    </div>
+
+    <section class="content-section" id="detail">
+      <div class="content-title">제품상세</div>
+      <div class="content-text">
+        <%= safeProduct.desc ? safeProduct.desc : '등록된 상세 정보가 없습니다.' %>
+      </div>
+    </section>
+
+    <section class="content-section" id="guide">
+      <div class="content-title">구매안내</div>
+      <div class="content-text">배송 / 교환 / 반품 안내가 준비중입니다.</div>
+    </section>
+
+    <section class="content-section" id="review">
+      <div class="content-title">상품후기</div>
+      <div class="content-text">리뷰 영역은 다음 단계에서 연결됩니다.</div>
+    </section>
+
+    <section class="content-section" id="qna">
+      <div class="content-title">상품문의</div>
+      <div class="content-text">Q&amp;A 영역은 다음 단계에서 연결됩니다.</div>
+    </section>
   </div>
 </div>
 
