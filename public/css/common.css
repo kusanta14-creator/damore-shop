@@ -315,7 +315,7 @@ footer {
 
 .footer-business-list {
   display: grid;
-  gap: 0;
+  gap: 6px;
 }
 
 .footer-business-list p {
@@ -323,7 +323,7 @@ footer {
   grid-template-columns: 92px 1fr;
   gap: 6px;
   font-size: 13px;
-  line-height: 1.35;
+  line-height: 1.65;
   color: rgba(255, 255, 255, 0.66);
   margin: 0;
 }
