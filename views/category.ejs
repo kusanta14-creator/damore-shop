@@ -1,861 +1,674 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%= String(category || '').toUpperCase() %> | DAMORE</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+<%
+  const safeProducts = Array.isArray(products) ? products : [];
+  const safeCategory = typeof category !== 'undefined' ? String(category || '').trim() : '';
+  const safeSub = typeof sub !== 'undefined' ? String(sub || '').trim() : '';
+  const categoryTitle = safeCategory ? safeCategory.toUpperCase() : 'CATEGORY';
 
-    :root {
-      --bg: #f5f3ef;
-      --bg-soft: #ece8e1;
-      --white: #ffffff;
-      --black: #111111;
-      --text: #1f1f1f;
-      --muted: #7a7268;
-      --line: rgba(17, 17, 17, 0.08);
-      --gold: #bfa68a;
-      --shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
-      --max: 1280px;
-    }
+  const bannerImage =
+    categoryDoc && categoryDoc.bannerImage
+      ? categoryDoc.bannerImage
+      : (siteContent && siteContent.heroImage
+          ? siteContent.heroImage
+          : 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1400&q=80');
 
-    body {
-      font-family: "Pretendard", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      word-break: keep-all;
-    }
+  const categorySubCategories =
+    categoryDoc && Array.isArray(categoryDoc.subCategories)
+      ? categoryDoc.subCategories
+      : [];
 
-    a { text-decoration: none; color: inherit; }
-    img { display: block; width: 100%; }
+  const buildPageLink = (pageNum) => {
+    const params = [];
+    if (keyword) params.push(`keyword=${encodeURIComponent(keyword)}`);
+    if (sort) params.push(`sort=${encodeURIComponent(sort)}`);
+    if (safeSub) params.push(`sub=${encodeURIComponent(safeSub)}`);
+    params.push(`page=${pageNum}`);
+    return `/category/${encodeURIComponent(safeCategory)}?${params.join('&')}`;
+  };
 
-    .container {
-      width: 100%;
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 0 24px;
-    }
+  const buildSubLink = (subName) => {
+    const params = [];
+    if (keyword) params.push(`keyword=${encodeURIComponent(keyword)}`);
+    if (sort) params.push(`sort=${encodeURIComponent(sort)}`);
+    if (subName) params.push(`sub=${encodeURIComponent(subName)}`);
+    return `/category/${encodeURIComponent(safeCategory)}${params.length ? '?' + params.join('&') : ''}`;
+  };
+%>
 
-    .topbar {
-      background: var(--black);
-      color: rgba(255,255,255,0.88);
-      font-size: 12px;
-      letter-spacing: 0.08em;
-      text-align: center;
-      padding: 12px 16px;
-    }
+<link rel="stylesheet" href="/css/common.css">
 
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      background: rgba(245, 243, 239, 0.88);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--line);
-    }
+<style>
+  .topbar {
+    background: var(--black);
+    color: rgba(255,255,255,0.88);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-align: center;
+    padding: 12px 16px;
+  }
 
-    .header-inner {
-      min-height: 82px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-      padding: 16px 0;
-    }
+  .mobile-category-bar {
+    display: none;
+    background: rgba(245, 243, 239, 0.96);
+    border-bottom: 1px solid var(--line);
+  }
 
-    .brand {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
+  .mobile-category-scroll {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 12px 0;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 
-    .brand-logo {
-      font-size: 30px;
-      font-weight: 800;
-      letter-spacing: 0.24em;
-      color: var(--black);
-    }
+  .mobile-category-scroll::-webkit-scrollbar {
+    display: none;
+  }
 
-    .brand-sub {
-      font-size: 10px;
-      letter-spacing: 0.32em;
-      color: var(--muted);
-      text-transform: uppercase;
-    }
+  .mobile-category-link {
+    flex-shrink: 0;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--black);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
 
-    .nav {
-      display: flex;
-      gap: 20px;
-      align-items: center;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
+  .mobile-category-link.active {
+    background: var(--black);
+    color: var(--white);
+    border-color: var(--black);
+  }
 
-    .nav-item {
-      position: relative;
-      display: flex;
-      align-items: center;
-      height: 48px;
-      padding-bottom: 14px;
-      margin-bottom: -14px;
-    }
+  .hero {
+    padding: 26px 0 52px;
+  }
 
-    .nav a,
-    .nav-link {
-      font-size: 14px;
-      color: #312d29;
-      position: relative;
-      text-transform: uppercase;
-    }
+  .hero-banner {
+    position: relative;
+    min-height: 430px;
+    overflow: hidden;
+    background: #ddd center/cover no-repeat;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
+  }
 
-    .nav-link {
-      display: inline-flex;
-      align-items: center;
-      height: 48px;
-    }
+  .hero-banner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.46), rgba(0,0,0,0.12));
+  }
 
-    .nav a::after,
-    .nav-link::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      bottom: -6px;
-      width: 0;
-      height: 1px;
-      background: var(--black);
-      transition: 0.25s ease;
-    }
+  .hero-content {
+    position: absolute;
+    left: 42px;
+    right: 42px;
+    bottom: 40px;
+    z-index: 2;
+    color: #fff;
+    max-width: 620px;
+  }
 
-    .nav a:hover::after,
-    .nav a.active::after,
-    .nav-link:hover::after,
-    .nav-link.active::after {
-      width: 100%;
-    }
+  .hero-content small {
+    display: inline-block;
+    margin-bottom: 14px;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.82);
+    font-weight: 700;
+  }
 
-    .dropdown-menu {
-      position: absolute;
-      top: calc(100% - 2px);
-      left: 50%;
-      transform: translateX(-50%);
-      min-width: 140px;
-      padding: 14px 0;
-      background: #e8e1d8;
-      display: flex;
-      flex-direction: column;
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transition: opacity 0.18s ease, visibility 0.18s ease;
-      z-index: 999;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.08);
-    }
+  .hero-content h1 {
+    font-size: clamp(34px, 5vw, 64px);
+    line-height: 1.04;
+    letter-spacing: -0.05em;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
 
-    .dropdown-menu a {
-      display: block;
-      padding: 8px 16px;
-      text-align: center;
-      font-size: 13px;
-      color: #111;
-      text-transform: none;
-      white-space: nowrap;
-    }
+  .hero-content p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.84);
+    max-width: 520px;
+  }
 
-    .dropdown-menu a::after {
-      display: none;
-    }
+  .category-section {
+    padding: 0 0 90px;
+  }
 
-    .dropdown-menu a:hover {
-      background: rgba(255,255,255,0.28);
-    }
+  .sub-filter-bar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
 
-    .nav-item:hover .dropdown-menu,
-    .nav-item:focus-within .dropdown-menu {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-    }
+  .sub-filter-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 0 14px;
+    border-radius: 999px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--black);
+  }
 
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      font-size: 14px;
-      color: var(--muted);
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
+  .sub-filter-chip.active {
+    background: var(--black);
+    color: var(--white);
+    border-color: var(--black);
+  }
 
-    .user-name {
-      font-weight: 700;
-      color: var(--black);
-    }
+  .filter-bar {
+    margin-bottom: 24px;
+    background: var(--white);
+    border-radius: 22px;
+    padding: 18px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    display: grid;
+    grid-template-columns: 1fr 220px 140px;
+    gap: 12px;
+    align-items: center;
+  }
 
-    .mobile-category-bar {
-      display: none;
-      background: rgba(245, 243, 239, 0.96);
-      border-bottom: 1px solid var(--line);
-    }
+  .filter-bar input,
+  .filter-bar select,
+  .filter-bar button {
+    height: 52px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    font-size: 14px;
+  }
 
-    .mobile-category-scroll {
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding: 12px 0;
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
+  .filter-bar input,
+  .filter-bar select {
+    padding: 0 16px;
+    background: #fff;
+    outline: none;
+  }
 
-    .mobile-category-scroll::-webkit-scrollbar {
-      display: none;
-    }
+  .filter-bar button {
+    background: var(--black);
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+  }
 
-    .mobile-category-link {
-      flex-shrink: 0;
-      padding: 10px 14px;
-      border-radius: 999px;
-      background: var(--white);
-      border: 1px solid var(--line);
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--black);
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
+  .search-summary {
+    margin-bottom: 22px;
+    color: var(--muted);
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
 
-    .mobile-category-link.active {
-      background: var(--black);
-      color: var(--white);
-      border-color: var(--black);
-    }
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 24px;
+    margin-bottom: 28px;
+  }
 
-    .hero {
-      padding: 26px 0 52px;
-    }
+  .section-head-left small {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: var(--gold);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 700;
+  }
 
-    .hero-banner {
-      position: relative;
-      min-height: 430px;
-      overflow: hidden;
-      background: #ddd center/cover no-repeat;
-      box-shadow: var(--shadow);
-    }
+  .section-head-left h2 {
+    font-size: clamp(28px, 4vw, 48px);
+    line-height: 1.08;
+    letter-spacing: -0.04em;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
 
-    .hero-banner::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.46), rgba(0,0,0,0.12));
-    }
+  .section-head-left p {
+    color: var(--muted);
+    max-width: 560px;
+    font-size: 15px;
+  }
 
-    .hero-content {
-      position: absolute;
-      left: 42px;
-      right: 42px;
-      bottom: 40px;
-      z-index: 2;
-      color: #fff;
-      max-width: 620px;
-    }
+  .catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px 16px;
+  }
 
-    .hero-content small {
-      display: inline-block;
-      margin-bottom: 14px;
-      font-size: 12px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.82);
-      font-weight: 700;
-    }
+  .catalog-card {
+    display: block;
+    min-width: 0;
+  }
 
-    .hero-content h1 {
-      font-size: clamp(34px, 5vw, 64px);
-      line-height: 1.04;
-      letter-spacing: -0.05em;
-      margin-bottom: 14px;
-      text-transform: uppercase;
-    }
+  .catalog-image-wrap {
+    position: relative;
+    overflow: hidden;
+    background: #e9e4dd;
+    aspect-ratio: 4 / 5;
+    margin-bottom: 10px;
+  }
 
-    .hero-content p {
-      font-size: 15px;
-      color: rgba(255,255,255,0.84);
-      max-width: 520px;
-    }
+  .catalog-image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+  }
 
-    section {
-      padding: 0 0 90px;
-    }
+  .catalog-card:hover .catalog-image-wrap img {
+    transform: scale(1.03);
+  }
 
-    .sub-filter-bar {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 18px;
-    }
+  .catalog-no-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #aaa;
+    font-size: 13px;
+    background: #e9e4dd;
+  }
 
-    .sub-filter-chip {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 38px;
-      padding: 0 14px;
-      border-radius: 999px;
-      background: var(--white);
-      border: 1px solid var(--line);
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--black);
-    }
+  .catalog-soldout {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    min-height: 28px;
+    padding: 0 10px;
+    background: rgba(255,255,255,0.94);
+    color: #111;
+    font-size: 11px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+  }
 
-    .sub-filter-chip.active {
-      background: var(--black);
-      color: var(--white);
-      border-color: var(--black);
+  .catalog-body {
+    border-bottom: none;
+    padding-bottom: 14px;
+  }
+
+  .catalog-title {
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.4;
+    color: var(--black);
+    margin-bottom: 8px;
+  }
+
+  .catalog-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+    min-height: 38px;
+    margin-bottom: 10px;
+  }
+
+  .catalog-price-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 7px;
+  }
+
+  .catalog-discount {
+    color: #d64c4c;
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .catalog-price {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--black);
+  }
+
+  .catalog-old-price {
+    font-size: 12px;
+    color: #aaa39a;
+    text-decoration: line-through;
+  }
+
+  .catalog-review {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .catalog-review strong {
+    color: var(--black);
+  }
+
+  .catalog-meta {
+    font-size: 11px;
+    color: #b39a7c;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .catalog-tag {
+    display: inline-block;
+    padding: 4px 9px;
+    background: #c6ab8a;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .empty-box {
+    background: var(--white);
+    padding: 56px 24px;
+    text-align: center;
+    box-shadow: 0 18px 50px rgba(0,0,0,0.08);
+  }
+
+  .empty-box h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    color: var(--black);
+  }
+
+  .empty-box p {
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .pagination {
+    margin-top: 36px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .pagination a,
+  .pagination span {
+    min-width: 44px;
+    height: 44px;
+    padding: 0 14px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--white);
+    color: var(--black);
+    box-shadow: 0 8px 22px rgba(0,0,0,0.05);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .pagination .active {
+    background: var(--black);
+    color: white;
+  }
+
+  @media (max-width: 1100px) {
+    .catalog-grid {
+      grid-template-columns: repeat(2, 1fr);
     }
 
     .filter-bar {
-      margin-bottom: 24px;
-      background: var(--white);
-      border-radius: 22px;
-      padding: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-      display: grid;
-      grid-template-columns: 1fr 220px 140px;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .filter-bar input,
-    .filter-bar select,
-    .filter-bar button {
-      height: 52px;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      font-size: 14px;
-    }
-
-    .filter-bar input,
-    .filter-bar select {
-      padding: 0 16px;
-      background: #fff;
-      outline: none;
+      grid-template-columns: 1fr 1fr;
     }
 
     .filter-bar button {
-      background: var(--black);
-      color: white;
-      font-weight: 700;
-      cursor: pointer;
-      border: none;
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .mobile-category-bar {
+      display: block;
     }
 
-    .search-summary {
-      margin-bottom: 22px;
-      color: var(--muted);
+    .hero {
+      padding: 18px 0 38px;
+    }
+
+    .hero-banner {
+      min-height: 320px;
+    }
+
+    .hero-content {
+      left: 22px;
+      right: 22px;
+      bottom: 24px;
+    }
+
+    .hero-content h1 {
+      font-size: 34px;
+    }
+
+    .hero-content p {
       font-size: 14px;
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .section-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: end;
-      gap: 24px;
-      margin-bottom: 28px;
-    }
-
-    .section-head-left small {
-      display: inline-block;
-      margin-bottom: 10px;
-      color: var(--gold);
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .section-head-left h2 {
-      font-size: clamp(28px, 4vw, 48px);
-      line-height: 1.08;
-      letter-spacing: -0.04em;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-    }
-
-    .section-head-left p {
-      color: var(--muted);
-      max-width: 560px;
-      font-size: 15px;
     }
 
     .catalog-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 22px 16px;
+      grid-template-columns: 1fr;
     }
 
-    .catalog-card {
-      display: block;
-      min-width: 0;
+    .filter-bar {
+      grid-template-columns: 1fr;
     }
 
-    .catalog-image-wrap {
-      position: relative;
-      overflow: hidden;
-      background: #e9e4dd;
-      aspect-ratio: 4 / 5;
-      margin-bottom: 10px;
+    .category-section {
+      padding-bottom: 64px;
     }
+  }
+</style>
 
-    .catalog-image-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.35s ease;
-    }
+<div class="topbar">
+  DAMORE OFFICIAL ONLINE STORE · 회원가입 없이도 주문 가능합니다
+</div>
 
-    .catalog-card:hover .catalog-image-wrap img {
-      transform: scale(1.03);
-    }
+<%- include('partials/header', {
+  currentPath: '/category',
+  category: safeCategory,
+  sub: safeSub,
+  categories,
+  currentUser,
+  cartCount
+}) %>
 
-    .catalog-no-image {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #aaa;
-      font-size: 13px;
-      background: #e9e4dd;
-    }
+<div class="mobile-category-bar">
+  <div class="container">
+    <div class="mobile-category-scroll">
+      <a href="/" class="mobile-category-link <%= !safeCategory ? 'active' : '' %>">all</a>
 
-    .catalog-soldout {
-      position: absolute;
-      right: 10px;
-      top: 10px;
-      min-height: 28px;
-      padding: 0 10px;
-      background: rgba(255,255,255,0.94);
-      color: #111;
-      font-size: 11px;
-      font-weight: 800;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 3;
-    }
-
-    .catalog-body {
-      border-bottom: none;
-      padding-bottom: 14px;
-    }
-
-    .catalog-title {
-      font-size: 16px;
-      font-weight: 800;
-      line-height: 1.4;
-      color: var(--black);
-      margin-bottom: 8px;
-    }
-
-    .catalog-desc {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.6;
-      min-height: 38px;
-      margin-bottom: 10px;
-    }
-
-    .catalog-price-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 7px;
-    }
-
-    .catalog-discount {
-      color: #d64c4c;
-      font-size: 13px;
-      font-weight: 800;
-    }
-
-    .catalog-price {
-      font-size: 15px;
-      font-weight: 800;
-      color: var(--black);
-    }
-
-    .catalog-old-price {
-      font-size: 12px;
-      color: #aaa39a;
-      text-decoration: line-through;
-    }
-
-    .catalog-review {
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    .catalog-review strong {
-      color: var(--black);
-    }
-
-    .catalog-meta {
-      font-size: 11px;
-      color: #b39a7c;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .catalog-tag {
-      display: inline-block;
-      padding: 4px 9px;
-      background: #c6ab8a;
-      color: #fff;
-      font-size: 10px;
-      font-weight: 700;
-    }
-
-    .empty-box {
-      background: var(--white);
-      padding: 56px 24px;
-      text-align: center;
-      box-shadow: var(--shadow);
-    }
-
-    .empty-box h2 {
-      font-size: 28px;
-      margin-bottom: 10px;
-      color: var(--black);
-    }
-
-    .empty-box p {
-      color: var(--muted);
-      font-size: 15px;
-    }
-
-    .pagination {
-      margin-top: 36px;
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .pagination a,
-    .pagination span {
-      min-width: 44px;
-      height: 44px;
-      padding: 0 14px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--white);
-      color: var(--black);
-      box-shadow: 0 8px 22px rgba(0,0,0,0.05);
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .pagination .active {
-      background: var(--black);
-      color: white;
-    }
-
-    @media (max-width: 1100px) {
-      .catalog-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .filter-bar {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .filter-bar button {
-        grid-column: 1 / -1;
-      }
-    }
-
-    @media (max-width: 760px) {
-      .container { padding: 0 16px; }
-      .header-actions { display: none; }
-      .nav { display: none; }
-      .mobile-category-bar { display: block; }
-
-      .hero {
-        padding: 18px 0 38px;
-      }
-
-      .hero-banner {
-        min-height: 320px;
-      }
-
-      .hero-content {
-        left: 22px;
-        right: 22px;
-        bottom: 24px;
-      }
-
-      .hero-content h1 {
-        font-size: 34px;
-      }
-
-      .hero-content p {
-        font-size: 14px;
-      }
-
-      .catalog-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .filter-bar {
-        grid-template-columns: 1fr;
-      }
-
-      section {
-        padding-bottom: 64px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <%
-    const safeProducts = Array.isArray(products) ? products : [];
-    const safeCategory = typeof category !== 'undefined' ? String(category || '').trim() : '';
-    const safeSub = typeof sub !== 'undefined' ? String(sub || '').trim() : '';
-    const categoryTitle = safeCategory ? safeCategory.toUpperCase() : 'CATEGORY';
-
-    const bannerImage =
-      categoryDoc && categoryDoc.bannerImage
-        ? categoryDoc.bannerImage
-        : (siteContent && siteContent.heroImage
-            ? siteContent.heroImage
-            : 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1400&q=80');
-
-    const categorySubCategories =
-      categoryDoc && Array.isArray(categoryDoc.subCategories)
-        ? categoryDoc.subCategories
-        : [];
-
-    const buildPageLink = (pageNum) => {
-      const params = [];
-      if (keyword) params.push(`keyword=${encodeURIComponent(keyword)}`);
-      if (sort) params.push(`sort=${encodeURIComponent(sort)}`);
-      if (safeSub) params.push(`sub=${encodeURIComponent(safeSub)}`);
-      params.push(`page=${pageNum}`);
-      return `/category/${encodeURIComponent(safeCategory)}?${params.join('&')}`;
-    };
-
-    const buildSubLink = (subName) => {
-      const params = [];
-      if (keyword) params.push(`keyword=${encodeURIComponent(keyword)}`);
-      if (sort) params.push(`sort=${encodeURIComponent(sort)}`);
-      if (subName) params.push(`sub=${encodeURIComponent(subName)}`);
-      return `/category/${encodeURIComponent(safeCategory)}${params.length ? '?' + params.join('&') : ''}`;
-    };
-  %>
-
-  <div class="topbar">
-    DAMORE OFFICIAL ONLINE STORE · 회원가입 없이도 주문 가능합니다
-  </div>
-
-  <%- include('partials/header', {
-    currentPath: '/category',
-    category: safeCategory,
-    sub: safeSub,
-    categories,
-    currentUser,
-    cartCount
-  }) %>
-
-  <div class="mobile-category-bar">
-    <div class="container">
-      <div class="mobile-category-scroll">
-        <a href="/" class="mobile-category-link <%= !safeCategory ? 'active' : '' %>">all</a>
-
-        <% if (categories && categories.length > 0) { %>
-          <% categories.forEach(item => { %>
-            <a href="/category/<%= item.name %>" class="mobile-category-link <%= safeCategory === item.name ? 'active' : '' %>">
-              <%= item.name %>
-            </a>
-          <% }) %>
-        <% } %>
-      </div>
+      <% if (categories && categories.length > 0) { %>
+        <% categories.forEach(item => { %>
+          <a href="/category/<%= item.name %>" class="mobile-category-link <%= safeCategory === item.name ? 'active' : '' %>">
+            <%= item.name %>
+          </a>
+        <% }) %>
+      <% } %>
     </div>
   </div>
+</div>
 
-  <main>
-    <section class="hero">
-      <div class="container">
-        <div class="hero-banner" style="background-image:url('<%= bannerImage %>');">
-          <div class="hero-content">
-            <small>DAMORE CATEGORY</small>
-            <h1><%= categoryTitle %></h1>
-            <p>
-              <%= categoryTitle %> 카테고리 상품을 홈과 같은 카드 스타일로 확인할 수 있습니다.
-              <% if (safeSub) { %>
-                · 현재 서브카테고리: <strong><%= safeSub %></strong>
-              <% } %>
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <div class="container">
-        <% if (categorySubCategories.length > 0) { %>
-          <div class="sub-filter-bar">
-            <a href="<%= buildSubLink('') %>" class="sub-filter-chip <%= !safeSub ? 'active' : '' %>">전체</a>
-            <% categorySubCategories.forEach((subItem) => { %>
-              <a href="<%= buildSubLink(subItem) %>" class="sub-filter-chip <%= safeSub === subItem ? 'active' : '' %>">
-                <%= subItem %>
-              </a>
-            <% }) %>
-          </div>
-        <% } %>
-
-        <form method="GET" action="/category/<%= encodeURIComponent(safeCategory) %>" class="filter-bar">
-          <input type="text" name="keyword" value="<%= keyword || '' %>" placeholder="상품명을 검색하세요" />
-
-          <select name="sort">
-            <option value="latest" <%= sort === 'latest' ? 'selected' : '' %>>최신순</option>
-            <option value="price_asc" <%= sort === 'price_asc' ? 'selected' : '' %>>가격 낮은순</option>
-            <option value="price_desc" <%= sort === 'price_desc' ? 'selected' : '' %>>가격 높은순</option>
-            <option value="name_asc" <%= sort === 'name_asc' ? 'selected' : '' %>>이름순</option>
-          </select>
-
-          <% if (safeSub) { %>
-            <input type="hidden" name="sub" value="<%= safeSub %>" />
-          <% } %>
-
-          <button type="submit">적용</button>
-        </form>
-
-        <div class="search-summary">
-          <div>
-            <% if (keyword) { %>
-              '<strong><%= keyword %></strong>' 검색 결과
-            <% } %>
+<main>
+  <section class="hero">
+    <div class="container">
+      <div class="hero-banner" style="background-image:url('<%= bannerImage %>');">
+        <div class="hero-content">
+          <small>DAMORE CATEGORY</small>
+          <h1><%= categoryTitle %></h1>
+          <p>
+            <%= categoryTitle %> 카테고리 상품을 홈과 같은 카드 스타일로 확인할 수 있습니다.
             <% if (safeSub) { %>
-              <span> · 서브카테고리 <strong><%= safeSub %></strong></span>
+              · 현재 서브카테고리: <strong><%= safeSub %></strong>
+            <% } %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="category-section">
+    <div class="container">
+      <% if (categorySubCategories.length > 0) { %>
+        <div class="sub-filter-bar">
+          <a href="<%= buildSubLink('') %>" class="sub-filter-chip <%= !safeSub ? 'active' : '' %>">전체</a>
+          <% categorySubCategories.forEach((subItem) => { %>
+            <a href="<%= buildSubLink(subItem) %>" class="sub-filter-chip <%= safeSub === subItem ? 'active' : '' %>">
+              <%= subItem %>
+            </a>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <form method="GET" action="/category/<%= encodeURIComponent(safeCategory) %>" class="filter-bar">
+        <input type="text" name="keyword" value="<%= keyword || '' %>" placeholder="상품명을 검색하세요" />
+
+        <select name="sort">
+          <option value="latest" <%= sort === 'latest' ? 'selected' : '' %>>최신순</option>
+          <option value="price_asc" <%= sort === 'price_asc' ? 'selected' : '' %>>가격 낮은순</option>
+          <option value="price_desc" <%= sort === 'price_desc' ? 'selected' : '' %>>가격 높은순</option>
+          <option value="name_asc" <%= sort === 'name_asc' ? 'selected' : '' %>>이름순</option>
+        </select>
+
+        <% if (safeSub) { %>
+          <input type="hidden" name="sub" value="<%= safeSub %>" />
+        <% } %>
+
+        <button type="submit">적용</button>
+      </form>
+
+      <div class="search-summary">
+        <div>
+          <% if (keyword) { %>
+            '<strong><%= keyword %></strong>' 검색 결과
+          <% } %>
+          <% if (safeSub) { %>
+            <span> · 서브카테고리 <strong><%= safeSub %></strong></span>
+          <% } %>
+        </div>
+        <div>총 <strong><%= totalProducts %></strong>개 상품</div>
+      </div>
+
+      <div class="section-head">
+        <div class="section-head-left">
+          <small>Category Product</small>
+          <h2><%= categoryTitle %></h2>
+          <p>홈과 동일한 상품 카드 UI로 통일된 카테고리 상품 목록입니다.</p>
+        </div>
+      </div>
+
+      <% if (safeProducts.length === 0) { %>
+        <div class="empty-box">
+          <h2>상품이 없습니다</h2>
+          <p>이 카테고리에 등록된 상품이 아직 없습니다.</p>
+        </div>
+      <% } else { %>
+        <div class="catalog-grid">
+          <% safeProducts.forEach((product) => { %>
+            <%
+              const hasDiscount = Number(product.oldPrice || 0) > Number(product.price || 0);
+              const discountPercent = hasDiscount
+                ? Math.round((1 - (Number(product.price || 0) / Number(product.oldPrice || 0))) * 100)
+                : 0;
+              const hasReview = Number(product.reviewCount || 0) > 0;
+            %>
+
+            <a href="/products/<%= product._id %>" class="catalog-card">
+              <div class="catalog-image-wrap">
+                <% if (product.image) { %>
+                  <img src="<%= product.image %>" alt="<%= product.name %>" />
+                <% } else { %>
+                  <div class="catalog-no-image">이미지 준비중</div>
+                <% } %>
+
+                <% if (product.status === 'soldout' || Number(product.stock || 0) <= 0) { %>
+                  <div class="catalog-soldout">품절</div>
+                <% } %>
+              </div>
+
+              <div class="catalog-body">
+                <div class="catalog-title"><%= product.name %></div>
+
+                <div class="catalog-desc">
+                  <%= product.desc ? product.desc.substring(0, 52) : '상품 설명이 없습니다.' %><%= product.desc && product.desc.length > 52 ? '...' : '' %>
+                </div>
+
+                <div class="catalog-price-row">
+                  <% if (hasDiscount) { %>
+                    <span class="catalog-discount"><%= discountPercent %>%</span>
+                  <% } %>
+                  <span class="catalog-price"><%= Number(product.price || 0).toLocaleString() %>원</span>
+                  <% if (Number(product.oldPrice || 0) > 0) { %>
+                    <span class="catalog-old-price"><%= Number(product.oldPrice || 0).toLocaleString() %>원</span>
+                  <% } %>
+                </div>
+
+                <% if (hasReview) { %>
+                  <div class="catalog-review">
+                    리뷰 <strong><%= Number(product.reviewCount || 0).toLocaleString() %></strong>
+                    <% if (Number(product.reviewAverage || 0) > 0) { %>
+                      · 평점 <strong><%= Number(product.reviewAverage || 0).toFixed(1) %></strong>
+                    <% } %>
+                  </div>
+                <% } %>
+
+                <div class="catalog-meta">
+                  <%= product.category || 'DAMORE' %>
+                  <% if (product.subCategory) { %>
+                    · <%= product.subCategory %>
+                  <% } %>
+                </div>
+
+                <% if (product.tag) { %>
+                  <div class="catalog-tag"><%= product.tag %></div>
+                <% } %>
+              </div>
+            </a>
+          <% }) %>
+        </div>
+
+        <% if (totalPages > 1) { %>
+          <div class="pagination">
+            <% if (currentPage > 1) { %>
+              <a href="<%= buildPageLink(currentPage - 1) %>">이전</a>
+            <% } %>
+
+            <% for (let i = 1; i <= totalPages; i++) { %>
+              <% if (i === currentPage) { %>
+                <span class="active"><%= i %></span>
+              <% } else { %>
+                <a href="<%= buildPageLink(i) %>"><%= i %></a>
+              <% } %>
+            <% } %>
+
+            <% if (currentPage < totalPages) { %>
+              <a href="<%= buildPageLink(currentPage + 1) %>">다음</a>
             <% } %>
           </div>
-          <div>총 <strong><%= totalProducts %></strong>개 상품</div>
-        </div>
-
-        <div class="section-head">
-          <div class="section-head-left">
-            <small>Category Product</small>
-            <h2><%= categoryTitle %></h2>
-            <p>홈과 동일한 상품 카드 UI로 통일된 카테고리 상품 목록입니다.</p>
-          </div>
-        </div>
-
-        <% if (safeProducts.length === 0) { %>
-          <div class="empty-box">
-            <h2>상품이 없습니다</h2>
-            <p>이 카테고리에 등록된 상품이 아직 없습니다.</p>
-          </div>
-        <% } else { %>
-          <div class="catalog-grid">
-            <% safeProducts.forEach((product) => { %>
-              <%
-                const hasDiscount = Number(product.oldPrice || 0) > Number(product.price || 0);
-                const discountPercent = hasDiscount
-                  ? Math.round((1 - (Number(product.price || 0) / Number(product.oldPrice || 0))) * 100)
-                  : 0;
-                const hasReview = Number(product.reviewCount || 0) > 0;
-              %>
-
-              <a href="/products/<%= product._id %>" class="catalog-card">
-                <div class="catalog-image-wrap">
-                  <% if (product.image) { %>
-                    <img src="<%= product.image %>" alt="<%= product.name %>" />
-                  <% } else { %>
-                    <div class="catalog-no-image">이미지 준비중</div>
-                  <% } %>
-
-                  <% if (product.status === 'soldout' || Number(product.stock || 0) <= 0) { %>
-                    <div class="catalog-soldout">품절</div>
-                  <% } %>
-                </div>
-
-                <div class="catalog-body">
-                  <div class="catalog-title"><%= product.name %></div>
-
-                  <div class="catalog-desc">
-                    <%= product.desc ? product.desc.substring(0, 52) : '상품 설명이 없습니다.' %><%= product.desc && product.desc.length > 52 ? '...' : '' %>
-                  </div>
-
-                  <div class="catalog-price-row">
-                    <% if (hasDiscount) { %>
-                      <span class="catalog-discount"><%= discountPercent %>%</span>
-                    <% } %>
-                    <span class="catalog-price"><%= Number(product.price || 0).toLocaleString() %>원</span>
-                    <% if (Number(product.oldPrice || 0) > 0) { %>
-                      <span class="catalog-old-price"><%= Number(product.oldPrice || 0).toLocaleString() %>원</span>
-                    <% } %>
-                  </div>
-
-                  <% if (hasReview) { %>
-                    <div class="catalog-review">
-                      리뷰 <strong><%= Number(product.reviewCount || 0).toLocaleString() %></strong>
-                      <% if (Number(product.reviewAverage || 0) > 0) { %>
-                        · 평점 <strong><%= Number(product.reviewAverage || 0).toFixed(1) %></strong>
-                      <% } %>
-                    </div>
-                  <% } %>
-
-                  <div class="catalog-meta">
-                    <%= product.category || 'DAMORE' %>
-                    <% if (product.subCategory) { %>
-                      · <%= product.subCategory %>
-                    <% } %>
-                  </div>
-
-                  <% if (product.tag) { %>
-                    <div class="catalog-tag"><%= product.tag %></div>
-                  <% } %>
-                </div>
-              </a>
-            <% }) %>
-          </div>
-
-          <% if (totalPages > 1) { %>
-            <div class="pagination">
-              <% if (currentPage > 1) { %>
-                <a href="<%= buildPageLink(currentPage - 1) %>">이전</a>
-              <% } %>
-
-              <% for (let i = 1; i <= totalPages; i++) { %>
-                <% if (i === currentPage) { %>
-                  <span class="active"><%= i %></span>
-                <% } else { %>
-                  <a href="<%= buildPageLink(i) %>"><%= i %></a>
-                <% } %>
-              <% } %>
-
-              <% if (currentPage < totalPages) { %>
-                <a href="<%= buildPageLink(currentPage + 1) %>">다음</a>
-              <% } %>
-            </div>
-          <% } %>
         <% } %>
-      </div>
-    </section>
-  </main>
+      <% } %>
+    </div>
+  </section>
+</main>
 
-  <%- include('partials/footer', { currentUser, siteContent }) %>
-</body>
-</html>
+<%- include('partials/footer', { currentUser, siteContent }) %>
