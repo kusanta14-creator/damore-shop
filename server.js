@@ -514,9 +514,8 @@ app.get('/about', async (req, res) => {
 });
 
 // 상품 상세
+// 상품 상세
 app.get('/products/:id', async (req, res) => {
-  return res.send('PRODUCT DETAIL ROUTE TEST 12345');
-});
   try {
     const product = await Product.findById(req.params.id).lean();
 
@@ -559,13 +558,6 @@ app.get('/products/:id', async (req, res) => {
 
     addOnProducts.forEach(normalizeProductStatus);
 
-    console.log('DETAIL RENDER OK:', {
-      productId: String(product._id),
-      addOnCount: addOnProducts.length,
-      categoryCount: categories.length,
-      hasSiteContent: !!siteContent
-    });
-
     res.render('product-detail', {
       product,
       addOnProducts,
@@ -576,7 +568,8 @@ app.get('/products/:id', async (req, res) => {
   } catch (error) {
     console.error('상품 상세 페이지 오류 >>>', error);
     res.status(500).send(error.stack || error.message || '상품 상세 페이지 오류');
-   };
+  }
+});
 
 // 장바구니 담기
 app.post('/cart/add', async (req, res) => {
