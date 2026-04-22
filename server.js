@@ -548,8 +548,8 @@ app.get('/products/:id', async (req, res) => {
     addOnProducts.forEach(normalizeProductStatus);
 
     res.render('product-detail', {
-      product,
-      addOnProducts
+      product: product,
+      addOnProducts: addOnProducts
     });
   } catch (error) {
     console.error(error);
