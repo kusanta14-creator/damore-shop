@@ -331,7 +331,7 @@ footer {
 
 .footer-business-list {
     display: grid;
-    gap: clamp(4px, 0.8vw, 7px);
+    gap: 6px;
 }
 
 .footer-business-list p {
@@ -339,7 +339,7 @@ footer {
     grid-template-columns: 92px 1fr;
     gap: 8px;
     font-size: clamp(12px, 0.95vw, 13px);
-    line-height: clamp(1.5, 1.75vw, 1.65);
+    line-height: 1.6;
     color: rgba(255, 255, 255, 0.66);
     margin: 0;
 }
@@ -348,7 +348,6 @@ footer {
     min-width: 0;
     color: rgba(255, 255, 255, 0.66);
     font-weight: 700;
-      white-space: nowrap;
 }
 
 .footer-business-list span {
@@ -477,4 +476,8 @@ footer {
         justify-content: flex-start;
         align-items: flex-start;
     }
+}
+
+.footer-business-long-label {
+    grid-template-columns: 126px 1fr;
 }
