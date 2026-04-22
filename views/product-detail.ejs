@@ -90,7 +90,7 @@
     .page {
       max-width: var(--max);
       margin: 0 auto;
-      padding: 20px 18px 70px;
+      padding: 20px 18px 80px;
     }
 
     .layout {
@@ -105,7 +105,7 @@
       aspect-ratio: 1 / 1.24;
       background: #e7e0d5;
       overflow: hidden;
-      border-radius: 10px;
+      border-radius: 8px;
     }
 
     .gallery-main img,
@@ -131,7 +131,7 @@
       overflow: hidden;
       cursor: pointer;
       padding: 0;
-      border-radius: 8px;
+      border-radius: 6px;
       transition: border-color .2s ease, transform .2s ease;
     }
 
@@ -154,12 +154,7 @@
     .purchase-box {
       position: sticky;
       top: 16px;
-      background: rgba(255, 255, 255, 0.72);
-      backdrop-filter: blur(6px);
-      border: 1px solid #e4ddd2;
-      border-radius: 16px;
-      padding: 18px;
-      box-shadow: var(--shadow);
+      background: transparent;
     }
 
     .interest-bubble {
@@ -218,7 +213,7 @@
     .price-lines {
       border-top: 1px solid var(--line);
       border-bottom: 1px solid var(--line);
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .price-line {
@@ -267,7 +262,7 @@
       display: grid;
       grid-template-columns: 96px minmax(0, 1fr);
       gap: 16px;
-      padding: 8px 0;
+      padding: 6px 0;
       font-size: 12px;
       align-items: start;
     }
@@ -304,15 +299,13 @@
       font-size: 11px;
       font-weight: 700;
       cursor: pointer;
-      border-radius: 8px;
+      border-radius: 6px;
     }
 
     .benefit-box {
       border: 1px solid var(--line);
-      background: var(--soft);
+      background: transparent;
       margin-bottom: 16px;
-      border-radius: 12px;
-      overflow: hidden;
     }
 
     .benefit-line {
@@ -369,7 +362,7 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      border-radius: 8px;
+      border-radius: 0;
       transition: all .2s ease;
     }
 
@@ -443,7 +436,6 @@
       background: #e8e1d6;
       overflow: hidden;
       margin-bottom: 6px;
-      border-radius: 10px;
     }
 
     .with-rank {
@@ -510,7 +502,6 @@
       font-size: 11px;
       font-weight: 700;
       cursor: pointer;
-      border-radius: 8px;
       transition: background .2s ease;
     }
 
@@ -534,7 +525,6 @@
       color: #777;
       cursor: pointer;
       line-height: 1;
-      border-radius: 999px;
     }
 
     .with-page {
@@ -545,11 +535,10 @@
     }
 
     .selected-box {
-      background: #f8f4ee;
+      background: transparent;
       border: 1px solid #d8d0c4;
       padding: 14px;
       margin-bottom: 12px;
-      border-radius: 12px;
     }
 
     .selected-name {
@@ -577,33 +566,30 @@
       display: inline-flex;
       align-items: center;
       gap: 2px;
-      background: var(--soft);
+      background: transparent;
       height: 32px;
-      border-radius: 8px;
-      padding: 3px;
+      padding: 3px 0;
     }
 
     .qty-btn {
       width: 26px;
       height: 26px;
-      border: 0;
+      border: 1px solid #ddd6cb;
       background: var(--soft-2);
       font-size: 12px;
       cursor: pointer;
       color: #555;
-      border-radius: 6px;
     }
 
     .qty-input {
       width: 34px;
       height: 26px;
-      border: 0;
+      border: 1px solid #ddd6cb;
       background: var(--soft-2);
       text-align: center;
       outline: none;
       font-size: 11px;
       color: #444;
-      border-radius: 6px;
     }
 
     .total-box {
@@ -656,9 +642,7 @@
       background: var(--brown-dark);
       color: #fff;
       height: 54px;
-      border-radius: 10px;
       font-size: 14px;
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
     }
 
     .btn-cart-icon,
@@ -671,78 +655,53 @@
       justify-content: center;
       font-size: 18px;
       height: 54px;
-      border-radius: 10px;
     }
 
     .btn-npay {
       background: var(--green);
       color: #fff;
       height: 40px;
-      border-radius: 10px;
     }
 
     .content-wrap {
-      margin-top: 36px;
-    }
-
-    .section-shortcuts {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 18px;
-    }
-
-    .section-shortcut {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      height: 40px;
-      padding: 0 18px;
-      border: 1px solid #ddd6cb;
-      background: rgba(255, 255, 255, 0.8);
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 800;
-      color: #4d453d;
-      transition: all .2s ease;
-    }
-
-    .section-shortcut:hover {
-      background: #111;
-      color: #fff;
-      border-color: #111;
+      margin-top: 56px;
     }
 
     .content-section {
-      background: rgba(255, 255, 255, 0.82);
-      border: 1px solid #e4ddd2;
-      border-radius: 18px;
-      padding: 26px;
-      margin-bottom: 18px;
-      box-shadow: var(--shadow);
+      padding: 36px 0;
+      border-top: 1px solid var(--line);
+      background: transparent;
+    }
+
+    .content-section:first-child {
+      border-top: 0;
+      padding-top: 0;
     }
 
     .content-section-title {
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 900;
       letter-spacing: -0.03em;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
     }
 
     .content-section-sub {
       font-size: 12px;
       color: #7a746c;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
 
     .detail-images {
       display: grid;
-      gap: 18px;
+      gap: 14px;
     }
 
     .detail-images img {
       width: 100%;
-      border-radius: 10px;
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
     }
 
     .guide-text {
@@ -750,11 +709,11 @@
       color: #555;
       white-space: pre-line;
       word-break: keep-all;
-      line-height: 1.8;
+      line-height: 1.9;
     }
 
     .guide-block {
-      margin-top: 20px;
+      margin-top: 24px;
     }
 
     .guide-block:first-child {
@@ -764,19 +723,14 @@
     .guide-heading {
       font-size: 14px;
       font-weight: 800;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       color: #222;
     }
 
-    .empty-box {
-      padding: 28px 16px;
-      text-align: center;
-      background: #faf8f4;
-      border: 1px solid #ece4d8;
-      border-radius: 12px;
-      color: #746c62;
+    .empty-text {
       font-size: 12px;
-      font-weight: 600;
+      color: #6f675d;
+      line-height: 1.8;
     }
 
     .mobile-buybar {
@@ -827,11 +781,11 @@
       }
 
       .content-section {
-        padding: 20px 16px;
+        padding: 28px 0;
       }
 
       .content-section-title {
-        font-size: 18px;
+        font-size: 19px;
       }
 
       .mobile-buybar {
@@ -852,7 +806,6 @@
       .mobile-buybar button {
         height: 48px;
         border: 0;
-        border-radius: 10px;
         font-size: 13px;
         font-weight: 800;
       }
@@ -912,7 +865,7 @@
     const interestCount = Math.max(Number(safeProduct.likeCount || 0), 238);
     const isSoldOut = safeStatus === 'soldout' || safeStock <= 0;
     const modelInfo = safeProduct.modelInfo || '신혜성 178cm / 70kg (상의 100~105 / 하의 30~31)';
-    const shippingText = safeProduct.shippingFeeText || 'KRW 2,500 (KRW 70,000 이상 구매 시 무료)';
+    const shippingText = safeProduct.shippingFeeText || '무료배송';
     const hasColorGroup = !!(colorGroup && Array.isArray(colorGroup.values) && colorGroup.values.length > 0);
     const hasSizeGroup = !!(sizeGroup && Array.isArray(sizeGroup.values) && sizeGroup.values.length > 0);
   %>
@@ -949,7 +902,7 @@
               <img src="<%= galleryItems[0].src %>" alt="<%= safeName %>">
             <% } %>
           <% } else { %>
-            <div class="empty-box" style="height:100%; display:flex; align-items:center; justify-content:center;">등록된 상품 이미지가 없습니다.</div>
+            <div class="empty-text" style="height:100%; display:flex; align-items:center; justify-content:center;">등록된 상품 이미지가 없습니다.</div>
           <% } %>
         </div>
 
@@ -1113,7 +1066,7 @@
                             <% if (addOnImage) { %>
                               <img src="<%= addOnImage %>" alt="<%= addOnName %>">
                             <% } else { %>
-                              <div class="empty-box" style="height:100%; border:0; border-radius:0;">이미지 없음</div>
+                              <div class="empty-text" style="height:100%; display:flex; align-items:center; justify-content:center;">이미지 없음</div>
                             <% } %>
                           </div>
 
@@ -1194,13 +1147,6 @@
     </div>
 
     <div class="content-wrap">
-      <div class="section-shortcuts">
-        <a href="#product-detail" class="section-shortcut">DETAIL</a>
-        <a href="#product-review" class="section-shortcut">REVIEW</a>
-        <a href="#product-qna" class="section-shortcut">Q&amp;A</a>
-        <a href="#product-guide" class="section-shortcut">GUIDE</a>
-      </div>
-
       <section class="content-section" id="product-detail">
         <div class="content-section-title">DETAIL</div>
         <div class="content-section-sub">상품의 상세 정보를 확인해보세요.</div>
@@ -1214,20 +1160,20 @@
         <% } else if (safeDesc) { %>
           <div class="guide-text"><%= safeDesc %></div>
         <% } else { %>
-          <div class="empty-box">등록된 상세 정보가 없습니다.</div>
+          <div class="empty-text">등록된 상세 정보가 없습니다.</div>
         <% } %>
       </section>
 
       <section class="content-section" id="product-review">
         <div class="content-section-title">REVIEW</div>
         <div class="content-section-sub">고객 리뷰 영역입니다.</div>
-        <div class="empty-box">리뷰 영역은 다음 단계에서 연결</div>
+        <div class="empty-text">리뷰 영역은 다음 단계에서 연결</div>
       </section>
 
       <section class="content-section" id="product-qna">
         <div class="content-section-title">Q&amp;A</div>
         <div class="content-section-sub">상품 문의 영역입니다.</div>
-        <div class="empty-box">Q&amp;A 영역은 다음 단계에서 연결</div>
+        <div class="empty-text">Q&amp;A 영역은 다음 단계에서 연결</div>
       </section>
 
       <section class="content-section" id="product-guide">
@@ -1237,14 +1183,14 @@
         <% if (safeGuide && safeGuide.sizeGuideImage) { %>
           <div class="guide-block">
             <div class="guide-heading">사이즈 가이드</div>
-            <img src="<%= safeGuide.sizeGuideImage %>" alt="사이즈 가이드" style="width:100%; border-radius:10px;">
+            <img src="<%= safeGuide.sizeGuideImage %>" alt="사이즈 가이드" style="width:100%;">
           </div>
         <% } %>
 
         <% if (safeGuide && safeGuide.washImage) { %>
           <div class="guide-block">
             <div class="guide-heading">세탁 안내</div>
-            <img src="<%= safeGuide.washImage %>" alt="세탁 안내" style="width:100%; border-radius:10px;">
+            <img src="<%= safeGuide.washImage %>" alt="세탁 안내" style="width:100%;">
           </div>
         <% } %>
 
@@ -1260,7 +1206,7 @@
           !(safeGuide && safeGuide.washImage) &&
           !(safeGuide && safeGuide.shippingExchangeReturn)
         ) { %>
-          <div class="empty-box">등록된 안내 정보가 없습니다.</div>
+          <div class="empty-text">등록된 안내 정보가 없습니다.</div>
         <% } %>
       </section>
     </div>
