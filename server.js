@@ -514,15 +514,24 @@ app.get('/about', async (req, res) => {
 });
 
 // 상품 상세
+// 상품 상세
 app.get('/products/:id', async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.id).lean();
 
     if (!product) {
       return res.status(404).send('상품이 없습니다');
     }
 
     normalizeProductStatus(product);
+
+    const categories = await Category.find().sort({ order: 1, createdAt: 1 }).lean();
+
+    let siteContent = await SiteContent.findOne().lean();
+    if (!siteContent) {
+      const created = await SiteContent.create({});
+      siteContent = created.toObject ? created.toObject() : created;
+    }
 
     const additionalIds = Array.isArray(product.additionalProducts)
       ? product.additionalProducts.filter(Boolean)
@@ -532,9 +541,10 @@ app.get('/products/:id', async (req, res) => {
 
     if (additionalIds.length > 0) {
       addOnProducts = await Product.find({
-        _id: { $in: additionalIds },
-        _id: { $ne: product._id }
-      }).limit(8);
+        _id: { $in: additionalIds, $ne: product._id }
+      })
+        .limit(8)
+        .lean();
     } else {
       addOnProducts = await Product.find({
         _id: { $ne: product._id },
@@ -542,18 +552,29 @@ app.get('/products/:id', async (req, res) => {
         status: { $ne: 'hidden' }
       })
         .sort({ createdAt: -1 })
-        .limit(4);
+        .limit(4)
+        .lean();
     }
 
     addOnProducts.forEach(normalizeProductStatus);
 
+    console.log('DETAIL RENDER OK:', {
+      productId: String(product._id),
+      addOnCount: addOnProducts.length,
+      categoryCount: categories.length,
+      hasSiteContent: !!siteContent
+    });
+
     res.render('product-detail', {
-      product: product,
-      addOnProducts: addOnProducts
+      product,
+      addOnProducts,
+      categories,
+      category: String(product.category || '').trim().toLowerCase(),
+      siteContent
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).send('상품 상세 페이지 오류');
+    console.error('상품 상세 페이지 오류 >>>', error);
+    res.status(500).send(error.stack || error.message || '상품 상세 페이지 오류');
   }
 });
 
