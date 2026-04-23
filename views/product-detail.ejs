@@ -17,28 +17,7 @@
   const safeOptionGroups = Array.isArray(safeProduct.optionGroups) ? safeProduct.optionGroups.filter(Boolean) : [];
   const safeGuide = safeProduct.guide || {};
 
-  const safeSizeGuideType = safeGuide.sizeGuideType || '';
-  const safeSizeTableHeaders = Array.isArray(safeGuide.sizeTableHeaders) ? safeGuide.sizeTableHeaders : [];
-  const safeSizeTableRows = Array.isArray(safeGuide.sizeTableRows) ? safeGuide.sizeTableRows : [];
   const safeWearInfo = safeGuide.wearInfo || {};
-  const safeSizeNotice =
-    safeGuide.sizeNotice ||
-    '- 위의 실측사이즈는 단면의 길이입니다. 참고해 주세요.\n- 사이즈는 측정방법에 따라 1~3cm 정도 오차가 있을 수 있습니다.\n- 제품 색상은 사용자 모니터와 해상도에 따라 실제 색상과 다소 차이가 있을 수 있습니다.';
-
-  const defaultSizeGuideMap = {
-    top: '/images/size-guide/top.png',
-    pants: '/images/size-guide/pants.png',
-    outer: '/images/size-guide/outer.png',
-    skirt: '/images/size-guide/skirt.png',
-    dress: '/images/size-guide/dress.png',
-    shoes: '/images/size-guide/shoes.png',
-    etc: '/images/size-guide/etc.png'
-  };
-
-  const resolvedSizeGuideImage =
-    safeGuide.sizeGuideImage ||
-    defaultSizeGuideMap[safeSizeGuideType] ||
-    '';
 
   let colorGroup = null;
   let sizeGroup = null;
@@ -801,81 +780,36 @@
     box-shadow: none;
   }
 
-  .size-guide-panel {
-    max-width: 620px;
-    margin: 0 auto;
-  }
+ .wear-table-wrap {
+  overflow-x: auto;
+}
 
-  .size-guide-heading {
-    text-align: center;
-    margin-bottom: 18px;
-  }
+.wear-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 460px;
+  background: #fff;
+}
 
-  .size-guide-heading span {
-    display: inline-block;
-    padding: 0 8px;
-    border-bottom: 1px solid #111;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-  }
+.wear-table th,
+.wear-table td {
+  border: 1px solid #d8d0c4;
+  padding: 9px 10px;
+  font-size: 11px;
+  text-align: center;
+  line-height: 1.45;
+}
 
-  .size-guide-image {
-    margin-bottom: 18px;
-    text-align: center;
-  }
+.wear-table th {
+  background: #f6f2eb;
+  font-weight: 800;
+  color: #444;
+}
 
-  .size-guide-image img {
-    max-width: 260px;
-    width: 100%;
-    display: inline-block;
-  }
-
-  .size-table-wrap,
-  .wear-table-wrap {
-    overflow-x: auto;
-  }
-
-  .size-table,
-  .wear-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 460px;
-    background: #fff;
-  }
-
-  .size-table th,
-  .size-table td,
-  .wear-table th,
-  .wear-table td {
-    border: 1px solid #d8d0c4;
-    padding: 9px 10px;
-    font-size: 11px;
-    text-align: center;
-    line-height: 1.45;
-  }
-
-  .size-table th,
-  .wear-table th {
-    background: #f6f2eb;
-    font-weight: 800;
-    color: #444;
-  }
-
-  .size-table td,
-  .wear-table td {
-    color: #555;
-    font-weight: 600;
-  }
-
-  .size-notice {
-    margin-top: 10px;
-    font-size: 11px;
-    color: #7a746c;
-    line-height: 1.7;
-    text-align: left;
-    white-space: pre-line;
-  }
+.wear-table td {
+  color: #555;
+  font-weight: 600;
+}
 
   .wear-info-panel {
     max-width: 620px;
@@ -1275,71 +1209,6 @@
         <% } else { %>
           <div class="empty-text">등록된 상세 정보가 없습니다.</div>
         <% } %>
-
-        <div class="size-guide-panel">
-          <div class="size-guide-heading"><span>사이즈 정보</span></div>
-
-          <% if (resolvedSizeGuideImage) { %>
-            <div class="size-guide-image">
-              <img src="<%= resolvedSizeGuideImage %>" alt="사이즈 가이드">
-            </div>
-          <% } %>
-
-          <div class="size-table-wrap">
-            <table class="size-table">
-              <thead>
-                <tr>
-                  <th>사이즈</th>
-                  <% if (safeSizeTableHeaders.length > 0) { %>
-                    <% for (let headerIndex = 0; headerIndex < safeSizeTableHeaders.length; headerIndex += 1) { %>
-                      <th><%= safeSizeTableHeaders[headerIndex] %></th>
-                    <% } %>
-                  <% } else { %>
-                    <th>옵션</th>
-                    <th>비고</th>
-                  <% } %>
-                </tr>
-              </thead>
-              <tbody>
-                <% if (safeSizeTableRows.length > 0) { %>
-                  <% for (let rowIndex = 0; rowIndex < safeSizeTableRows.length; rowIndex += 1) { %>
-                    <% const row = safeSizeTableRows[rowIndex] || {}; %>
-                    <% const rowValues = Array.isArray(row.values) ? row.values : []; %>
-                    <tr>
-                      <td><%= row.sizeLabel || '-' %></td>
-
-                      <% if (safeSizeTableHeaders.length > 0) { %>
-                        <% for (let valueIndex = 0; valueIndex < safeSizeTableHeaders.length; valueIndex += 1) { %>
-                          <td><%= rowValues[valueIndex] || '-' %></td>
-                        <% } %>
-                      <% } else { %>
-                        <td><%= rowValues.length > 0 ? rowValues.join(' / ') : '-' %></td>
-                        <td>선택가능</td>
-                      <% } %>
-                    </tr>
-                  <% } %>
-                <% } else if (hasSizeGroup) { %>
-                  <% for (let fallbackSizeIndex = 0; fallbackSizeIndex < sizeGroup.values.length; fallbackSizeIndex += 1) { %>
-                    <% const item = sizeGroup.values[fallbackSizeIndex] || {}; %>
-                    <tr>
-                      <td><%= item.value || '-' %></td>
-                      <td><%= item.value || '-' %></td>
-                      <td><%= item.isSoldOut ? '품절' : '선택가능' %></td>
-                    </tr>
-                  <% } %>
-                <% } else { %>
-                  <tr>
-                    <td colspan="<%= safeSizeTableHeaders.length > 0 ? safeSizeTableHeaders.length + 1 : 3 %>">
-                      등록된 사이즈 정보가 없습니다.
-                    </td>
-                  </tr>
-                <% } %>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="size-notice"><%= safeSizeNotice %></div>
-        </div>
 
         <div class="wear-info-panel">
           <div class="wear-info-heading"><span>착용 정보</span></div>
