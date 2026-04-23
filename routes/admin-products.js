@@ -45,13 +45,7 @@ const upload = multer({
     const ext = path.extname(file.originalname || '').toLowerCase();
 
     if (
-      [
-        'imageFile',
-        'subImageFiles',
-        'detailImageFiles',
-        'washImageFile',
-        'sizeGuideImageFile'
-      ].includes(file.fieldname) &&
+      ['imageFile', 'subImageFiles', 'detailImageFiles', 'washImageFile'].includes(file.fieldname) &&
       imageExts.includes(ext)
     ) {
       return cb(null, true);
@@ -160,33 +154,6 @@ function buildOptionGroupsFromQuickInputs(body, existingProduct = null) {
   return existingProduct?.optionGroups || [];
 }
 
-function buildSizeTableHeaders(value) {
-  return splitCommaValues(value);
-}
-
-function buildSizeTableRows(body) {
-  const labels = normalizeArrayInput(body.sizeRowLabel);
-  const valuesList = normalizeArrayInput(body.sizeRowValues);
-
-  const rows = [];
-
-  const maxLength = Math.max(labels.length, valuesList.length);
-
-  for (let i = 0; i < maxLength; i += 1) {
-    const sizeLabel = String(labels[i] || '').trim();
-    const values = splitCommaValues(valuesList[i] || '');
-
-    if (!sizeLabel && values.length === 0) continue;
-
-    rows.push({
-      sizeLabel,
-      values
-    });
-  }
-
-  return rows;
-}
-
 function collectAllMediaPaths(product) {
   const result = [];
 
@@ -204,7 +171,6 @@ function collectAllMediaPaths(product) {
   });
 
   if (product.guide?.washImage) result.push(product.guide.washImage);
-  if (product.guide?.sizeGuideImage) result.push(product.guide.sizeGuideImage);
 
   return result;
 }
@@ -221,7 +187,6 @@ async function buildProductPayload(req, existingProduct = null) {
   const subImageFiles = files.subImageFiles || [];
   const detailImageFiles = files.detailImageFiles || [];
   const washImageFile = files.washImageFile?.[0] || null;
-  const sizeGuideImageFile = files.sizeGuideImageFile?.[0] || null;
 
   const image = imageFile
     ? toPublicPath(imageFile)
@@ -245,20 +210,11 @@ async function buildProductPayload(req, existingProduct = null) {
     ? toPublicPath(washImageFile)
     : String(req.body.existingWashImage || existingProduct?.guide?.washImage || '').trim();
 
-  const sizeGuideImage = sizeGuideImageFile
-    ? toPublicPath(sizeGuideImageFile)
-    : String(req.body.existingSizeGuideImage || existingProduct?.guide?.sizeGuideImage || '').trim();
-
   const optionGroups = buildOptionGroupsFromQuickInputs(req.body, existingProduct);
 
   const additionalProducts = normalizeArrayInput(req.body.additionalProducts)
     .map((id) => String(id || '').trim())
     .filter(Boolean);
-
-  const sizeGuideType = String(req.body.sizeGuideType || '').trim();
-  const sizeTableHeaders = buildSizeTableHeaders(req.body.sizeTableHeaders);
-  const sizeTableRows = buildSizeTableRows(req.body);
-  const sizeNotice = String(req.body.sizeNotice || '').trim();
 
   return {
     name: String(req.body.name || '').trim(),
@@ -289,15 +245,7 @@ async function buildProductPayload(req, existingProduct = null) {
     shippingFeeText: String(req.body.shippingFeeText || '').trim() || '무료배송',
     modelInfo: String(req.body.modelInfo || existingProduct?.modelInfo || '').trim(),
     guide: {
-      sizeGuideType,
       washImage,
-      sizeGuideImage,
-      sizeTableHeaders,
-      sizeTableRows,
-      sizeNotice:
-        sizeNotice ||
-        existingProduct?.guide?.sizeNotice ||
-        '- 위의 실측사이즈는 단면의 길이입니다. 참고해 주세요.\n- 사이즈는 측정방법에 따라 1~3cm 정도 오차가 있을 수 있습니다.\n- 제품 색상은 사용자 모니터와 해상도에 따라 실제 색상과 다소 차이가 있을 수 있습니다.',
       wearInfo: {
         season: String(req.body.wearSeason || existingProduct?.guide?.wearInfo?.season || '봄/가을').trim(),
         elasticity: String(req.body.wearElasticity || existingProduct?.guide?.wearInfo?.elasticity || '적당함').trim(),
@@ -348,8 +296,7 @@ router.post(
     { name: 'videoFile', maxCount: 1 },
     { name: 'subImageFiles', maxCount: 20 },
     { name: 'detailImageFiles', maxCount: 50 },
-    { name: 'washImageFile', maxCount: 1 },
-    { name: 'sizeGuideImageFile', maxCount: 1 }
+    { name: 'washImageFile', maxCount: 1 }
   ]),
   async (req, res) => {
     try {
@@ -398,8 +345,7 @@ router.post(
     { name: 'videoFile', maxCount: 1 },
     { name: 'subImageFiles', maxCount: 20 },
     { name: 'detailImageFiles', maxCount: 50 },
-    { name: 'washImageFile', maxCount: 1 },
-    { name: 'sizeGuideImageFile', maxCount: 1 }
+    { name: 'washImageFile', maxCount: 1 }
   ]),
   async (req, res) => {
     try {
