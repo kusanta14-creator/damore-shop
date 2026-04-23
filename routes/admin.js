@@ -575,208 +575,6 @@ router.post('/categories/:id/delete', checkAdmin, async (req, res) => {
   }
 });
 
-// 상품 등록
-router.get('/products/new', checkAdmin, async (req, res) => {
-  try {
-    const categories = await Category.find().sort({ order: 1, createdAt: 1 });
-
-    res.render('admin/product-form', {
-      isEdit: false,
-      formAction: '/admin/products',
-      product: {},
-      categories
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('상품 등록 페이지 오류');
-  }
-});
-
-router.post(
-  '/products',
-  checkAdmin,
-  upload.fields([
-    { name: 'image', maxCount: 1 },
-    { name: 'detailImage', maxCount: 1 },
-    { name: 'detailImages', maxCount: 10 }
-  ]),
-  async (req, res) => {
-    try {
-      const {
-        name,
-        category,
-        subCategory,
-        price,
-        oldPrice,
-        desc,
-        description,
-        stock,
-        tag,
-        status
-      } = req.body;
-
-      const normalizedOptions = normalizeOptions(req.body.options);
-      const normalizedColors = normalizeColors(req.body.colors);
-      const numericStock = Math.max(Number(stock) || 0, 0);
-      const uploaded = await getUploadedFiles(req);
-
-      await Product.create({
-        name,
-        category: (category || '').toLowerCase(),
-        subCategory: (subCategory || '').trim(),
-        price: Number(price),
-        oldPrice: Number(oldPrice || 0),
-        desc: description || desc || '',
-        options: normalizedOptions,
-        colors: normalizedColors,
-        image: uploaded.image,
-        detailImage: uploaded.detailImage,
-        detailImages: uploaded.detailImages,
-        stock: numericStock,
-        status: status === 'active' ? 'active' : (numericStock > 0 ? 'active' : 'soldout'),
-        tag,
-        isBest: req.body.isBest === 'on' || req.body.isBest === 'true'
-      });
-
-      res.redirect('/admin/products');
-    } catch (error) {
-      console.error('상품 등록 에러:', error);
-      res.status(500).send('상품 등록 오류');
-    }
-  }
-);
-
-// 상품 목록
-router.get('/products', checkAdmin, async (req, res) => {
-  try {
-    const products = await Product.find().sort({ createdAt: -1 });
-    res.render('admin/products', { products });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('상품 목록 오류');
-  }
-});
-
-// 상품 수정 페이지
-router.get('/products/:id/edit', checkAdmin, async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id);
-    const categories = await Category.find().sort({ order: 1, createdAt: 1 });
-
-    if (!product) {
-      return res.status(404).send('상품이 없습니다');
-    }
-
-    res.render('admin/product-form', {
-      isEdit: true,
-      formAction: `/admin/products/${product._id}/edit`,
-      product,
-      categories
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('상품 수정 페이지 오류');
-  }
-});
-
-// 상품 수정 저장
-router.post(
-  '/products/:id/edit',
-  checkAdmin,
-  upload.fields([
-    { name: 'image', maxCount: 1 },
-    { name: 'detailImage', maxCount: 1 },
-    { name: 'detailImages', maxCount: 10 }
-  ]),
-  async (req, res) => {
-    try {
-      const {
-        name,
-        category,
-        subCategory,
-        price,
-        oldPrice,
-        desc,
-        description,
-        stock,
-        tag,
-        status
-      } = req.body;
-
-      const normalizedOptions = normalizeOptions(req.body.options);
-      const normalizedColors = normalizeColors(req.body.colors);
-      const numericStock = Math.max(Number(stock) || 0, 0);
-      const uploaded = await getUploadedFiles(req);
-
-      const product = await Product.findById(req.params.id);
-      if (!product) {
-        return res.status(404).send('상품이 없습니다');
-      }
-
-      const updateData = {
-        name,
-        category: (category || '').toLowerCase(),
-        subCategory: (subCategory || '').trim(),
-        price: Number(price),
-        oldPrice: Number(oldPrice || 0),
-        desc: description || desc || '',
-        options: normalizedOptions,
-        colors: normalizedColors,
-        stock: numericStock,
-        status: status === 'active' ? 'active' : (numericStock > 0 ? 'active' : 'soldout'),
-        tag,
-        isBest: req.body.isBest === 'on' || req.body.isBest === 'true'
-      };
-
-      if (uploaded.image) {
-        updateData.image = uploaded.image;
-      }
-
-      if (uploaded.detailImage) {
-        updateData.detailImage = uploaded.detailImage;
-      }
-
-      if (uploaded.detailImages.length > 0) {
-        updateData.detailImages = uploaded.detailImages;
-      }
-
-      await Product.findByIdAndUpdate(req.params.id, updateData);
-      res.redirect('/admin/products');
-    } catch (error) {
-      console.error(error);
-      res.status(500).send('상품 수정 오류');
-    }
-  }
-);
-
-router.post('/products/:id/best', checkAdmin, async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id);
-
-    if (!product) {
-      return res.redirect('/admin/products');
-    }
-
-    product.isBest = !product.isBest;
-    await product.save();
-
-    res.redirect('/admin/products');
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('베스트 변경 오류');
-  }
-});
-
-router.post('/products/:id/delete', checkAdmin, async (req, res) => {
-  try {
-    await Product.findByIdAndDelete(req.params.id);
-    res.redirect('/admin/products');
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('상품 삭제 오류');
-  }
-});
-
 // 주문
 router.get('/orders', checkAdmin, async (req, res) => {
   try {
@@ -917,7 +715,6 @@ router.post('/orders/:id/status', checkAdmin, async (req, res) => {
   }
 });
 
-// 취소요청 승인
 router.post('/orders/:id/cancel-approve', checkAdmin, async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
@@ -949,7 +746,6 @@ router.post('/orders/:id/cancel-approve', checkAdmin, async (req, res) => {
   }
 });
 
-// 취소요청 반려
 router.post('/orders/:id/cancel-reject', checkAdmin, async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
@@ -972,7 +768,6 @@ router.post('/orders/:id/cancel-reject', checkAdmin, async (req, res) => {
   }
 });
 
-// 테스트주문만 삭제 가능
 router.post('/orders/:id/delete', checkAdmin, async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
@@ -993,7 +788,6 @@ router.post('/orders/:id/delete', checkAdmin, async (req, res) => {
   }
 });
 
-// 홈 섹션 관리
 // 홈 섹션 관리
 router.get('/home-sections', checkAdmin, async (req, res) => {
   try {
@@ -1059,25 +853,19 @@ router.post('/home-sections', checkAdmin, async (req, res) => {
     await HomeSection.create({
       sectionKey: (req.body.sectionKey || '').trim(),
       sectionType: (req.body.sectionType || 'product-grid').trim(),
-
       titleLabel: (req.body.titleLabel || '').trim(),
       title: (req.body.title || '').trim(),
       description: (req.body.description || '').trim(),
-
       moreText: (req.body.moreText || '').trim(),
       moreLink: (req.body.moreLink || '').trim(),
-
       isVisible: req.body.isVisible === 'on',
       order: nextOrder,
-
       productSource: (req.body.productSource || 'latest').trim(),
       category: (req.body.category || '').trim().toLowerCase(),
       subCategory: (req.body.subCategory || '').trim(),
-
       productLimit: Math.max(Number(req.body.productLimit) || 8, 1),
       autoRotate: req.body.autoRotate === 'on',
       rotateSeconds: Math.max(Number(req.body.rotateSeconds) || 4, 1),
-
       labelTop: (req.body.labelTop || '40px').trim(),
       labelLeft: (req.body.labelLeft || '40px').trim(),
       titleTop: (req.body.titleTop || '110px').trim(),
@@ -1086,7 +874,6 @@ router.post('/home-sections', checkAdmin, async (req, res) => {
       descLeft: (req.body.descLeft || '40px').trim(),
       tabsTop: (req.body.tabsTop || '330px').trim(),
       tabsLeft: (req.body.tabsLeft || '40px').trim(),
-
       tabs,
       manualProductIds
     });
@@ -1134,24 +921,18 @@ router.post('/home-sections/:id/edit', checkAdmin, async (req, res) => {
 
     homeSection.sectionKey = (req.body.sectionKey || '').trim();
     homeSection.sectionType = (req.body.sectionType || 'product-grid').trim();
-
     homeSection.titleLabel = (req.body.titleLabel || '').trim();
     homeSection.title = (req.body.title || '').trim();
     homeSection.description = (req.body.description || '').trim();
-
     homeSection.moreText = (req.body.moreText || '').trim();
     homeSection.moreLink = (req.body.moreLink || '').trim();
-
     homeSection.isVisible = req.body.isVisible === 'on';
-
     homeSection.productSource = (req.body.productSource || 'latest').trim();
     homeSection.category = (req.body.category || '').trim().toLowerCase();
     homeSection.subCategory = (req.body.subCategory || '').trim();
-
     homeSection.productLimit = Math.max(Number(req.body.productLimit) || 8, 1);
     homeSection.autoRotate = req.body.autoRotate === 'on';
     homeSection.rotateSeconds = Math.max(Number(req.body.rotateSeconds) || 4, 1);
-
     homeSection.labelTop = (req.body.labelTop || '40px').trim();
     homeSection.labelLeft = (req.body.labelLeft || '40px').trim();
     homeSection.titleTop = (req.body.titleTop || '110px').trim();
@@ -1160,7 +941,6 @@ router.post('/home-sections/:id/edit', checkAdmin, async (req, res) => {
     homeSection.descLeft = (req.body.descLeft || '40px').trim();
     homeSection.tabsTop = (req.body.tabsTop || '330px').trim();
     homeSection.tabsLeft = (req.body.tabsLeft || '40px').trim();
-
     homeSection.tabs = tabs;
     homeSection.manualProductIds = manualProductIds;
 
@@ -1239,6 +1019,7 @@ router.post('/home-sections/:id/down', checkAdmin, async (req, res) => {
     res.status(500).send('홈 섹션 순서 변경 오류');
   }
 });
+
 // 사이트 콘텐츠
 router.get('/site-content', checkAdmin, async (req, res) => {
   try {
@@ -1258,112 +1039,97 @@ router.get('/site-content', checkAdmin, async (req, res) => {
   }
 });
 
-router.post(
-  '/site-content',
-  checkAdmin,
-  async (req, res) => {
-    try {
-      let siteContent = await SiteContent.findOne();
+router.post('/site-content', checkAdmin, async (req, res) => {
+  try {
+    let siteContent = await SiteContent.findOne();
 
-      if (!siteContent) {
-        siteContent = await SiteContent.create({});
-      }
-
-      const footerSns = buildFooterSns(req.body);
-
-      const updateData = {
-        philosophyTitle: req.body.philosophyTitle,
-        philosophyDesc: req.body.philosophyDesc,
-        philosophyKeywords: req.body.philosophyKeywords,
-
-        newSectionTitle: req.body.newSectionTitle,
-        newSectionDesc: req.body.newSectionDesc,
-        collectionTitle: req.body.collectionTitle,
-        collectionDesc: req.body.collectionDesc,
-        editorialTitle: req.body.editorialTitle,
-        editorialDesc: req.body.editorialDesc,
-        aboutTitle: req.body.aboutTitle,
-        aboutDesc: req.body.aboutDesc,
-
-        aboutHeroEyebrow: req.body.aboutHeroEyebrow,
-        aboutHeroTitle: req.body.aboutHeroTitle,
-        aboutHeroDesc: req.body.aboutHeroDesc,
-        aboutImageBannerTitle: req.body.aboutImageBannerTitle,
-        aboutImageBannerDesc: req.body.aboutImageBannerDesc,
-        aboutTextCardLabel: req.body.aboutTextCardLabel,
-        aboutTextCardTitle: req.body.aboutTextCardTitle,
-        aboutTextCardDesc: req.body.aboutTextCardDesc,
-        aboutKeywordTitle: req.body.aboutKeywordTitle,
-        aboutKeywordDesc: req.body.aboutKeywordDesc,
-
-        identitySectionLabel: req.body.identitySectionLabel,
-        identitySectionTitle: req.body.identitySectionTitle,
-        identitySectionDesc: req.body.identitySectionDesc,
-        identity1Title: req.body.identity1Title,
-        identity1Desc: req.body.identity1Desc,
-        identity2Title: req.body.identity2Title,
-        identity2Desc: req.body.identity2Desc,
-        identity3Title: req.body.identity3Title,
-        identity3Desc: req.body.identity3Desc,
-
-        sceneSectionLabel: req.body.sceneSectionLabel,
-        sceneSectionTitle: req.body.sceneSectionTitle,
-        sceneSectionDesc: req.body.sceneSectionDesc,
-
-        moodSectionLabel: req.body.moodSectionLabel,
-        moodSectionTitle: req.body.moodSectionTitle,
-        moodSectionDesc: req.body.moodSectionDesc,
-        moodCard1Label: req.body.moodCard1Label,
-        moodCard1Title: req.body.moodCard1Title,
-        moodCard1Desc: req.body.moodCard1Desc,
-        moodCard2Label: req.body.moodCard2Label,
-        moodCard2Title: req.body.moodCard2Title,
-        moodCard2Desc: req.body.moodCard2Desc,
-        moodCard3Label: req.body.moodCard3Label,
-        moodCard3Title: req.body.moodCard3Title,
-        moodCard3Desc: req.body.moodCard3Desc,
-
-        footerBrandName: req.body.footerBrandName,
-        footerDesc: req.body.footerDesc,
-        footerCsLabel: req.body.footerCsLabel,
-        footerCsPhone: req.body.footerCsPhone,
-        footerCsTime1: req.body.footerCsTime1,
-        footerCsTime2: req.body.footerCsTime2,
-
-        footerBankTitle: req.body.footerBankTitle,
-        footerBank1: req.body.footerBank1,
-        footerBank2: req.body.footerBank2,
-        footerBank3: req.body.footerBank3,
-        footerDepositor: req.body.footerDepositor,
-        footerBankNotice: req.body.footerBankNotice,
-
-        footerBizTitle: req.body.footerBizTitle,
-        footerBizName: req.body.footerBizName,
-        footerBizOwner: req.body.footerBizOwner,
-        footerBizAddress: req.body.footerBizAddress,
-        footerBizNumber: req.body.footerBizNumber,
-        footerBizOnline: req.body.footerBizOnline,
-        footerBizPrivacyManager: req.body.footerBizPrivacyManager,
-
-        footerCustomerTitle: req.body.footerCustomerTitle,
-
-        footerTermsLink: req.body.footerTermsLink,
-        footerPrivacyLink: req.body.footerPrivacyLink,
-        footerBizInfoLink: req.body.footerBizInfoLink,
-
-        footerCopyright: req.body.footerCopyright,
-        footerSlogan: req.body.footerSlogan,
-        footerSns
-      };
-
-      await SiteContent.findByIdAndUpdate(siteContent._id, updateData);
-      res.redirect('/admin/site-content?success=1');
-    } catch (error) {
-      console.error(error);
-      res.status(500).send('사이트 관리 저장 오류');
+    if (!siteContent) {
+      siteContent = await SiteContent.create({});
     }
+
+    const footerSns = buildFooterSns(req.body);
+
+    const updateData = {
+      philosophyTitle: req.body.philosophyTitle,
+      philosophyDesc: req.body.philosophyDesc,
+      philosophyKeywords: req.body.philosophyKeywords,
+      newSectionTitle: req.body.newSectionTitle,
+      newSectionDesc: req.body.newSectionDesc,
+      collectionTitle: req.body.collectionTitle,
+      collectionDesc: req.body.collectionDesc,
+      editorialTitle: req.body.editorialTitle,
+      editorialDesc: req.body.editorialDesc,
+      aboutTitle: req.body.aboutTitle,
+      aboutDesc: req.body.aboutDesc,
+      aboutHeroEyebrow: req.body.aboutHeroEyebrow,
+      aboutHeroTitle: req.body.aboutHeroTitle,
+      aboutHeroDesc: req.body.aboutHeroDesc,
+      aboutImageBannerTitle: req.body.aboutImageBannerTitle,
+      aboutImageBannerDesc: req.body.aboutImageBannerDesc,
+      aboutTextCardLabel: req.body.aboutTextCardLabel,
+      aboutTextCardTitle: req.body.aboutTextCardTitle,
+      aboutTextCardDesc: req.body.aboutTextCardDesc,
+      aboutKeywordTitle: req.body.aboutKeywordTitle,
+      aboutKeywordDesc: req.body.aboutKeywordDesc,
+      identitySectionLabel: req.body.identitySectionLabel,
+      identitySectionTitle: req.body.identitySectionTitle,
+      identitySectionDesc: req.body.identitySectionDesc,
+      identity1Title: req.body.identity1Title,
+      identity1Desc: req.body.identity1Desc,
+      identity2Title: req.body.identity2Title,
+      identity2Desc: req.body.identity2Desc,
+      identity3Title: req.body.identity3Title,
+      identity3Desc: req.body.identity3Desc,
+      sceneSectionLabel: req.body.sceneSectionLabel,
+      sceneSectionTitle: req.body.sceneSectionTitle,
+      sceneSectionDesc: req.body.sceneSectionDesc,
+      moodSectionLabel: req.body.moodSectionLabel,
+      moodSectionTitle: req.body.moodSectionTitle,
+      moodSectionDesc: req.body.moodSectionDesc,
+      moodCard1Label: req.body.moodCard1Label,
+      moodCard1Title: req.body.moodCard1Title,
+      moodCard1Desc: req.body.moodCard1Desc,
+      moodCard2Label: req.body.moodCard2Label,
+      moodCard2Title: req.body.moodCard2Title,
+      moodCard2Desc: req.body.moodCard2Desc,
+      moodCard3Label: req.body.moodCard3Label,
+      moodCard3Title: req.body.moodCard3Title,
+      moodCard3Desc: req.body.moodCard3Desc,
+      footerBrandName: req.body.footerBrandName,
+      footerDesc: req.body.footerDesc,
+      footerCsLabel: req.body.footerCsLabel,
+      footerCsPhone: req.body.footerCsPhone,
+      footerCsTime1: req.body.footerCsTime1,
+      footerCsTime2: req.body.footerCsTime2,
+      footerBankTitle: req.body.footerBankTitle,
+      footerBank1: req.body.footerBank1,
+      footerBank2: req.body.footerBank2,
+      footerBank3: req.body.footerBank3,
+      footerDepositor: req.body.footerDepositor,
+      footerBankNotice: req.body.footerBankNotice,
+      footerBizTitle: req.body.footerBizTitle,
+      footerBizName: req.body.footerBizName,
+      footerBizOwner: req.body.footerBizOwner,
+      footerBizAddress: req.body.footerBizAddress,
+      footerBizNumber: req.body.footerBizNumber,
+      footerBizOnline: req.body.footerBizOnline,
+      footerBizPrivacyManager: req.body.footerBizPrivacyManager,
+      footerCustomerTitle: req.body.footerCustomerTitle,
+      footerTermsLink: req.body.footerTermsLink,
+      footerPrivacyLink: req.body.footerPrivacyLink,
+      footerBizInfoLink: req.body.footerBizInfoLink,
+      footerCopyright: req.body.footerCopyright,
+      footerSlogan: req.body.footerSlogan,
+      footerSns
+    };
+
+    await SiteContent.findByIdAndUpdate(siteContent._id, updateData);
+    res.redirect('/admin/site-content?success=1');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('사이트 관리 저장 오류');
   }
-);
+});
 
 // 메인 슬라이드 관리
 router.get('/hero-slides', checkAdmin, async (req, res) => {
@@ -1392,69 +1158,52 @@ router.post(
       await HeroSlide.create({
         title: req.body.title || '',
         desc: req.body.desc || '',
-
         mainLabel: req.body.mainLabel || 'DAMORE MAIN VISUAL',
         showMainLabel: req.body.showMainLabel === 'on',
-
         buttonText: req.body.buttonText || '',
         buttonLink: req.body.buttonLink || '',
         showButton: req.body.showButton === 'on',
-
         leftLink: req.body.leftLink || '',
         centerLink: req.body.centerLink || '',
         rightLink: req.body.rightLink || '',
-
         badge1: req.body.badge1 || '',
         badge2: req.body.badge2 || '',
         badge3: req.body.badge3 || '',
-
         showBadge1: req.body.showBadge1 === 'on',
         showBadge2: req.body.showBadge2 === 'on',
         showBadge3: req.body.showBadge3 === 'on',
-
         badge1Top: req.body.badge1Top || '82px',
         badge1Left: req.body.badge1Left || '50px',
         badge1Right: req.body.badge1Right || '',
         badge1Bottom: req.body.badge1Bottom || '',
-
         badge2Top: req.body.badge2Top || '',
         badge2Left: req.body.badge2Left || '70px',
         badge2Right: req.body.badge2Right || '',
         badge2Bottom: req.body.badge2Bottom || '150px',
-
         badge3Top: req.body.badge3Top || '',
         badge3Left: req.body.badge3Left || '',
         badge3Right: req.body.badge3Right || '46px',
         badge3Bottom: req.body.badge3Bottom || '86px',
-
         benefit1: req.body.benefit1 || '',
         benefit2: req.body.benefit2 || '',
         benefit3: req.body.benefit3 || '',
-
         showBenefit1: req.body.showBenefit1 === 'on',
         showBenefit2: req.body.showBenefit2 === 'on',
         showBenefit3: req.body.showBenefit3 === 'on',
-
         point1: req.body.point1 || '',
         point2: req.body.point2 || '',
         point3: req.body.point3 || '',
-
         showPoint1: req.body.showPoint1 === 'on',
         showPoint2: req.body.showPoint2 === 'on',
         showPoint3: req.body.showPoint3 === 'on',
-
         titleTop: req.body.titleTop || '58%',
         titleLeft: req.body.titleLeft || '34px',
-
         benefitBottom: req.body.benefitBottom || '86px',
         benefitLeft: req.body.benefitLeft || '34px',
-
         buttonBottom: req.body.buttonBottom || '34px',
         buttonLeft: req.body.buttonLeft || '34px',
-
         pointBottom: req.body.pointBottom || '34px',
         pointRight: req.body.pointRight || '34px',
-
         leftImage: req.files?.leftImage?.[0]
           ? await saveImagePreserveAnimation(req.files.leftImage[0], 'hero', {
               width: 1600,
@@ -1462,7 +1211,6 @@ router.post(
               quality: 95
             })
           : '',
-
         centerImage: req.files?.centerImage?.[0]
           ? await saveImagePreserveAnimation(req.files.centerImage[0], 'hero', {
               width: 1600,
@@ -1470,7 +1218,6 @@ router.post(
               quality: 95
             })
           : '',
-
         rightImage: req.files?.rightImage?.[0]
           ? await saveImagePreserveAnimation(req.files.rightImage[0], 'hero', {
               width: 1600,
@@ -1478,7 +1225,6 @@ router.post(
               quality: 95
             })
           : '',
-
         order: nextOrder,
         isActive: req.body.isActive === 'on'
       });
@@ -1506,69 +1252,52 @@ router.post(
 
       slide.title = req.body.title || '';
       slide.desc = req.body.desc || '';
-
       slide.mainLabel = req.body.mainLabel || 'DAMORE MAIN VISUAL';
       slide.showMainLabel = req.body.showMainLabel === 'on';
-
       slide.buttonText = req.body.buttonText || '';
       slide.buttonLink = req.body.buttonLink || '';
       slide.showButton = req.body.showButton === 'on';
-
       slide.leftLink = req.body.leftLink || '';
       slide.centerLink = req.body.centerLink || '';
       slide.rightLink = req.body.rightLink || '';
-
       slide.badge1 = req.body.badge1 || '';
       slide.badge2 = req.body.badge2 || '';
       slide.badge3 = req.body.badge3 || '';
-
       slide.showBadge1 = req.body.showBadge1 === 'on';
       slide.showBadge2 = req.body.showBadge2 === 'on';
       slide.showBadge3 = req.body.showBadge3 === 'on';
-
       slide.badge1Top = req.body.badge1Top || '82px';
       slide.badge1Left = req.body.badge1Left || '50px';
       slide.badge1Right = req.body.badge1Right || '';
       slide.badge1Bottom = req.body.badge1Bottom || '';
-
       slide.badge2Top = req.body.badge2Top || '';
       slide.badge2Left = req.body.badge2Left || '70px';
       slide.badge2Right = req.body.badge2Right || '';
       slide.badge2Bottom = req.body.badge2Bottom || '150px';
-
       slide.badge3Top = req.body.badge3Top || '';
       slide.badge3Left = req.body.badge3Left || '';
       slide.badge3Right = req.body.badge3Right || '46px';
       slide.badge3Bottom = req.body.badge3Bottom || '86px';
-
       slide.benefit1 = req.body.benefit1 || '';
       slide.benefit2 = req.body.benefit2 || '';
       slide.benefit3 = req.body.benefit3 || '';
-
       slide.showBenefit1 = req.body.showBenefit1 === 'on';
       slide.showBenefit2 = req.body.showBenefit2 === 'on';
       slide.showBenefit3 = req.body.showBenefit3 === 'on';
-
       slide.point1 = req.body.point1 || '';
       slide.point2 = req.body.point2 || '';
       slide.point3 = req.body.point3 || '';
-
       slide.showPoint1 = req.body.showPoint1 === 'on';
       slide.showPoint2 = req.body.showPoint2 === 'on';
       slide.showPoint3 = req.body.showPoint3 === 'on';
-
       slide.titleTop = req.body.titleTop || '58%';
       slide.titleLeft = req.body.titleLeft || '34px';
-
       slide.benefitBottom = req.body.benefitBottom || '86px';
       slide.benefitLeft = req.body.benefitLeft || '34px';
-
       slide.buttonBottom = req.body.buttonBottom || '34px';
       slide.buttonLeft = req.body.buttonLeft || '34px';
-
       slide.pointBottom = req.body.pointBottom || '34px';
       slide.pointRight = req.body.pointRight || '34px';
-
       slide.isActive = req.body.isActive === 'on';
 
       if (req.files?.leftImage?.[0]) {
