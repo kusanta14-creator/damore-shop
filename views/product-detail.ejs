@@ -41,8 +41,8 @@
   const rewardPoint = Math.floor(safePrice * 0.01);
   const interestCount = Math.max(Number(safeProduct.likeCount || 0), 238);
   const isSoldOut = safeStatus === 'soldout' || safeStock <= 0;
-  const modelInfo = safeProduct.modelInfo || '신혜성 178cm / 70kg (상의 100~105 / 하의 30~31)';
-  const shippingText = safeProduct.shippingFeeText || '무료배송';
+  const modelInfo = safeProduct.modelInfo || '';
+  const shippingText = safeProduct.shippingFeeText || '';
   const hasColorGroup = !!(colorGroup && Array.isArray(colorGroup.values) && colorGroup.values.length > 0);
   const hasSizeGroup = !!(sizeGroup && Array.isArray(sizeGroup.values) && sizeGroup.values.length > 0);
 
@@ -63,6 +63,9 @@
       discountRate: weeklyDiscountRate
     };
   });
+
+  const sizeText = hasSizeGroup ? sizeGroup.values.map(v => v.value).join(' / ') : '';
+  const colorText = hasColorGroup ? colorGroup.values.map(v => v.value).join(' / ') : '';
 %>
 
 <link rel="stylesheet" href="/css/common.css">
@@ -770,6 +773,150 @@
     text-align: center;
   }
 
+  /* 추가 상세 영역 */
+  .detail-long-wrap {
+    display: grid;
+    gap: 42px;
+  }
+
+  .detail-hero-stack {
+    display: grid;
+    gap: 18px;
+  }
+
+  .detail-hero-stack img {
+    width: 100%;
+    display: block;
+    background: #f3eee7;
+  }
+
+  .product-info-panel {
+    max-width: 520px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .product-info-heading {
+    display: inline-block;
+    margin-bottom: 18px;
+    padding: 0 8px;
+    border-bottom: 1px solid #111;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  .product-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .product-info-card {
+    border: 1px solid #ddd6cb;
+    background: #faf8f4;
+    min-height: 76px;
+    padding: 14px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .product-info-card-label {
+    font-size: 11px;
+    color: #6f675d;
+    font-weight: 700;
+  }
+
+  .product-info-card-value {
+    font-size: 12px;
+    color: #1f1f1f;
+    font-weight: 800;
+    text-align: center;
+    line-height: 1.5;
+    word-break: keep-all;
+  }
+
+  .size-guide-panel {
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  .size-guide-heading {
+    text-align: center;
+    margin-bottom: 18px;
+  }
+
+  .size-guide-heading span {
+    display: inline-block;
+    padding: 0 8px;
+    border-bottom: 1px solid #111;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  .size-guide-image {
+    margin-bottom: 18px;
+    text-align: center;
+  }
+
+  .size-guide-image img {
+    max-width: 260px;
+    width: 100%;
+    display: inline-block;
+  }
+
+  .size-table-wrap {
+    overflow-x: auto;
+  }
+
+  .size-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 460px;
+    background: #fff;
+  }
+
+  .size-table th,
+  .size-table td {
+    border: 1px solid #d8d0c4;
+    padding: 9px 10px;
+    font-size: 11px;
+    text-align: center;
+    line-height: 1.45;
+  }
+
+  .size-table th {
+    background: #f6f2eb;
+    font-weight: 800;
+    color: #444;
+  }
+
+  .size-table td {
+    color: #555;
+    font-weight: 600;
+  }
+
+  .size-notice {
+    margin-top: 10px;
+    font-size: 11px;
+    color: #7a746c;
+    line-height: 1.7;
+    text-align: left;
+    white-space: pre-line;
+  }
+
+  .info-text-box {
+    max-width: 620px;
+    margin: 0 auto;
+    border: 1px solid #ddd6cb;
+    background: #faf8f4;
+    padding: 18px 20px;
+  }
+
   .mobile-buybar {
     display: none;
   }
@@ -831,6 +978,10 @@
 
     .weekly-card-thumb {
       height: 110px;
+    }
+
+    .product-info-grid {
+      grid-template-columns: 1fr 1fr;
     }
 
     .mobile-buybar {
@@ -945,17 +1096,17 @@
 
           <div class="detail-row">
             <div class="detail-row-label">SIZE(cm)</div>
-            <div class="detail-row-value"><%= hasSizeGroup ? sizeGroup.values.map(v => v.value).join(' / ') : '-' %></div>
+            <div class="detail-row-value"><%= sizeText || '-' %></div>
           </div>
 
           <div class="detail-row">
             <div class="detail-row-label">MODEL</div>
-            <div class="detail-row-value"><%= modelInfo %></div>
+            <div class="detail-row-value"><%= modelInfo || '-' %></div>
           </div>
 
           <div class="detail-row">
             <div class="detail-row-label">배송비(비회원)</div>
-            <div class="detail-row-value"><%= shippingText %></div>
+            <div class="detail-row-value"><%= shippingText || '-' %></div>
           </div>
         </div>
 
@@ -1123,29 +1274,93 @@
       <div class="content-section-title">제품상세</div>
       <div class="content-section-sub">상품의 상세 정보를 확인해보세요.</div>
 
-      <% if (safeDetailImages.length > 0) { %>
-        <div class="detail-images">
-          <% safeDetailImages.forEach((img, index) => { %>
-            <img src="<%= img %>" alt="상세 이미지 <%= index + 1 %>">
-          <% }) %>
+      <div class="detail-long-wrap">
+        <% if (safeDetailImages.length > 0) { %>
+          <div class="detail-hero-stack">
+            <% safeDetailImages.forEach((img, index) => { %>
+              <img src="<%= img %>" alt="상세 이미지 <%= index + 1 %>">
+            <% }) %>
+          </div>
+        <% } else if (safeDesc) { %>
+          <div class="info-text-box">
+            <div class="guide-text"><%= safeDesc %></div>
+          </div>
+        <% } else { %>
+          <div class="empty-text">등록된 상세 정보가 없습니다.</div>
+        <% } %>
+
+        <div class="product-info-panel">
+          <div class="product-info-heading">PRODUCT INFO</div>
+
+          <div class="product-info-grid">
+            <div class="product-info-card">
+              <div class="product-info-card-label">색상</div>
+              <div class="product-info-card-value"><%= colorText || '-' %></div>
+            </div>
+
+            <div class="product-info-card">
+              <div class="product-info-card-label">사이즈</div>
+              <div class="product-info-card-value"><%= sizeText || '-' %></div>
+            </div>
+
+            <div class="product-info-card">
+              <div class="product-info-card-label">모델</div>
+              <div class="product-info-card-value"><%= modelInfo || '-' %></div>
+            </div>
+
+            <div class="product-info-card">
+              <div class="product-info-card-label">배송안내</div>
+              <div class="product-info-card-value"><%= shippingText || '-' %></div>
+            </div>
+          </div>
         </div>
-      <% } else if (safeDesc) { %>
-        <div class="guide-text"><%= safeDesc %></div>
-      <% } else { %>
-        <div class="empty-text">등록된 상세 정보가 없습니다.</div>
-      <% } %>
+
+        <div class="size-guide-panel">
+          <div class="size-guide-heading"><span>사이즈 정보</span></div>
+
+          <% if (safeGuide && safeGuide.sizeGuideImage) { %>
+            <div class="size-guide-image">
+              <img src="<%= safeGuide.sizeGuideImage %>" alt="사이즈 가이드">
+            </div>
+          <% } %>
+
+          <div class="size-table-wrap">
+            <table class="size-table">
+              <thead>
+                <tr>
+                  <th>구분</th>
+                  <th>옵션</th>
+                  <th>비고</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (hasSizeGroup) { %>
+                  <% sizeGroup.values.forEach((item, index) => { %>
+                    <tr>
+                      <td><%= index + 1 %></td>
+                      <td><%= item && item.value ? item.value : '-' %></td>
+                      <td><%= item && item.isSoldOut ? '품절' : '선택가능' %></td>
+                    </tr>
+                  <% }) %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="3">등록된 사이즈 정보가 없습니다.</td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+
+          <% if (safeGuide && safeGuide.copyrightNotice) { %>
+            <div class="size-notice"><%= safeGuide.copyrightNotice %></div>
+          <% } %>
+        </div>
+      </div>
     </section>
 
     <section class="content-section" id="product-info">
       <div class="content-section-title">구매안내</div>
       <div class="content-section-sub">사이즈 / 세탁 / 배송 정보를 확인해보세요.</div>
-
-      <% if (safeGuide && safeGuide.sizeGuideImage) { %>
-        <div class="guide-block">
-          <div class="guide-heading">사이즈 가이드</div>
-          <img src="<%= safeGuide.sizeGuideImage %>" alt="사이즈 가이드" style="width:100%;">
-        </div>
-      <% } %>
 
       <% if (safeGuide && safeGuide.washImage) { %>
         <div class="guide-block">
@@ -1157,15 +1372,13 @@
       <% if (safeGuide && safeGuide.shippingExchangeReturn) { %>
         <div class="guide-block">
           <div class="guide-heading">배송 / 교환 / 반품 안내</div>
-          <div class="guide-text"><%= safeGuide.shippingExchangeReturn %></div>
+          <div class="info-text-box">
+            <div class="guide-text"><%= safeGuide.shippingExchangeReturn %></div>
+          </div>
         </div>
       <% } %>
 
-      <% if (
-        !(safeGuide && safeGuide.sizeGuideImage) &&
-        !(safeGuide && safeGuide.washImage) &&
-        !(safeGuide && safeGuide.shippingExchangeReturn)
-      ) { %>
+      <% if (!(safeGuide && safeGuide.washImage) && !(safeGuide && safeGuide.shippingExchangeReturn)) { %>
         <div class="empty-text">등록된 안내 정보가 없습니다.</div>
       <% } %>
     </section>
