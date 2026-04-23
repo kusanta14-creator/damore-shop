@@ -7,22 +7,95 @@
   <style>
     * { box-sizing: border-box; }
 
+    :root {
+      --bg: #f5f3ef;
+      --white: #ffffff;
+      --black: #111111;
+      --muted: #6f6a63;
+      --line: rgba(17, 17, 17, 0.08);
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
+      --radius: 24px;
+      --max: 1200px;
+      --soft: #efe9df;
+      --gold: #9d8660;
+    }
+
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f7f7f7;
-      padding: 40px;
-      color: #111;
+      font-family: "Pretendard", "Noto Sans KR", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--black);
+      padding: 40px 20px 80px;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
     }
 
     .wrap {
-      max-width: 1100px;
+      max-width: var(--max);
       margin: 0 auto;
     }
 
-    h1 {
-      margin: 0 0 24px;
-      font-size: 36px;
+    .page-head {
+      margin-bottom: 28px;
+    }
+
+    .page-head small {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .page-head h1 {
+      margin: 0 0 10px;
+      font-size: 40px;
+      line-height: 1.1;
+    }
+
+    .page-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .quick-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .quick-btn {
+      min-height: 46px;
+      padding: 0 18px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      transition: 0.2s ease;
+    }
+
+    .quick-btn.primary {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .quick-btn.light {
+      background: var(--soft);
+      color: var(--black);
+    }
+
+    .quick-btn:hover {
+      transform: translateY(-1px);
     }
 
     .grid {
@@ -33,49 +106,55 @@
 
     .card {
       display: block;
-      background: white;
-      border-radius: 12px;
+      background: var(--white);
+      border-radius: var(--radius);
       padding: 24px;
-      text-decoration: none;
-      color: #111;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      color: var(--black);
+      box-shadow: var(--shadow);
       transition: 0.2s ease;
-      border: 1px solid #eee;
-      min-height: 140px;
+      border: 1px solid var(--line);
+      min-height: 148px;
     }
 
     .card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+    }
+
+    .card.primary {
+      border: 2px solid var(--black);
     }
 
     .card strong {
       display: block;
-      font-size: 20px;
+      font-size: 21px;
       margin-bottom: 10px;
+      line-height: 1.3;
     }
 
     .card p {
       margin: 0;
-      color: #666;
-      line-height: 1.6;
-    }
-
-    .card.primary {
-      background: white;
-      color: #111;
-      border: 2px solid #111;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
     }
 
     .logout {
-      display: inline-block;
-      margin-top: 24px;
-      text-decoration: none;
-      background: #111;
-      color: white;
-      padding: 12px 16px;
-      border-radius: 8px;
-      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 28px;
+      min-height: 48px;
+      padding: 0 18px;
+      background: var(--black);
+      color: var(--white);
+      border-radius: 12px;
+      font-weight: 800;
+      transition: 0.2s ease;
+    }
+
+    .logout:hover {
+      transform: translateY(-1px);
     }
 
     @media (max-width: 1000px) {
@@ -84,64 +163,83 @@
       }
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 640px) {
       body {
-        padding: 24px 16px;
+        padding: 24px 16px 64px;
       }
 
       .grid {
         grid-template-columns: 1fr;
       }
 
-      h1 {
-        font-size: 30px;
+      .page-head h1 {
+        font-size: 32px;
+      }
+
+      .quick-btn,
+      .logout {
+        width: 100%;
       }
     }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>관리자 대시보드</h1>
+    <div class="page-head">
+      <small>DAMORE ADMIN</small>
+      <h1>관리자 대시보드</h1>
+      <p>상품, 쇼츠, 주문, 카테고리, 메인화면 요소를 한 번에 관리할 수 있습니다.</p>
+    </div>
+
+    <div class="quick-actions">
+      <a href="/admin/products/new" class="quick-btn primary">상품 바로 등록</a>
+      <a href="/admin/shorts/new" class="quick-btn light">숏폼 바로 등록</a>
+    </div>
 
     <div class="grid">
       <a href="/admin/hero-slides" class="card primary">
         <strong>메인 슬라이드</strong>
-        <p>홈 배너 이미지 / 링크 / 문구 관리</p>
+        <p>홈 배너 이미지, 링크, 문구를 관리합니다.</p>
       </a>
 
       <a href="/admin/products" class="card">
         <strong>상품 목록</strong>
-        <p>등록된 상품 확인, 수정, 삭제</p>
+        <p>등록된 상품을 확인하고 수정, 삭제합니다.</p>
       </a>
 
       <a href="/admin/products/new" class="card">
         <strong>상품 등록</strong>
-        <p>새 상품 추가 및 이미지 업로드</p>
-      </a>
-
-      <a href="/admin/categories" class="card">
-        <strong>카테고리 관리</strong>
-        <p>카테고리 추가 / 삭제</p>
-      </a>
-
-      <a href="/admin/orders" class="card">
-        <strong>주문 목록</strong>
-        <p>고객 주문 내역 확인</p>
-      </a>
-
-      <a href="/admin/site-content" class="card">
-        <strong>사이트 관리</strong>
-        <p>메인 이미지, 소개글, 문구 수정</p>
+        <p>새 상품 추가, 이미지·영상 업로드, 옵션 입력을 진행합니다.</p>
       </a>
 
       <a href="/admin/shorts" class="card">
         <strong>숏폼 관리</strong>
-        <p>숏폼 등록, 수정, 노출 상태 관리</p>
+        <p>등록된 숏폼 확인, 수정, 노출 상태를 관리합니다.</p>
       </a>
 
       <a href="/admin/shorts/new" class="card">
         <strong>숏폼 등록</strong>
-        <p>새 숏폼 추가 및 상품 연결</p>
+        <p>새 숏폼을 올리고 상품 연결을 설정합니다.</p>
+      </a>
+
+      <a href="/admin/categories" class="card">
+        <strong>카테고리 관리</strong>
+        <p>카테고리, 서브카테고리, 카테고리 배너를 관리합니다.</p>
+      </a>
+
+      <a href="/admin/orders" class="card">
+        <strong>주문 목록</strong>
+        <p>고객 주문 내역과 배송 상태를 확인합니다.</p>
+      </a>
+
+      <a href="/admin/site-content" class="card">
+        <strong>사이트 관리</strong>
+        <p>브랜드 문구, 소개글, 푸터 정보 등을 수정합니다.</p>
+      </a>
+
+      <a href="/admin/home-sections" class="card">
+        <strong>홈 섹션 관리</strong>
+        <p>메인 홈 화면 섹션 추가, 수정, 노출 순서를 관리합니다.</p>
       </a>
     </div>
 
