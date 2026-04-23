@@ -46,6 +46,8 @@
   const hasColorGroup = !!(colorGroup && Array.isArray(colorGroup.values) && colorGroup.values.length > 0);
   const hasSizeGroup = !!(sizeGroup && Array.isArray(sizeGroup.values) && sizeGroup.values.length > 0);
 
+  const sizeText = hasSizeGroup ? sizeGroup.values.map(v => v.value).join(' / ') : '';
+
   const weeklyProducts = safeAddOnProducts.slice(0, 4).map((item) => {
     const currentPrice = Number(item && item.price ? item.price : 0);
     const originalPrice = Number(item && item.oldPrice ? item.oldPrice : 0);
@@ -63,9 +65,6 @@
       discountRate: weeklyDiscountRate
     };
   });
-
-  const sizeText = hasSizeGroup ? sizeGroup.values.map(v => v.value).join(' / ') : '';
-  const colorText = hasColorGroup ? colorGroup.values.map(v => v.value).join(' / ') : '';
 %>
 
 <link rel="stylesheet" href="/css/common.css">
@@ -731,18 +730,6 @@
     text-align: center;
   }
 
-  .detail-images {
-    display: grid;
-    gap: 14px;
-  }
-
-  .detail-images img {
-    width: 100%;
-    background: transparent;
-    border: 0;
-    box-shadow: none;
-  }
-
   .guide-text {
     font-size: 12px;
     color: #555;
@@ -773,7 +760,6 @@
     text-align: center;
   }
 
-  /* 추가 상세 영역 */
   .detail-long-wrap {
     display: grid;
     gap: 42px;
@@ -781,62 +767,15 @@
 
   .detail-hero-stack {
     display: grid;
-    gap: 18px;
+    gap: 14px;
   }
 
   .detail-hero-stack img {
     width: 100%;
     display: block;
     background: #f3eee7;
-  }
-
-  .product-info-panel {
-    max-width: 520px;
-    margin: 0 auto;
-    text-align: center;
-  }
-
-  .product-info-heading {
-    display: inline-block;
-    margin-bottom: 18px;
-    padding: 0 8px;
-    border-bottom: 1px solid #111;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-  }
-
-  .product-info-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-  }
-
-  .product-info-card {
-    border: 1px solid #ddd6cb;
-    background: #faf8f4;
-    min-height: 76px;
-    padding: 14px 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .product-info-card-label {
-    font-size: 11px;
-    color: #6f675d;
-    font-weight: 700;
-  }
-
-  .product-info-card-value {
-    font-size: 12px;
-    color: #1f1f1f;
-    font-weight: 800;
-    text-align: center;
-    line-height: 1.5;
-    word-break: keep-all;
+    border: 0;
+    box-shadow: none;
   }
 
   .size-guide-panel {
@@ -869,11 +808,13 @@
     display: inline-block;
   }
 
-  .size-table-wrap {
+  .size-table-wrap,
+  .wear-table-wrap {
     overflow-x: auto;
   }
 
-  .size-table {
+  .size-table,
+  .wear-table {
     width: 100%;
     border-collapse: collapse;
     min-width: 460px;
@@ -881,7 +822,9 @@
   }
 
   .size-table th,
-  .size-table td {
+  .size-table td,
+  .wear-table th,
+  .wear-table td {
     border: 1px solid #d8d0c4;
     padding: 9px 10px;
     font-size: 11px;
@@ -889,13 +832,15 @@
     line-height: 1.45;
   }
 
-  .size-table th {
+  .size-table th,
+  .wear-table th {
     background: #f6f2eb;
     font-weight: 800;
     color: #444;
   }
 
-  .size-table td {
+  .size-table td,
+  .wear-table td {
     color: #555;
     font-weight: 600;
   }
@@ -907,6 +852,34 @@
     line-height: 1.7;
     text-align: left;
     white-space: pre-line;
+  }
+
+  .wear-info-panel {
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  .wear-info-heading {
+    text-align: center;
+    margin-bottom: 18px;
+  }
+
+  .wear-info-heading span {
+    display: inline-block;
+    padding: 0 8px;
+    border-bottom: 1px solid #111;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  .wear-mark {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    background: #ef625d;
+    margin-right: 6px;
+    vertical-align: middle;
   }
 
   .info-text-box {
@@ -978,10 +951,6 @@
 
     .weekly-card-thumb {
       height: 110px;
-    }
-
-    .product-info-grid {
-      grid-template-columns: 1fr 1fr;
     }
 
     .mobile-buybar {
@@ -1289,32 +1258,6 @@
           <div class="empty-text">등록된 상세 정보가 없습니다.</div>
         <% } %>
 
-        <div class="product-info-panel">
-          <div class="product-info-heading">PRODUCT INFO</div>
-
-          <div class="product-info-grid">
-            <div class="product-info-card">
-              <div class="product-info-card-label">색상</div>
-              <div class="product-info-card-value"><%= colorText || '-' %></div>
-            </div>
-
-            <div class="product-info-card">
-              <div class="product-info-card-label">사이즈</div>
-              <div class="product-info-card-value"><%= sizeText || '-' %></div>
-            </div>
-
-            <div class="product-info-card">
-              <div class="product-info-card-label">모델</div>
-              <div class="product-info-card-value"><%= modelInfo || '-' %></div>
-            </div>
-
-            <div class="product-info-card">
-              <div class="product-info-card-label">배송안내</div>
-              <div class="product-info-card-value"><%= shippingText || '-' %></div>
-            </div>
-          </div>
-        </div>
-
         <div class="size-guide-panel">
           <div class="size-guide-heading"><span>사이즈 정보</span></div>
 
@@ -1328,7 +1271,7 @@
             <table class="size-table">
               <thead>
                 <tr>
-                  <th>구분</th>
+                  <th>사이즈</th>
                   <th>옵션</th>
                   <th>비고</th>
                 </tr>
@@ -1351,16 +1294,59 @@
             </table>
           </div>
 
-          <% if (safeGuide && safeGuide.copyrightNotice) { %>
-            <div class="size-notice"><%= safeGuide.copyrightNotice %></div>
-          <% } %>
+          <div class="size-notice">- 위의 실측사이즈는 단면의 길이입니다. 참고해 주세요.
+- 사이즈는 측정방법에 따라 1~3cm 정도 오차가 있을 수 있습니다.
+- 제품 색상은 사용자 모니터와 해상도에 따라 실제 색상과 다소 차이가 있을 수 있습니다.</div>
+        </div>
+
+        <div class="wear-info-panel">
+          <div class="wear-info-heading"><span>착용 정보</span></div>
+
+          <div class="wear-table-wrap">
+            <table class="wear-table">
+              <thead>
+                <tr>
+                  <th>항목</th>
+                  <th>낮음</th>
+                  <th>보통</th>
+                  <th>높음</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th>계절감</th>
+                  <td><span class="wear-mark"></span>봄/가을</td>
+                  <td>여름</td>
+                  <td>겨울</td>
+                </tr>
+                <tr>
+                  <th>신축성</th>
+                  <td>없음</td>
+                  <td><span class="wear-mark"></span>적당함</td>
+                  <td>좋음</td>
+                </tr>
+                <tr>
+                  <th>두께감</th>
+                  <td>얇음</td>
+                  <td><span class="wear-mark"></span>적당함</td>
+                  <td>두꺼움</td>
+                </tr>
+                <tr>
+                  <th>무게감</th>
+                  <td>가벼움</td>
+                  <td><span class="wear-mark"></span>적당함</td>
+                  <td>무거움</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
 
     <section class="content-section" id="product-info">
       <div class="content-section-title">구매안내</div>
-      <div class="content-section-sub">사이즈 / 세탁 / 배송 정보를 확인해보세요.</div>
+      <div class="content-section-sub">세탁 / 배송 정보를 확인해보세요.</div>
 
       <% if (safeGuide && safeGuide.washImage) { %>
         <div class="guide-block">
