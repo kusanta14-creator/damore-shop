@@ -45,7 +45,13 @@ const upload = multer({
     const ext = path.extname(file.originalname || '').toLowerCase();
 
     if (
-      ['imageFile', 'subImageFiles', 'detailImageFiles', 'washImageFile', 'sizeGuideImageFile'].includes(file.fieldname) &&
+      [
+        'imageFile',
+        'subImageFiles',
+        'detailImageFiles',
+        'washImageFile',
+        'sizeGuideImageFile'
+      ].includes(file.fieldname) &&
       imageExts.includes(ext)
     ) {
       return cb(null, true);
@@ -93,6 +99,13 @@ function extractExistingArray(bodyValue) {
     .filter(Boolean);
 }
 
+function splitCommaValues(value) {
+  return String(value || '')
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
 function buildOptionGroup(name, valuesText) {
   const groupName = String(name || '').trim();
   const values = splitLines(valuesText).map((value) => ({
@@ -108,6 +121,70 @@ function buildOptionGroup(name, valuesText) {
     name: groupName,
     values
   };
+}
+
+function buildOptionGroupsFromQuickInputs(body, existingProduct = null) {
+  const optionGroups = [];
+
+  const colorValues = splitCommaValues(body.colorsInput);
+  const sizeValues = splitCommaValues(body.sizesInput);
+
+  if (colorValues.length > 0) {
+    optionGroups.push({
+      name: '색상',
+      values: colorValues.map((value) => ({ value, isSoldOut: false }))
+    });
+  }
+
+  if (sizeValues.length > 0) {
+    optionGroups.push({
+      name: '사이즈',
+      values: sizeValues.map((value) => ({ value, isSoldOut: false }))
+    });
+  }
+
+  if (optionGroups.length > 0) {
+    return optionGroups;
+  }
+
+  const optionGroup1 = buildOptionGroup(body.optionGroup1Name, body.optionGroup1Values);
+  const optionGroup2 = buildOptionGroup(body.optionGroup2Name, body.optionGroup2Values);
+
+  if (optionGroup1) optionGroups.push(optionGroup1);
+  if (optionGroup2) optionGroups.push(optionGroup2);
+
+  if (optionGroups.length > 0) {
+    return optionGroups;
+  }
+
+  return existingProduct?.optionGroups || [];
+}
+
+function buildSizeTableHeaders(value) {
+  return splitCommaValues(value);
+}
+
+function buildSizeTableRows(body) {
+  const labels = normalizeArrayInput(body.sizeRowLabel);
+  const valuesList = normalizeArrayInput(body.sizeRowValues);
+
+  const rows = [];
+
+  const maxLength = Math.max(labels.length, valuesList.length);
+
+  for (let i = 0; i < maxLength; i += 1) {
+    const sizeLabel = String(labels[i] || '').trim();
+    const values = splitCommaValues(valuesList[i] || '');
+
+    if (!sizeLabel && values.length === 0) continue;
+
+    rows.push({
+      sizeLabel,
+      values
+    });
+  }
+
+  return rows;
 }
 
 function collectAllMediaPaths(product) {
@@ -172,22 +249,23 @@ async function buildProductPayload(req, existingProduct = null) {
     ? toPublicPath(sizeGuideImageFile)
     : String(req.body.existingSizeGuideImage || existingProduct?.guide?.sizeGuideImage || '').trim();
 
-  const optionGroups = [];
-  const optionGroup1 = buildOptionGroup(req.body.optionGroup1Name, req.body.optionGroup1Values);
-  const optionGroup2 = buildOptionGroup(req.body.optionGroup2Name, req.body.optionGroup2Values);
-
-  if (optionGroup1) optionGroups.push(optionGroup1);
-  if (optionGroup2) optionGroups.push(optionGroup2);
+  const optionGroups = buildOptionGroupsFromQuickInputs(req.body, existingProduct);
 
   const additionalProducts = normalizeArrayInput(req.body.additionalProducts)
     .map((id) => String(id || '').trim())
     .filter(Boolean);
+
+  const sizeGuideType = String(req.body.sizeGuideType || '').trim();
+  const sizeTableHeaders = buildSizeTableHeaders(req.body.sizeTableHeaders);
+  const sizeTableRows = buildSizeTableRows(req.body);
+  const sizeNotice = String(req.body.sizeNotice || '').trim();
 
   return {
     name: String(req.body.name || '').trim(),
     summary: String(req.body.summary || '').trim(),
     desc: String(req.body.desc || '').trim(),
     category: String(req.body.category || '').trim(),
+    subCategory: String(req.body.subCategory || '').trim(),
     tag: String(req.body.tag || '').trim(),
     price: Number(req.body.price || 0),
     oldPrice: Number(req.body.oldPrice || 0),
@@ -209,9 +287,23 @@ async function buildProductPayload(req, existingProduct = null) {
     interestCount: Number(req.body.interestCount || existingProduct?.interestCount || 0),
     reviewCount: Number(req.body.reviewCount || existingProduct?.reviewCount || 0),
     shippingFeeText: String(req.body.shippingFeeText || '').trim() || '무료배송',
+    modelInfo: String(req.body.modelInfo || existingProduct?.modelInfo || '').trim(),
     guide: {
+      sizeGuideType,
       washImage,
       sizeGuideImage,
+      sizeTableHeaders,
+      sizeTableRows,
+      sizeNotice:
+        sizeNotice ||
+        existingProduct?.guide?.sizeNotice ||
+        '- 위의 실측사이즈는 단면의 길이입니다. 참고해 주세요.\n- 사이즈는 측정방법에 따라 1~3cm 정도 오차가 있을 수 있습니다.\n- 제품 색상은 사용자 모니터와 해상도에 따라 실제 색상과 다소 차이가 있을 수 있습니다.',
+      wearInfo: {
+        season: String(req.body.wearSeason || existingProduct?.guide?.wearInfo?.season || '봄/가을').trim(),
+        elasticity: String(req.body.wearElasticity || existingProduct?.guide?.wearInfo?.elasticity || '적당함').trim(),
+        thickness: String(req.body.wearThickness || existingProduct?.guide?.wearInfo?.thickness || '적당함').trim(),
+        weight: String(req.body.wearWeight || existingProduct?.guide?.wearInfo?.weight || '적당함').trim()
+      },
       copyrightNotice: String(req.body.copyrightNotice || '').trim(),
       shippingExchangeReturn: String(req.body.shippingExchangeReturn || '').trim()
     }
@@ -324,6 +416,7 @@ router.post(
       product.summary = payload.summary;
       product.desc = payload.desc;
       product.category = payload.category;
+      product.subCategory = payload.subCategory;
       product.tag = payload.tag;
       product.price = payload.price;
       product.oldPrice = payload.oldPrice;
@@ -342,6 +435,7 @@ router.post(
       product.interestCount = payload.interestCount;
       product.reviewCount = payload.reviewCount;
       product.shippingFeeText = payload.shippingFeeText;
+      product.modelInfo = payload.modelInfo;
       product.guide = payload.guide;
 
       await product.save();
