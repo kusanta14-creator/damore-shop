@@ -291,7 +291,7 @@
       gap: 20px;
       margin: 0 auto 18px;
       flex-wrap: wrap;
-      max-width: 920px;
+      max-width: 1120px;
     }
 
     .section-head-left small {
@@ -386,8 +386,8 @@
     .best-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      max-width: 920px;
+      gap: 16px;
+      max-width: 1120px;
       margin-left: auto;
       margin-right: auto;
     }
@@ -569,13 +569,13 @@
       border-radius: 999px;
     }
 
-  .home-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 0 auto 22px;
-  max-width: 920px;
-}
+    .home-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 0 auto 22px;
+      max-width: 1120px;
+    }
 
     .home-tab-btn {
       min-height: 38px;
@@ -627,8 +627,8 @@
     .section-slide-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      max-width: 920px;
+      gap: 16px;
+      max-width: 1120px;
       margin-left: auto;
       margin-right: auto;
     }
@@ -894,7 +894,15 @@
       }
 
       .collection-grid,
-      .best-grid,
+      .best-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        max-width: 1120px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
       .section-slide-grid,
       .shorts-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -944,7 +952,16 @@
 
       .collection-grid,
       .best-grid,
-      .section-slide-grid,
+      .section-slide-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        max-width: 1120px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+
       .shorts-grid {
         grid-template-columns: 1fr;
       }
