@@ -5,7 +5,6 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const methodOverride = require('method-override');
 const axios = require('axios');
-const adminProductRoutes = require('./routes/admin-products');
 
 dotenv.config();
 
@@ -38,7 +37,6 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.set('trust proxy', 1);
 
-app.use('/admin/products', adminProductRoutes);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride('_method'));
@@ -515,7 +513,6 @@ app.get('/about', async (req, res) => {
   }
 });
 
-// 상품 상세
 // 상품 상세
 app.get('/products/:id', async (req, res) => {
   try {
