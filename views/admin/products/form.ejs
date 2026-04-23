@@ -3,33 +3,115 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>상품 등록 | DAMORE ADMIN</title>
+<title><%= mode === 'edit' ? '상품 수정' : '상품 등록' %> | DAMORE ADMIN</title>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:Pretendard;background:#f5f3ef;color:#111;}
+body{
+  font-family:Pretendard,"Noto Sans KR",Arial,sans-serif;
+  background:#f5f3ef;
+  color:#111;
+}
+a{text-decoration:none;color:inherit;}
+input,textarea,select,button{font:inherit;}
 
-.container{max-width:1200px;margin:40px auto;padding:0 20px;}
-.card{background:#fff;border-radius:20px;padding:30px;box-shadow:0 10px 30px rgba(0,0,0,0.05);}
-
-h1{margin-bottom:20px;}
-label{display:block;margin:12px 0 6px;font-weight:700;}
-input,textarea,select{
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:1px solid #ddd;
+:root{
+  --bg:#f5f3ef;
+  --white:#fff;
+  --black:#111;
+  --muted:#6f6a63;
+  --line:rgba(17,17,17,0.08);
+  --gold:#9d8660;
+  --soft:#efe9df;
+  --shadow:0 10px 30px rgba(0,0,0,0.05);
 }
 
-button{
-  margin-top:20px;
+.container{max-width:1200px;margin:40px auto;padding:0 20px;}
+.card{background:#fff;border-radius:24px;padding:30px;box-shadow:var(--shadow);}
+
+.top-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+
+.top-btn{
+  min-width:160px;
+  height:46px;
+  padding:0 18px;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+  font-weight:800;
+}
+
+.top-btn-dark{
+  background:#111;
+  color:#fff;
+}
+
+.top-btn-light{
+  background:var(--soft);
+  color:#111;
+}
+
+.head{
+  margin-bottom:20px;
+}
+
+.head small{
+  display:inline-block;
+  margin-bottom:8px;
+  color:var(--gold);
+  font-size:12px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  font-weight:700;
+}
+
+.head h1{
+  margin-bottom:10px;
+  font-size:36px;
+}
+
+.head p{
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.7;
+}
+
+label{
+  display:block;
+  margin:12px 0 6px;
+  font-weight:700;
+  font-size:14px;
+}
+
+input,textarea,select{
+  width:100%;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  background:#fff;
+}
+
+textarea{
+  min-height:120px;
+  resize:vertical;
+}
+
+button.save-btn{
+  margin-top:24px;
   padding:14px;
   width:100%;
   border:none;
   background:#111;
   color:#fff;
   font-weight:700;
-  border-radius:12px;
+  border-radius:14px;
   cursor:pointer;
 }
 
@@ -41,194 +123,353 @@ button{
 
 .full{grid-column:1/-1;}
 
-.preview{
-  margin-top:30px;
-  padding:20px;
+.note{
+  margin-top:6px;
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.6;
+}
+
+.preview-box{
+  margin-top:8px;
+  padding:14px;
   background:#faf8f4;
+  border:1px solid var(--line);
   border-radius:16px;
 }
 
+.preview-title{
+  font-size:13px;
+  font-weight:800;
+  margin-bottom:10px;
+}
+
+.preview-list{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+}
+
+.preview-thumb{
+  width:120px;
+  height:140px;
+  border-radius:14px;
+  overflow:hidden;
+  background:#ece8e1;
+  border:1px solid var(--line);
+}
+
+.preview-thumb img,
+.preview-thumb video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.preview-empty{
+  font-size:12px;
+  color:var(--muted);
+}
+
+.helper-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+@media (max-width: 760px){
+  .container{padding:0 16px;}
+  .grid,
+  .helper-grid{grid-template-columns:1fr;}
+  .top-btn{width:100%;}
+}
 </style>
 </head>
 
 <body>
+<%
+  const safeProduct = product || {};
+  const safeGuide = safeProduct.guide || {};
+  const safeOptionGroups = Array.isArray(safeProduct.optionGroups) ? safeProduct.optionGroups : [];
+  const optionGroup1 = safeOptionGroups[0] || {};
+  const optionGroup2 = safeOptionGroups[1] || {};
+
+  const optionGroup1Name = optionGroup1.name || '';
+  const optionGroup1Values = Array.isArray(optionGroup1.values)
+    ? optionGroup1.values.map(v => v.value).filter(Boolean).join('\n')
+    : '';
+
+  const optionGroup2Name = optionGroup2.name || '';
+  const optionGroup2Values = Array.isArray(optionGroup2.values)
+    ? optionGroup2.values.map(v => v.value).filter(Boolean).join('\n')
+    : '';
+
+  const selectedAdditionalProducts = Array.isArray(safeProduct.additionalProducts)
+    ? safeProduct.additionalProducts.map(v => String(v))
+    : [];
+
+  const couponEnabled = safeProduct.couponDisplay && typeof safeProduct.couponDisplay.enabled === 'boolean'
+    ? String(safeProduct.couponDisplay.enabled)
+    : 'false';
+
+  const couponLabel = safeProduct.couponDisplay?.label || '';
+%>
 
 <div class="container">
-<div class="card">
+  <div class="top-actions">
+    <a href="/admin/dashboard" class="top-btn top-btn-light">대시보드</a>
+    <a href="/admin/products" class="top-btn top-btn-light">상품목록</a>
+    <a href="/admin/products/new" class="top-btn top-btn-dark">+ 새 상품 등록</a>
+  </div>
 
-<h1><%= mode === 'edit' ? '상품 수정' : '상품 등록' %></h1>
+  <div class="card">
+    <div class="head">
+      <small>Admin Product</small>
+      <h1><%= mode === 'edit' ? '상품 수정' : '상품 등록' %></h1>
+      <p>
+        대표 이미지, 영상, 서브 이미지, 상세 이미지, 옵션, 추가상품, 가이드 정보를 한 번에 관리할 수 있어요.
+      </p>
+    </div>
 
-<form method="POST"
-action="<%= mode === 'edit' ? '/admin/products/' + product._id + '/edit' : '/admin/products/new' %>"
-enctype="multipart/form-data">
+    <form
+      method="POST"
+      action="<%= mode === 'edit' ? '/admin/products/' + safeProduct._id + '/edit' : '/admin/products/new' %>"
+      enctype="multipart/form-data"
+    >
+      <div class="grid">
 
-<div class="grid">
+        <div>
+          <label>상품명</label>
+          <input name="name" value="<%= safeProduct.name || '' %>" required>
+        </div>
 
-<!-- 상품명 -->
-<div>
-<label>상품명</label>
-<input name="name" value="<%= product?.name || '' %>" required>
-</div>
+        <div>
+          <label>카테고리</label>
+          <input name="category" value="<%= safeProduct.category || '' %>">
+        </div>
 
-<!-- 카테고리 -->
-<div>
-<label>카테고리</label>
-<input name="category" value="<%= product?.category || '' %>">
-</div>
+        <div>
+          <label>가격</label>
+          <input type="number" name="price" min="0" value="<%= safeProduct.price || 0 %>">
+        </div>
 
-<!-- 가격 -->
-<div>
-<label>가격</label>
-<input type="number" name="price" value="<%= product?.price || 0 %>">
-</div>
+        <div>
+          <label>할인전 가격</label>
+          <input type="number" name="oldPrice" min="0" value="<%= safeProduct.oldPrice || 0 %>">
+        </div>
 
-<!-- 할인전 -->
-<div>
-<label>할인전 가격</label>
-<input type="number" name="oldPrice" value="<%= product?.oldPrice || 0 %>">
-</div>
+        <div>
+          <label>재고 수량</label>
+          <input type="number" name="stock" min="0" value="<%= safeProduct.stock || 0 %>">
+        </div>
 
-<!-- 요약 -->
-<div class="full">
-<label>한줄 요약</label>
-<input name="summary" value="<%= product?.summary || '' %>">
-</div>
+        <div>
+          <label>상태</label>
+          <select name="status">
+            <option value="onsale" <%= safeProduct.status !== 'soldout' && safeProduct.status !== 'hidden' ? 'selected' : '' %>>판매중</option>
+            <option value="soldout" <%= safeProduct.status === 'soldout' ? 'selected' : '' %>>품절</option>
+            <option value="hidden" <%= safeProduct.status === 'hidden' ? 'selected' : '' %>>숨김</option>
+          </select>
+        </div>
 
-<!-- 설명 -->
-<div class="full">
-<label>설명</label>
-<textarea name="desc"><%= product?.desc || '' %></textarea>
-</div>
+        <div class="full">
+          <label>한줄 요약</label>
+          <input name="summary" value="<%= safeProduct.summary || '' %>">
+        </div>
 
-<!-- 태그 -->
-<div>
-<label>태그</label>
-<input name="tag" value="<%= product?.tag || '' %>">
-</div>
+        <div class="full">
+          <label>설명</label>
+          <textarea name="desc"><%= safeProduct.desc || '' %></textarea>
+        </div>
 
-<!-- 상태 -->
-<div>
-<label>상태</label>
-<select name="status">
-<option value="onsale" <%= product?.status !== 'soldout' ? 'selected' : '' %>>판매중</option>
-<option value="soldout" <%= product?.status === 'soldout' ? 'selected' : '' %>>품절</option>
-</select>
-</div>
+        <div>
+          <label>태그</label>
+          <input name="tag" value="<%= safeProduct.tag || '' %>">
+        </div>
 
-<!-- 대표이미지 -->
-<div class="full">
-<label>대표 이미지</label>
-<input type="file" name="imageFile">
-<input type="hidden" name="image" value="<%= product?.image || '' %>">
-</div>
+        <div>
+          <label>배송 안내</label>
+          <input name="shippingFeeText" value="<%= safeProduct.shippingFeeText || '무료배송' %>">
+        </div>
 
-<!-- 영상 -->
-<div class="full">
-<label>상품 영상</label>
-<input type="file" name="videoFile">
-<input type="hidden" name="video" value="<%= product?.video || '' %>">
-</div>
+        <div class="full">
+          <label>대표 이미지</label>
+          <input type="file" name="imageFile" accept="image/*">
+          <input type="hidden" name="image" value="<%= safeProduct.image || '' %>">
 
-<!-- 서브 이미지 -->
-<div class="full">
-<label>서브 이미지 (여러개)</label>
-<input type="file" name="subImageFiles" multiple>
-<% if(product?.subImages){ product.subImages.forEach(img=>{ %>
-<input type="hidden" name="existingSubImages" value="<%= img %>">
-<% }) } %>
-</div>
+          <% if (safeProduct.image) { %>
+            <div class="preview-box">
+              <div class="preview-title">현재 대표 이미지</div>
+              <div class="preview-list">
+                <div class="preview-thumb">
+                  <img src="<%= safeProduct.image %>" alt="대표 이미지">
+                </div>
+              </div>
+            </div>
+          <% } %>
+        </div>
 
-<!-- 상세 이미지 -->
-<div class="full">
-<label>상세 이미지</label>
-<input type="file" name="detailImageFiles" multiple>
-<% if(product?.detailImages){ product.detailImages.forEach(img=>{ %>
-<input type="hidden" name="existingDetailImages" value="<%= img %>">
-<% }) } %>
-</div>
+        <div class="full">
+          <label>상품 영상</label>
+          <input type="file" name="videoFile" accept="video/*">
+          <input type="hidden" name="video" value="<%= safeProduct.video || '' %>">
 
-<!-- 옵션1 -->
-<div>
-<label>옵션1 이름</label>
-<input name="optionGroup1Name">
-</div>
+          <% if (safeProduct.video) { %>
+            <div class="preview-box">
+              <div class="preview-title">현재 상품 영상</div>
+              <div class="preview-list">
+                <div class="preview-thumb">
+                  <video src="<%= safeProduct.video %>" muted playsinline controls></video>
+                </div>
+              </div>
+            </div>
+          <% } %>
+        </div>
 
-<div>
-<label>옵션1 값 (엔터로 구분)</label>
-<textarea name="optionGroup1Values"></textarea>
-</div>
+        <div class="full">
+          <label>서브 이미지 (여러개)</label>
+          <input type="file" name="subImageFiles" multiple accept="image/*">
+          <% if (safeProduct.subImages) { safeProduct.subImages.forEach(img => { %>
+            <input type="hidden" name="existingSubImages" value="<%= img %>">
+          <% }) } %>
 
-<!-- 옵션2 -->
-<div>
-<label>옵션2 이름</label>
-<input name="optionGroup2Name">
-</div>
+          <div class="note">새 파일을 업로드하지 않으면 기존 서브 이미지를 유지합니다.</div>
 
-<div>
-<label>옵션2 값</label>
-<textarea name="optionGroup2Values"></textarea>
-</div>
+          <% if (safeProduct.subImages && safeProduct.subImages.length) { %>
+            <div class="preview-box">
+              <div class="preview-title">현재 서브 이미지 (<%= safeProduct.subImages.length %>장)</div>
+              <div class="preview-list">
+                <% safeProduct.subImages.forEach(img => { %>
+                  <div class="preview-thumb">
+                    <img src="<%= img %>" alt="서브 이미지">
+                  </div>
+                <% }) %>
+              </div>
+            </div>
+          <% } %>
+        </div>
 
-<!-- 추가상품 -->
-<div class="full">
-<label>추가상품 선택</label>
-<select name="additionalProducts" multiple>
-<% allProducts.forEach(p=>{ %>
-<option value="<%= p._id %>"><%= p.name %></option>
-<% }) %>
-</select>
-</div>
+        <div class="full">
+          <label>상세 이미지 (여러개)</label>
+          <input type="file" name="detailImageFiles" multiple accept="image/*">
+          <% if (safeProduct.detailImages) { safeProduct.detailImages.forEach(img => { %>
+            <input type="hidden" name="existingDetailImages" value="<%= img %>">
+          <% }) } %>
 
-<!-- 쿠폰 -->
-<div>
-<label>쿠폰 사용</label>
-<select name="couponEnabled">
-<option value="true">사용</option>
-<option value="false">미사용</option>
-</select>
-</div>
+          <div class="note">새 파일을 업로드하지 않으면 기존 상세 이미지를 유지합니다.</div>
 
-<div>
-<label>쿠폰 문구</label>
-<input name="couponLabel">
-</div>
+          <% if (safeProduct.detailImages && safeProduct.detailImages.length) { %>
+            <div class="preview-box">
+              <div class="preview-title">현재 상세 이미지 (<%= safeProduct.detailImages.length %>장)</div>
+              <div class="preview-list">
+                <% safeProduct.detailImages.forEach(img => { %>
+                  <div class="preview-thumb">
+                    <img src="<%= img %>" alt="상세 이미지">
+                  </div>
+                <% }) %>
+              </div>
+            </div>
+          <% } %>
+        </div>
 
-<!-- 배송 -->
-<div class="full">
-<label>배송 안내</label>
-<input name="shippingFeeText" value="<%= product?.shippingFeeText || '무료배송' %>">
-</div>
+        <div>
+          <label>옵션1 이름</label>
+          <input name="optionGroup1Name" value="<%= optionGroup1Name %>" placeholder="예: 색상">
+        </div>
 
-<!-- 가이드 -->
-<div class="full">
-<label>세탁 이미지</label>
-<input type="file" name="washImageFile">
-<input type="hidden" name="existingWashImage" value="<%= product?.guide?.washImage || '' %>">
-</div>
+        <div>
+          <label>옵션1 값 (엔터로 구분)</label>
+          <textarea name="optionGroup1Values" placeholder="예: 블랙&#10;아이보리&#10;네이비"><%= optionGroup1Values %></textarea>
+        </div>
 
-<div class="full">
-<label>사이즈 가이드</label>
-<input type="file" name="sizeGuideImageFile">
-<input type="hidden" name="existingSizeGuideImage" value="<%= product?.guide?.sizeGuideImage || '' %>">
-</div>
+        <div>
+          <label>옵션2 이름</label>
+          <input name="optionGroup2Name" value="<%= optionGroup2Name %>" placeholder="예: 사이즈">
+        </div>
 
-<div class="full">
-<label>저작권 안내</label>
-<textarea name="copyrightNotice"><%= product?.guide?.copyrightNotice || '' %></textarea>
-</div>
+        <div>
+          <label>옵션2 값 (엔터로 구분)</label>
+          <textarea name="optionGroup2Values" placeholder="예: S&#10;M&#10;L"><%= optionGroup2Values %></textarea>
+        </div>
 
-<div class="full">
-<label>배송/교환/반품</label>
-<textarea name="shippingExchangeReturn"><%= product?.guide?.shippingExchangeReturn || '' %></textarea>
-</div>
+        <div class="full">
+          <label>추가상품 선택</label>
+          <select name="additionalProducts" multiple size="8">
+            <% allProducts.forEach(p => { %>
+              <option
+                value="<%= p._id %>"
+                <%= selectedAdditionalProducts.includes(String(p._id)) ? 'selected' : '' %>>
+                <%= p.name %>
+              </option>
+            <% }) %>
+          </select>
+          <div class="note">Ctrl 또는 Command 키로 여러 상품을 선택할 수 있어요.</div>
+        </div>
 
-</div>
+        <div>
+          <label>쿠폰 사용</label>
+          <select name="couponEnabled">
+            <option value="true" <%= couponEnabled === 'true' ? 'selected' : '' %>>사용</option>
+            <option value="false" <%= couponEnabled === 'false' ? 'selected' : '' %>>미사용</option>
+          </select>
+        </div>
 
-<button type="submit">저장하기</button>
+        <div>
+          <label>쿠폰 문구</label>
+          <input name="couponLabel" value="<%= couponLabel %>">
+        </div>
 
-</form>
+        <div class="full">
+          <label>세탁 이미지</label>
+          <input type="file" name="washImageFile" accept="image/*">
+          <input type="hidden" name="existingWashImage" value="<%= safeGuide.washImage || '' %>">
 
-</div>
+          <% if (safeGuide.washImage) { %>
+            <div class="preview-box">
+              <div class="preview-title">현재 세탁 이미지</div>
+              <div class="preview-list">
+                <div class="preview-thumb">
+                  <img src="<%= safeGuide.washImage %>" alt="세탁 이미지">
+                </div>
+              </div>
+            </div>
+          <% } %>
+        </div>
+
+        <div class="full">
+          <label>사이즈 가이드 이미지</label>
+          <input type="file" name="sizeGuideImageFile" accept="image/*">
+          <input type="hidden" name="existingSizeGuideImage" value="<%= safeGuide.sizeGuideImage || '' %>">
+
+          <% if (safeGuide.sizeGuideImage) { %>
+            <div class="preview-box">
+              <div class="preview-title">현재 사이즈 가이드 이미지</div>
+              <div class="preview-list">
+                <div class="preview-thumb">
+                  <img src="<%= safeGuide.sizeGuideImage %>" alt="사이즈 가이드">
+                </div>
+              </div>
+            </div>
+          <% } %>
+        </div>
+
+        <div class="full">
+          <label>저작권 안내</label>
+          <textarea name="copyrightNotice"><%= safeGuide.copyrightNotice || '' %></textarea>
+        </div>
+
+        <div class="full">
+          <label>배송 / 교환 / 반품</label>
+          <textarea name="shippingExchangeReturn"><%= safeGuide.shippingExchangeReturn || '' %></textarea>
+        </div>
+      </div>
+
+      <button type="submit" class="save-btn">
+        <%= mode === 'edit' ? '상품 수정 저장' : '상품 등록 저장' %>
+      </button>
+    </form>
+  </div>
 </div>
 
 </body>
