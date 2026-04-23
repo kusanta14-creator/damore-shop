@@ -6,6 +6,7 @@ const multer = require('multer');
 const router = express.Router();
 
 const Product = require('../models/Product');
+const Category = require('../models/Category');
 
 function checkAdmin(req, res, next) {
   if (!req.session || !req.session.adminId) {
@@ -45,7 +46,7 @@ const upload = multer({
     const ext = path.extname(file.originalname || '').toLowerCase();
 
     if (
-      ['imageFile', 'subImageFiles', 'detailImageFiles', 'washImageFile'].includes(file.fieldname) &&
+      ['imageFile', 'subImageFiles', 'detailImageFiles'].includes(file.fieldname) &&
       imageExts.includes(ext)
     ) {
       return cb(null, true);
@@ -170,8 +171,6 @@ function collectAllMediaPaths(product) {
     if (item) result.push(item);
   });
 
-  if (product.guide?.washImage) result.push(product.guide.washImage);
-
   return result;
 }
 
@@ -186,7 +185,6 @@ async function buildProductPayload(req, existingProduct = null) {
   const videoFile = files.videoFile?.[0] || null;
   const subImageFiles = files.subImageFiles || [];
   const detailImageFiles = files.detailImageFiles || [];
-  const washImageFile = files.washImageFile?.[0] || null;
 
   const image = imageFile
     ? toPublicPath(imageFile)
@@ -206,10 +204,6 @@ async function buildProductPayload(req, existingProduct = null) {
     ? detailImageFiles.map(toPublicPath)
     : (existingDetailImages.length > 0 ? existingDetailImages : (existingProduct?.detailImages || []));
 
-  const washImage = washImageFile
-    ? toPublicPath(washImageFile)
-    : String(req.body.existingWashImage || existingProduct?.guide?.washImage || '').trim();
-
   const optionGroups = buildOptionGroupsFromQuickInputs(req.body, existingProduct);
 
   const additionalProducts = normalizeArrayInput(req.body.additionalProducts)
@@ -220,7 +214,7 @@ async function buildProductPayload(req, existingProduct = null) {
     name: String(req.body.name || '').trim(),
     summary: String(req.body.summary || '').trim(),
     desc: String(req.body.desc || '').trim(),
-    category: String(req.body.category || '').trim(),
+    category: String(req.body.category || '').trim().toLowerCase(),
     subCategory: String(req.body.subCategory || '').trim(),
     tag: String(req.body.tag || '').trim(),
     price: Number(req.body.price || 0),
@@ -245,20 +239,16 @@ async function buildProductPayload(req, existingProduct = null) {
     shippingFeeText: String(req.body.shippingFeeText || '').trim() || '무료배송',
     modelInfo: String(req.body.modelInfo || existingProduct?.modelInfo || '').trim(),
     guide: {
-      washImage,
       wearInfo: {
         season: String(req.body.wearSeason || existingProduct?.guide?.wearInfo?.season || '봄/가을').trim(),
         elasticity: String(req.body.wearElasticity || existingProduct?.guide?.wearInfo?.elasticity || '적당함').trim(),
         thickness: String(req.body.wearThickness || existingProduct?.guide?.wearInfo?.thickness || '적당함').trim(),
         weight: String(req.body.wearWeight || existingProduct?.guide?.wearInfo?.weight || '적당함').trim()
-      },
-      copyrightNotice: String(req.body.copyrightNotice || '').trim(),
-      shippingExchangeReturn: String(req.body.shippingExchangeReturn || '').trim()
+      }
     }
   };
 }
 
-// 목록
 router.get('/', checkAdmin, async (req, res) => {
   try {
     const products = await Product.find().sort({ createdAt: -1 });
@@ -269,17 +259,19 @@ router.get('/', checkAdmin, async (req, res) => {
   }
 });
 
-// 등록 페이지
 router.get('/new', checkAdmin, async (req, res) => {
   try {
     const allProducts = await Product.find()
       .select('_id name price image')
       .sort({ createdAt: -1 });
 
+    const categories = await Category.find().sort({ order: 1, createdAt: 1 });
+
     res.render('admin/products/form', {
       mode: 'create',
       product: null,
-      allProducts
+      allProducts,
+      categories
     });
   } catch (error) {
     console.error(error);
@@ -287,7 +279,6 @@ router.get('/new', checkAdmin, async (req, res) => {
   }
 });
 
-// 등록 처리
 router.post(
   '/new',
   checkAdmin,
@@ -295,8 +286,7 @@ router.post(
     { name: 'imageFile', maxCount: 1 },
     { name: 'videoFile', maxCount: 1 },
     { name: 'subImageFiles', maxCount: 20 },
-    { name: 'detailImageFiles', maxCount: 50 },
-    { name: 'washImageFile', maxCount: 1 }
+    { name: 'detailImageFiles', maxCount: 50 }
   ]),
   async (req, res) => {
     try {
@@ -310,7 +300,6 @@ router.post(
   }
 );
 
-// 수정 페이지
 router.get('/:id/edit', checkAdmin, async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -325,10 +314,13 @@ router.get('/:id/edit', checkAdmin, async (req, res) => {
       .select('_id name price image')
       .sort({ createdAt: -1 });
 
+    const categories = await Category.find().sort({ order: 1, createdAt: 1 });
+
     res.render('admin/products/form', {
       mode: 'edit',
       product,
-      allProducts
+      allProducts,
+      categories
     });
   } catch (error) {
     console.error(error);
@@ -336,7 +328,6 @@ router.get('/:id/edit', checkAdmin, async (req, res) => {
   }
 });
 
-// 수정 처리
 router.post(
   '/:id/edit',
   checkAdmin,
@@ -344,8 +335,7 @@ router.post(
     { name: 'imageFile', maxCount: 1 },
     { name: 'videoFile', maxCount: 1 },
     { name: 'subImageFiles', maxCount: 20 },
-    { name: 'detailImageFiles', maxCount: 50 },
-    { name: 'washImageFile', maxCount: 1 }
+    { name: 'detailImageFiles', maxCount: 50 }
   ]),
   async (req, res) => {
     try {
@@ -403,7 +393,6 @@ router.post(
   }
 );
 
-// 삭제
 router.post('/:id/delete', checkAdmin, async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
