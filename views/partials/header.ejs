@@ -5,6 +5,7 @@
   const safeIsAdmin = typeof isAdmin !== 'undefined' ? isAdmin : false;
   const safeCurrentUser = typeof currentUser !== 'undefined' ? currentUser : null;
   const safeCartCount = typeof cartCount !== 'undefined' ? cartCount : 0;
+  const isCommunityActive = safeCurrentPath.startsWith('/community');
 %>
 
 <header>
@@ -37,6 +38,19 @@
             </div>
           <% }) %>
         <% } %>
+
+        <div class="nav-item">
+          <a href="/community/notice" class="nav-link <%= isCommunityActive ? 'active' : '' %>">
+            커뮤니티
+          </a>
+
+          <div class="dropdown-menu">
+            <a href="/community/notice">공지사항</a>
+            <a href="/community/review">리뷰</a>
+            <a href="/community/event">이벤트</a>
+            <a href="/community/customer">고객센터</a>
+          </div>
+        </div>
 
         <a href="/about" class="<%= safeCurrentPath === '/about' ? 'active' : '' %>">about</a>
       </nav>

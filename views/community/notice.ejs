@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= pageTitle %> | DAMORE</title>
+  <link rel="stylesheet" href="/css/common.css" />
+  <style>
+    body {
+      margin: 0;
+      background: #f6f4ef;
+      color: #111;
+      font-family: Arial, sans-serif;
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
+
+    .community-head {
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    .community-head h1 {
+      margin: 0 0 10px;
+      font-size: 34px;
+      font-weight: 800;
+    }
+
+    .community-head p {
+      margin: 0;
+      color: #777;
+      font-size: 14px;
+    }
+
+    .community-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 34px;
+    }
+
+    .community-tabs a {
+      padding: 10px 16px;
+      border: 1px solid #ddd2c4;
+      border-radius: 999px;
+      background: #fff;
+      color: #444;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .community-tabs a.active {
+      background: #111;
+      color: #fff;
+      border-color: #111;
+    }
+
+    .board-card {
+      background: #fff;
+      border: 1px solid #e8e0d4;
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .board-row {
+      display: grid;
+      grid-template-columns: 90px 1fr 140px;
+      gap: 16px;
+      align-items: center;
+      padding: 18px 22px;
+      border-bottom: 1px solid #f0ebe3;
+    }
+
+    .board-row:last-child {
+      border-bottom: 0;
+    }
+
+    .board-row.head {
+      background: #fbf9f5;
+      font-weight: 800;
+      color: #555;
+    }
+
+    .board-title {
+      font-weight: 700;
+    }
+
+    .board-date {
+      color: #777;
+      text-align: right;
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .board-row {
+        grid-template-columns: 70px 1fr;
+      }
+
+      .board-date {
+        grid-column: 2 / 3;
+        text-align: left;
+        font-size: 13px;
+      }
+
+      .board-row.head .board-date {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('../partials/header') %>
+
+  <div class="page">
+    <div class="community-head">
+      <h1>공지사항</h1>
+      <p>다모어의 운영 공지와 안내를 확인해보세요.</p>
+    </div>
+
+    <div class="community-tabs">
+      <a href="/community/notice" class="active">공지사항</a>
+      <a href="/community/review">리뷰</a>
+      <a href="/community/event">이벤트</a>
+      <a href="/community/customer">고객센터</a>
+    </div>
+
+    <div class="board-card">
+      <div class="board-row head">
+        <div>번호</div>
+        <div>제목</div>
+        <div class="board-date">등록일</div>
+      </div>
+
+      <div class="board-row">
+        <div>1</div>
+        <div class="board-title">다모어 공지사항 페이지 준비중입니다.</div>
+        <div class="board-date">2026-04-25</div>
+      </div>
+
+      <div class="board-row">
+        <div>2</div>
+        <div class="board-title">배송 및 운영 관련 공지는 이곳에 등록됩니다.</div>
+        <div class="board-date">2026-04-25</div>
+      </div>
+    </div>
+  </div>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>
