@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,13 +14,11 @@
       text-align: center;
       padding: 12px 16px;
     }
-
     .mobile-category-bar {
       display: none;
       background: rgba(245, 243, 239, 0.96);
       border-bottom: 1px solid var(--line);
     }
-
     .mobile-category-scroll {
       display: flex;
       gap: 10px;
@@ -30,11 +27,9 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
-
     .mobile-category-scroll::-webkit-scrollbar {
       display: none;
     }
-
     .mobile-category-link {
       flex-shrink: 0;
       padding: 10px 14px;
@@ -47,31 +42,26 @@
       text-transform: uppercase;
       white-space: nowrap;
     }
-
     .mobile-category-link.active {
       background: var(--black);
       color: var(--white);
       border-color: var(--black);
     }
-
     .hero {
       padding: 26px 0 70px;
     }
-
     .hero-slider {
       position: relative;
       overflow: hidden;
       background: #ddd;
       box-shadow: var(--shadow);
     }
-
     .hero-track {
       display: flex;
       width: 100%;
       transition: transform 0.45s ease;
       will-change: transform;
     }
-
     .hero-slide {
       flex: 0 0 100%;
       min-width: 100%;
@@ -80,13 +70,11 @@
       grid-template-columns: 1fr 1fr 1fr;
       min-height: 710px;
     }
-
     .hero-panel {
       position: relative;
       overflow: hidden;
       background: #ddd;
     }
-
     .hero-panel::before {
       content: "";
       position: absolute;
@@ -95,11 +83,9 @@
       z-index: 1;
       pointer-events: none;
     }
-
     .hero-panel.left::before {
       background: linear-gradient(to top, rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.10));
     }
-
     .hero-panel.left img,
     .hero-panel.center img,
     .hero-panel.right img {
@@ -107,6 +93,7 @@
       height: 100%;
       object-fit: cover;
       display: block;
+     object-position: center conter ;
     }
 
     .hero-panel-link {
@@ -115,7 +102,6 @@
       z-index: 4;
       display: block;
     }
-
     .hero-panel-content {
       position: absolute;
       left: 34px;
@@ -124,7 +110,6 @@
       z-index: 5;
       color: white;
     }
-
     .hero-panel-label {
       display: inline-block;
       margin-bottom: 14px;
@@ -134,7 +119,6 @@
       font-weight: 700;
       color: rgba(255, 255, 255, 0.82);
     }
-
     .hero-main-title {
       font-size: clamp(34px, 4.5vw, 66px);
       line-height: 1.04;
@@ -143,7 +127,6 @@
       margin-bottom: 16px;
       white-space: pre-line;
     }
-
     .hero-main-desc {
       font-size: 15px;
       line-height: 1.7;
@@ -152,13 +135,11 @@
       margin-bottom: 20px;
       white-space: pre-line;
     }
-
     .hero-floating-title {
       position: absolute;
       z-index: 6;
       color: white;
     }
-
     .hero-benefits {
       position: absolute;
       z-index: 6;
@@ -166,7 +147,6 @@
       gap: 8px;
       max-width: 300px;
     }
-
     .hero-benefit {
       display: block;
       color: rgba(255, 255, 255, 0.96);
@@ -175,7 +155,6 @@
       line-height: 1.5;
       text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
     }
-
     .hero-cta {
       position: absolute;
       z-index: 6;
@@ -186,7 +165,6 @@
       line-height: 1.4;
       text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
     }
-
     .hero-center-badge {
       position: absolute;
       display: inline-flex;
@@ -198,14 +176,12 @@
       z-index: 6;
       text-shadow: 0 3px 12px rgba(0, 0, 0, 0.28);
     }
-
     .hero-info-card {
       position: absolute;
       z-index: 6;
       width: auto;
       max-width: calc(100% - 48px);
     }
-
     .hero-info-item {
       display: flex;
       align-items: center;
@@ -216,7 +192,6 @@
       line-height: 1.5;
       text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
     }
-
     .hero-info-check {
       width: 18px;
       height: 18px;
@@ -230,11 +205,9 @@
       flex-shrink: 0;
       background: transparent;
     }
-
     .hero-info-item+.hero-info-item {
       margin-top: 10px;
     }
-
     .hero-arrow-wrap {
       position: absolute;
       top: 50%;
@@ -246,7 +219,6 @@
       pointer-events: none;
       z-index: 8;
     }
-
     .hero-arrow {
       width: 50px;
       height: 50px;
@@ -260,7 +232,6 @@
       pointer-events: auto;
       box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
     }
-
     .hero-dots {
       position: absolute;
       left: 50%;
@@ -270,7 +241,6 @@
       gap: 10px;
       z-index: 8;
     }
-
     .hero-dot {
       width: 10px;
       height: 10px;
@@ -279,11 +249,9 @@
       background: rgba(255, 255, 255, 0.48);
       cursor: pointer;
     }
-
     .hero-dot.active {
       background: white;
     }
-
     .section-head {
       display: flex;
       justify-content: space-between;
@@ -292,7 +260,6 @@
       margin-bottom: 10px;
       flex-wrap: wrap;
     }
-
     .section-head-left small {
       display: inline-block;
       margin: 0 0 2px;
@@ -303,7 +270,6 @@
       font-weight: 700;
       line-height: 1;
     }
-
     .section-head-left h2 {
       font-size: clamp(28px, 4vw, 48px);
       line-height: 0.95;
@@ -311,7 +277,6 @@
       margin: 0 0 2px;
       white-space: pre-line;
     }
-
     .section-head-left p {
       color: var(--muted);
       max-width: 560px;
@@ -320,14 +285,12 @@
       white-space: pre-line;
       margin: 0;
     }
-
     .section-link {
       font-size: 13px;
       color: var(--black);
       font-weight: 700;
       white-space: nowrap;
     }
-
     .filter-bar {
       margin-top: -10px;
       margin-bottom: 24px;
@@ -340,7 +303,6 @@
       gap: 12px;
       align-items: center;
     }
-
     .filter-bar input,
     .filter-bar select,
     .filter-bar button {
@@ -349,14 +311,12 @@
       border: 1px solid var(--line);
       font-size: 14px;
     }
-
     .filter-bar input,
     .filter-bar select {
       padding: 0 14px;
       background: #fff;
       outline: none;
     }
-
     .filter-bar button {
       background: var(--black);
       color: white;
@@ -364,7 +324,6 @@
       cursor: pointer;
       border: none;
     }
-
     .search-summary {
       margin-bottom: 12px;
       color: var(--muted);
@@ -374,20 +333,17 @@
       gap: 16px;
       flex-wrap: wrap;
     }
-
     .best-section,
     .dynamic-home-section,
     .shorts-section {
       padding: 0px 0 78px;
     }
-
     .collection-grid,
     .best-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 16px;
     }
-
     .product-card,
     .best-card {
       display: block;
@@ -395,7 +351,6 @@
       overflow: hidden;
       height: 100%;
     }
-
     .product-image-wrap,
     .best-image {
       position: relative;
@@ -404,13 +359,11 @@
       aspect-ratio: 4 / 5;
       margin-bottom: 10px;
     }
-
     .product-image {
       width: 100%;
       height: 100%;
       overflow: hidden;
     }
-
     .product-image img,
     .best-image img {
       width: 100%;
@@ -419,12 +372,10 @@
       display: block;
       transition: transform 0.35s ease;
     }
-
     .product-card:hover .product-image img,
     .best-card:hover .best-image img {
       transform: scale(1.03);
     }
-
     .product-no-image {
       width: 100%;
       height: 100%;
@@ -435,7 +386,6 @@
       font-size: 13px;
       background: #e8e3db;
     }
-
     .product-body,
     .best-info {
       padding: 0 0 16px;
@@ -443,7 +393,6 @@
       flex-direction: column;
       align-items: stretch;
     }
-
     .product-name,
     .best-name {
       font-size: 13px;
@@ -459,7 +408,6 @@
       overflow: hidden;
       word-break: keep-all;
     }
-
     .product-desc,
     .best-desc {
       font-size: 11px;
@@ -474,7 +422,6 @@
       overflow: hidden;
       word-break: keep-all;
     }
-
     .price-row {
       display: flex;
       align-items: center;
@@ -483,7 +430,6 @@
       margin-bottom: 6px;
       min-height: 20px;
     }
-
     .price,
     .best-price {
       font-size: 13px;
@@ -491,21 +437,18 @@
       color: #111;
       line-height: 1.4;
     }
-
     .old-price {
       font-size: 11px;
       color: #a0a0a0;
       text-decoration: line-through;
       line-height: 1.4;
     }
-
     .showcase-discount-text {
       font-size: 12px;
       font-weight: 800;
       color: #d25757;
       line-height: 1.4;
     }
-
     .showcase-review {
       font-size: 10px;
       color: #9b9b9b;
@@ -513,11 +456,9 @@
       min-height: 14px;
       line-height: 1.4;
     }
-
     .showcase-review strong {
       color: #111;
     }
-
     .status-line,
     .product-category {
       font-size: 10px;
@@ -532,7 +473,6 @@
       line-height: 1.4;
       margin-top: auto;
     }
-
     .product-tag,
     .best-tag {
       display: inline-flex;
@@ -547,7 +487,6 @@
       margin-top: 8px;
       align-self: flex-start;
     }
-
     .soldout-badge {
       position: absolute;
       left: 10px;
@@ -564,14 +503,12 @@
       justify-content: center;
       border-radius: 999px;
     }
-
     .home-tabs {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       margin-bottom: 22px;
     }
-
     .home-tab-btn {
       min-height: 38px;
       padding: 0 14px;
@@ -583,55 +520,45 @@
       font-weight: 800;
       cursor: pointer;
     }
-
     .home-tab-btn.active {
       background: var(--black);
       color: var(--white);
       border-color: var(--black);
     }
-
     .home-tab-panel {
       display: none;
     }
-
     .home-tab-panel.active {
       display: block;
     }
-
     .section-slider {
       position: relative;
       overflow: hidden;
     }
-
     .section-slider-viewport {
       overflow: hidden;
       width: 100%;
     }
-
     .section-slider-track {
       display: flex;
       transition: transform 0.45s ease;
       will-change: transform;
     }
-
     .section-slide {
       flex: 0 0 100%;
       min-width: 100%;
     }
-
     .section-slide-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 16px;
     }
-
     .section-slider-dots {
       display: flex;
       justify-content: center;
       gap: 8px;
       margin-top: 18px;
     }
-
     .section-slider-dot {
       width: 10px;
       height: 10px;
@@ -640,15 +567,12 @@
       background: rgba(17, 17, 17, 0.18);
       cursor: pointer;
     }
-
     .section-slider-dot.active {
       background: var(--black);
     }
-
     .rank-thumb-wrap {
       position: relative;
     }
-
     .rank-badge {
       position: absolute;
       left: 10px;
@@ -665,14 +589,12 @@
       font-size: 11px;
       font-weight: 800;
     }
-
     .text-banner-box {
       background: linear-gradient(135deg, #181715, #2a2722);
       color: #fff;
       padding: 40px 34px;
       box-shadow: var(--shadow);
     }
-
     .text-banner-box small {
       display: inline-block;
       margin-bottom: 10px;
@@ -682,7 +604,6 @@
       font-size: 11px;
       font-weight: 700;
     }
-
     .text-banner-box h3 {
       font-size: clamp(28px, 4vw, 46px);
       line-height: 1.08;
@@ -690,7 +611,6 @@
       letter-spacing: -0.04em;
       white-space: pre-line;
     }
-
     .text-banner-box p {
       color: rgba(255, 255, 255, 0.74);
       max-width: 640px;
@@ -699,7 +619,6 @@
       white-space: pre-line;
       margin-bottom: 18px;
     }
-
     .text-banner-link {
       display: inline-flex;
       align-items: center;
@@ -710,7 +629,6 @@
       font-size: 13px;
       font-weight: 800;
     }
-
     .pagination {
       margin-top: 28px;
       display: flex;
@@ -718,7 +636,6 @@
       gap: 8px;
       flex-wrap: wrap;
     }
-
     .pagination a,
     .pagination span {
       min-width: 38px;
@@ -734,12 +651,10 @@
       font-size: 13px;
       font-weight: 700;
     }
-
     .pagination .active {
       background: var(--black);
       color: white;
     }
-
     .shorts-head {
       display: flex;
       justify-content: space-between;
@@ -748,7 +663,6 @@
       margin-bottom: 26px;
       flex-wrap: wrap;
     }
-
     .shorts-head-left small {
       display: inline-block;
       margin-bottom: 10px;
@@ -758,27 +672,23 @@
       font-size: 11px;
       font-weight: 700;
     }
-
     .shorts-head-left h2 {
       font-size: clamp(28px, 4vw, 48px);
       line-height: 1.08;
       letter-spacing: -0.04em;
       margin: 0;
     }
-
     .shorts-more {
       font-size: 13px;
       color: var(--black);
       font-weight: 700;
       white-space: nowrap;
     }
-
     .shorts-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 18px;
     }
-
     .shorts-card {
       position: relative;
       border-radius: 26px;
@@ -787,7 +697,6 @@
       aspect-ratio: 9 / 16;
       box-shadow: var(--shadow);
     }
-
     .shorts-video {
       width: 100%;
       aspect-ratio: 9 / 16;
@@ -796,7 +705,6 @@
       background: #000;
       border-radius: 20px;
     }
-
     .shorts-card::after {
       content: "";
       position: absolute;
@@ -804,7 +712,6 @@
       background: linear-gradient(to top, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.02));
       pointer-events: none;
     }
-
     .shorts-top-badge {
       position: absolute;
       left: 16px;
@@ -816,7 +723,6 @@
       text-shadow: 0 2px 8px rgba(0, 0, 0, 0.24);
       pointer-events: none;
     }
-
     .shorts-product-box {
       position: absolute;
       left: 14px;
@@ -832,7 +738,6 @@
       color: #111;
       text-decoration: none;
     }
-
     .shorts-product-thumb {
       width: 56px;
       height: 56px;
@@ -841,17 +746,14 @@
       flex-shrink: 0;
       background: #eee;
     }
-
     .shorts-product-thumb img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-
     .shorts-product-info {
       min-width: 0;
     }
-
     .shorts-product-title {
       font-size: 13px;
       line-height: 1.35;
@@ -864,131 +766,99 @@
       overflow: hidden;
       margin-bottom: 4px;
     }
-
     .shorts-product-price {
       font-size: 14px;
       font-weight: 800;
       color: #111;
     }
-
     @media (max-width: 1100px) {
       .hero-slide {
         grid-template-columns: 1fr;
         min-height: auto;
       }
-
       .hero-panel {
         min-height: 440px;
       }
-
       .hero-main-title {
         font-size: 42px;
       }
-
       .collection-grid,
       .best-grid,
       .section-slide-grid,
       .shorts-grid {
         grid-template-columns: repeat(2, 1fr);
       }
-
       .filter-bar {
         grid-template-columns: 1fr 1fr;
       }
-
       .filter-bar button {
         grid-column: 1 / -1;
       }
     }
+ @media (max-width: 760px) {
 
-    @media (max-width: 760px) {
-      .mobile-category-bar {
-        display: block;
-      }
+  .mobile-category-bar {
+    display: block;
+  }
 
-      .hero {
-        padding: 18px 0 44px;
-      }
+  .hero {
+    padding: 14px 0 34px;
+  }
 
-      .hero-panel {
-        min-height: 360px;
-      }
+  /* 🔥 핵심: 3칸 유지 */
+  .hero-slide {
+    grid-template-columns: repeat(3, 1fr) !important;
+    min-height: 260px !important;
+    height: 260px !important;
+  }
 
-      .hero-panel-content {
-        left: 20px;
-        right: 20px;
-        bottom: 20px;
-      }
+  .hero-panel {
+    min-height: 260px !important;
+    height: 260px !important;
+  }
 
-      .hero-main-title {
-        font-size: 34px;
-      }
+  .hero-panel img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 
-      .hero-main-desc {
-        font-size: 14px;
-      }
+  /* 🔥 모바일에서 텍스트 제거 */
+  .hero-panel-content,
+  .hero-floating-title,
+  .hero-benefits,
+  .hero-cta,
+  .hero-center-badge,
+  .hero-info-card {
+    display: none !important;
+  }
 
-      .hero-arrow {
-        width: 42px;
-        height: 42px;
-        font-size: 24px;
-      }
+  .hero-arrow {
+    width: 42px;
+    height: 42px;
+    font-size: 24px;
+  }
 
-      .collection-grid,
-      .best-grid,
-      .section-slide-grid,
-      .shorts-grid {
-        grid-template-columns: 1fr;
-      }
+  .collection-grid,
+  .best-grid,
+  .section-slide-grid,
+  .shorts-grid {
+    grid-template-columns: 1fr;
+  }
 
-      .filter-bar {
-        grid-template-columns: 1fr;
-      }
+  .filter-bar {
+    grid-template-columns: 1fr;
+  }
 
-      .best-section,
-      .dynamic-home-section,
-      .shorts-section {
-        padding: 58px 0;
-      }
-    }
+  .best-section,
+  .dynamic-home-section,
+  .shorts-section {
+    padding: 58px 0;
+  }
 
-    /* ===== 모바일 HERO 강제 가로 유지 + 이미지 자동비율 ===== */
-    .hero-slide {
-      grid-template-columns: repeat(3, 1fr) !important;
-      min-height: 0 !important;
-      height: auto !important;
-    }
-
-    .hero-panel {
-      min-height: 0 !important;
-      height: auto !important;
-    }
-
-    .hero-panel img {
-      width: 100% !important;
-      height: auto !important;
-      object-fit: contain !important;
-      display: block !important;
-    }
-
-    @media (max-width: 1100px) {
-      .hero-slide {
-        grid-template-columns: repeat(3, 1fr) !important;
-      }
-    }
-
-    @media (max-width: 760px) {
-      .hero {
-        padding: 14px 0 34px !important;
-      }
-
-      .hero-slide {
-        grid-template-columns: repeat(3, 1fr) !important;
-      }
-    }
+}
   </style>
 </head>
-
 <body>
   <% const buildPageLink=(pageNum)=> {
     const params = [];
@@ -998,32 +868,26 @@
     params.push(`page=${pageNum}`);
     return `/?${params.join('&')}`;
     };
-
     const safeHeroSlides =
     typeof heroSlides !== 'undefined' && Array.isArray(heroSlides)
     ? heroSlides
     : [];
-
     const safeHomeSections =
     typeof homeSections !== 'undefined' && Array.isArray(homeSections)
     ? homeSections
     : [];
-
     const safeHomeSectionProductsMap =
     typeof homeSectionProductsMap !== 'undefined' && homeSectionProductsMap
     ? homeSectionProductsMap
     : {};
-
     const safeSiteContent =
     typeof siteContent !== 'undefined' && siteContent
     ? siteContent
     : {};
-
     const safeShortsItems =
     typeof shortsItems !== 'undefined' && Array.isArray(shortsItems)
     ? shortsItems
     : [];
-
     const fallbackHeroSlides = [
     {
     title: safeSiteContent.heroTitle || '더 많은 가능성,\n더 깊은 스타일',
@@ -1075,7 +939,6 @@
     pointRight: '40px'
     }
     ];
-
     const fallbackShortsItems = [
     {
     title: 'SHORTS 01',
@@ -1114,22 +977,17 @@
     productThumb: 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=400&q=80'
     }
     ];
-
     const renderedHeroSlides = safeHeroSlides.length > 0 ? safeHeroSlides : fallbackHeroSlides;
     const renderedShortsItems = safeShortsItems.length > 0 ? safeShortsItems : fallbackShortsItems;
-
     const makeChunks = (arr, size) => {
     const result = [];
     if (!Array.isArray(arr) || !arr.length || size <= 0) return result; for (let i=0; i < arr.length; i +=size) {
       result.push(arr.slice(i, i + size)); } return result; }; %>
-
       <div class="topbar">
         DAMORE OFFICIAL ONLINE STORE · 회원가입 없이도 주문 가능합니다
       </div>
-
       <%- include('partials/header', { currentPath: '/' , category: category || '' , sub: '' , categories, currentUser,
         cartCount }) %>
-
         <div class="mobile-category-bar">
           <div class="container">
             <div class="mobile-category-scroll">
@@ -1146,7 +1004,6 @@
             </div>
           </div>
         </div>
-
         <main>
           <section class="hero">
             <div class="container">
@@ -1205,7 +1062,6 @@
                                   </a>
                                   <% } %>
                       </div>
-
                       <div class="hero-panel center">
                         <% if (slide.centerLink) { %>
                           <a href="<%= slide.centerLink %>" class="hero-panel-link" aria-label="가운데 배너 이동"></a>
@@ -1240,7 +1096,6 @@
                                           </div>
                                           <% } %>
                       </div>
-
                       <div class="hero-panel right">
                         <% if (slide.rightLink) { %>
                           <a href="<%= slide.rightLink %>" class="hero-panel-link" aria-label="오른쪽 배너 이동"></a>
@@ -1285,14 +1140,12 @@
                     </div>
                     <% }) %>
                 </div>
-
                 <% if (renderedHeroSlides.length> 1) { %>
                   <div class="hero-arrow-wrap">
                     <button type="button" class="hero-arrow" id="heroPrev">‹</button>
                     <button type="button" class="hero-arrow" id="heroNext">›</button>
                   </div>
                   <% } %>
-
                     <div class="hero-dots" id="heroDots">
                       <% renderedHeroSlides.forEach((_, index)=> { %>
                         <button type="button" class="hero-dot <%= index === 0 ? 'active' : '' %>"
@@ -1302,7 +1155,6 @@
               </div>
             </div>
           </section>
-
           <section style="padding-top: 0; padding-bottom: 20px;">
             <div class="container">
               <form method="GET" action="/" class="filter-bar">
@@ -1332,7 +1184,6 @@
               </div>
             </div>
           </section>
-
           <% if (!category && safeHomeSections.length> 0) { %>
             <% safeHomeSections.forEach((section, sectionIndex)=> { %>
               <% const sectionId=`home-section-${sectionIndex}`; const
@@ -1348,7 +1199,6 @@
                 products: Array.isArray(rawMapValue) ? rawMapValue : []
                 }];
                 %>
-
                 <section class="dynamic-home-section" id="<%= section.sectionKey || sectionId %>">
                   <div class="container">
                     <% if (section.sectionType==='text-banner' ) { %>
@@ -1395,7 +1245,6 @@
                             </a>
                             <% } %>
                         </div>
-
                         <% if (hasTabs && panels.length> 0) { %>
                           <div class="home-tabs">
                             <% panels.forEach((panel, tabIndex)=> { %>
@@ -1406,7 +1255,6 @@
                               <% }) %>
                           </div>
                           <% } %>
-
                             <% panels.forEach((panel, panelIndex)=> { %>
                               <div class="home-tab-panel <%= panelIndex === 0 ? 'active' : '' %>" data-home-tab-panel
                                 data-section="<%= sectionId %>" data-tab="<%= panelIndex %>">
@@ -1583,7 +1431,6 @@
                 </section>
                 <% }) %>
                   <% } %>
-
                     <% if (!category && renderedShortsItems.length> 0) { %>
                       <section class="shorts-section" id="shorts">
                         <style>
@@ -1595,7 +1442,6 @@
                             margin-bottom: 26px;
                             flex-wrap: wrap;
                           }
-
                           .shorts-head-left small {
                             display: inline-block;
                             margin-bottom: 10px;
@@ -1605,27 +1451,23 @@
                             font-size: 11px;
                             font-weight: 700;
                           }
-
                           .shorts-head-left h2 {
                             font-size: clamp(28px, 4vw, 48px);
                             line-height: 1.08;
                             letter-spacing: -0.04em;
                             margin: 0;
                           }
-
                           .shorts-more {
                             font-size: 13px;
                             color: var(--black);
                             font-weight: 700;
                             white-space: nowrap;
                           }
-
                           .shorts-grid {
                             display: grid;
                             grid-template-columns: repeat(4, minmax(0, 1fr));
                             gap: 20px;
                           }
-
                           .shorts-card {
                             position: relative;
                             border-radius: 26px;
@@ -1633,7 +1475,6 @@
                             background: #d8d0c6;
                             box-shadow: var(--shadow);
                           }
-
                           .shorts-video-wrap {
                             position: relative;
                             border-radius: 26px;
@@ -1641,7 +1482,6 @@
                             background: #000;
                             aspect-ratio: 9 / 16;
                           }
-
                           .shorts-video {
                             width: 100%;
                             height: 100%;
@@ -1650,7 +1490,6 @@
                             background: #000;
                             cursor: pointer;
                           }
-
                           .shorts-top-badge {
                             position: absolute;
                             left: 16px;
@@ -1662,7 +1501,6 @@
                             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.24);
                             pointer-events: none;
                           }
-
                           .shorts-center-icon {
                             position: absolute;
                             left: 50%;
@@ -1684,12 +1522,10 @@
                             transition: opacity 0.2s ease, transform 0.2s ease;
                             backdrop-filter: blur(6px);
                           }
-
                           .shorts-center-icon.show {
                             opacity: 1;
                             transform: translate(-50%, -50%) scale(1);
                           }
-
                           .shorts-sound-controls {
                             position: absolute;
                             right: 12px;
@@ -1703,7 +1539,6 @@
                             backdrop-filter: blur(8px);
                             z-index: 10;
                           }
-
                           .sound-btn {
                             width: 38px;
                             height: 38px;
@@ -1718,7 +1553,6 @@
                             justify-content: center;
                             flex-shrink: 0;
                           }
-
                           .volume-range {
                             width: 0;
                             opacity: 0;
@@ -1727,12 +1561,10 @@
                             transition: width 0.25s ease, opacity 0.25s ease;
                             accent-color: #fff;
                           }
-
                           .shorts-sound-controls:hover .volume-range {
                             width: 90px;
                             opacity: 1;
                           }
-
                           .shorts-product-box {
                             position: absolute;
                             left: 14px;
@@ -1748,7 +1580,6 @@
                             color: #111;
                             text-decoration: none;
                           }
-
                           .shorts-product-thumb {
                             width: 56px;
                             height: 56px;
@@ -1757,17 +1588,14 @@
                             flex-shrink: 0;
                             background: #eee;
                           }
-
                           .shorts-product-thumb img {
                             width: 100%;
                             height: 100%;
                             object-fit: cover;
                           }
-
                           .shorts-product-info {
                             min-width: 0;
                           }
-
                           .shorts-product-title {
                             font-size: 13px;
                             line-height: 1.35;
@@ -1780,40 +1608,33 @@
                             overflow: hidden;
                             margin-bottom: 4px;
                           }
-
                           .shorts-product-price {
                             font-size: 14px;
                             font-weight: 800;
                             color: #111;
                           }
-
                           @media (hover: none) {
                             .volume-range {
                               width: 70px;
                               opacity: 1;
                             }
                           }
-
                           @media (max-width: 1100px) {
                             .shorts-grid {
                               grid-template-columns: repeat(3, minmax(0, 1fr));
                             }
                           }
-
                           @media (max-width: 860px) {
                             .shorts-grid {
                               grid-template-columns: repeat(2, minmax(0, 1fr));
                             }
                           }
-
                           @media (max-width: 560px) {
                             .shorts-grid {
                               grid-template-columns: 1fr;
                             }
                           }
                         </style>
-
-
                         <div class="container">
                           <div class="shorts-head">
                             <div class="shorts-head-left">
@@ -1822,28 +1643,23 @@
                             </div>
                             <a href="/about" class="shorts-more">더보기</a>
                           </div>
-
                           <div class="shorts-grid">
                             <% renderedShortsItems.slice(0, 4).forEach((item, index)=> { %>
                               <div class="shorts-card">
                                 <div class="shorts-top-badge">
                                   <%= item.brandLabel || 'DAMORE SHORTS' %>
                                 </div>
-
                                 <div class="shorts-video-wrap">
                                   <% if (item.video) { %>
                                     <video class="shorts-video js-shorts-video" src="<%= item.video %>" autoplay muted
                                       loop playsinline preload="metadata" data-index="<%= index %>">
                                     </video>
-
                                     <div class="shorts-center-icon js-center-icon" data-target="<%= index %>">▶</div>
-
                                     <div class="shorts-sound-controls">
                                       <button type="button" class="sound-btn js-sound-btn" data-target="<%= index %>"
                                         aria-label="음소거 해제">
                                         🔇
                                       </button>
-
                                       <input type="range" class="volume-range js-volume-range"
                                         data-target="<%= index %>" min="0" max="1" step="0.05" value="0.5"
                                         aria-label="볼륨 조절">
@@ -1855,7 +1671,6 @@
                                       </div>
                                       <% } %>
                                 </div>
-
                                 <a href="<%= item.link || '/about' %>" class="shorts-product-box">
                                   <div class="shorts-product-thumb">
                                     <% if (item.productThumb) { %>
@@ -1876,13 +1691,11 @@
                               <% }) %>
                           </div>
                         </div>
-
                         <script>
                           (function () {
                             const videos = document.querySelectorAll('.js-shorts-video');
                             const soundButtons = document.querySelectorAll('.js-sound-btn');
                             const volumeRanges = document.querySelectorAll('.js-volume-range');
-
                             function updateButton(video, button) {
                               if (!video || !button) return;
                               button.textContent = video.muted || video.volume === 0 ? '🔇' : '🔊';
@@ -1891,14 +1704,11 @@
                                 video.muted || video.volume === 0 ? '음소거 해제' : '음소거'
                               );
                             }
-
                             function showCenterIcon(index, iconText, keepVisible) {
                               const icon = document.querySelector('.js-center-icon[data-target="' + index + '"]');
                               if (!icon) return;
-
                               icon.textContent = iconText;
                               icon.classList.add('show');
-
                               if (!keepVisible) {
                                 clearTimeout(icon._hideTimer);
                                 icon._hideTimer = setTimeout(function () {
@@ -1906,7 +1716,6 @@
                                 }, 700);
                               }
                             }
-
                             function pauseOtherVideos(currentIndex) {
                               videos.forEach((video) => {
                                 if (video.dataset.index !== currentIndex) {
@@ -1915,39 +1724,32 @@
                                 }
                               });
                             }
-
                             function muteOtherVideos(currentIndex) {
                               videos.forEach((video) => {
                                 if (video.dataset.index !== currentIndex) {
                                   video.muted = true;
                                 }
                               });
-
                               soundButtons.forEach((button) => {
                                 const target = button.dataset.target;
                                 const targetVideo = document.querySelector('.js-shorts-video[data-index="' + target + '"]');
                                 updateButton(targetVideo, button);
                               });
                             }
-
                             videos.forEach((video) => {
                               video.muted = true;
                               video.volume = 0.5;
-
                               video.addEventListener('loadeddata', function () {
                                 if (video.paused) {
                                   showCenterIcon(video.dataset.index, '▶', true);
                                 }
                               });
-
                               video.addEventListener('play', function () {
                                 showCenterIcon(video.dataset.index, '⏸', false);
                               });
-
                               video.addEventListener('pause', function () {
                                 showCenterIcon(video.dataset.index, '▶', true);
                               });
-
                               video.addEventListener('click', function () {
                                 if (video.paused) {
                                   pauseOtherVideos(video.dataset.index);
@@ -1957,66 +1759,51 @@
                                 }
                               });
                             });
-
                             soundButtons.forEach((button) => {
                               button.addEventListener('click', function (e) {
                                 e.stopPropagation();
-
                                 const target = this.dataset.target;
                                 const video = document.querySelector('.js-shorts-video[data-index="' + target + '"]');
                                 const range = document.querySelector('.js-volume-range[data-target="' + target + '"]');
-
                                 if (!video) return;
-
                                 if (video.muted || video.volume === 0) {
                                   muteOtherVideos(target);
                                   video.muted = false;
-
                                   if (range && Number(range.value) === 0) {
                                     range.value = 0.5;
                                   }
-
                                   video.volume = range ? Number(range.value) : 0.5;
                                 } else {
                                   video.muted = true;
                                 }
-
                                 updateButton(video, this);
                               });
                             });
-
                             volumeRanges.forEach((range) => {
                               range.addEventListener('click', function (e) {
                                 e.stopPropagation();
                               });
-
                               range.addEventListener('input', function () {
                                 const target = this.dataset.target;
                                 const video = document.querySelector('.js-shorts-video[data-index="' + target + '"]');
                                 const button = document.querySelector('.js-sound-btn[data-target="' + target + '"]');
-
                                 if (!video) return;
-
                                 const volume = Number(this.value);
                                 video.volume = volume;
-
                                 if (volume <= 0) {
                                   video.muted = true;
                                 } else {
                                   muteOtherVideos(target);
                                   video.muted = false;
                                 }
-
                                 updateButton(video, button);
                               });
                             });
-
                             soundButtons.forEach((button) => {
                               const target = button.dataset.target;
                               const video = document.querySelector('.js-shorts-video[data-index="' + target + '"]');
                               updateButton(video, button);
                             });
-
                             videos.forEach((video) => {
                               if (video.paused) {
                                 showCenterIcon(video.dataset.index, '▶', true);
@@ -2026,7 +1813,6 @@
                         </script>
                       </section>
                       <% } %>
-
                         <% if (category && bestProducts && bestProducts.length> 0 && currentPage === 1) { %>
                           <section class="best-section">
                             <div class="container">
@@ -2105,9 +1891,7 @@
                           </section>
                           <% } %>
         </main>
-
         <%- include('partials/footer', { currentUser, siteContent: safeSiteContent, categories }) %>
-
           <script>
             (function () {
               const track = document.getElementById('heroTrack');
@@ -2115,22 +1899,18 @@
               const prevBtn = document.getElementById('heroPrev');
               const nextBtn = document.getElementById('heroNext');
               if (!track || !dotsWrap) return;
-
               const slides = Array.from(track.querySelectorAll('.hero-slide'));
               const dots = Array.from(dotsWrap.querySelectorAll('.hero-dot'));
               const slideCount = slides.length;
               let current = 0;
               let autoTimer = null;
-
               if (!slideCount) return;
-
               track.style.width = `${slideCount * 100}%`;
               slides.forEach((slide) => {
                 slide.style.width = `${100 / slideCount}%`;
                 slide.style.minWidth = `${100 / slideCount}%`;
                 slide.style.flex = `0 0 ${100 / slideCount}%`;
               });
-
               function renderSlider(index) {
                 current = index;
                 track.style.transform = `translateX(-${(100 / slideCount) * current}%)`;
@@ -2138,30 +1918,25 @@
                   dot.classList.toggle('active', i === current);
                 });
               }
-
               function nextSlide() {
                 if (slideCount <= 1) return;
                 renderSlider((current + 1) % slideCount);
               }
-
               function prevSlide() {
                 if (slideCount <= 1) return;
                 renderSlider((current - 1 + slideCount) % slideCount);
               }
-
               function stopAuto() {
                 if (autoTimer) {
                   clearInterval(autoTimer);
                   autoTimer = null;
                 }
               }
-
               function startAuto() {
                 stopAuto();
                 if (slideCount <= 1) return;
                 autoTimer = setInterval(nextSlide, 4000);
               }
-
               if (prevBtn) {
                 prevBtn.addEventListener('click', function (e) {
                   e.preventDefault();
@@ -2169,7 +1944,6 @@
                   startAuto();
                 });
               }
-
               if (nextBtn) {
                 nextBtn.addEventListener('click', function (e) {
                   e.preventDefault();
@@ -2177,7 +1951,6 @@
                   startAuto();
                 });
               }
-
               dots.forEach((dot, index) => {
                 dot.addEventListener('click', function (e) {
                   e.preventDefault();
@@ -2185,14 +1958,11 @@
                   startAuto();
                 });
               });
-
               track.addEventListener('mouseenter', stopAuto);
               track.addEventListener('mouseleave', startAuto);
-
               renderSlider(0);
               startAuto();
             })();
-
             (function () {
               const items = document.querySelectorAll('[data-pos]');
               items.forEach((el) => {
@@ -2206,23 +1976,19 @@
                 if (bottom) el.style.bottom = bottom;
               });
             })();
-
             (function () {
               const tabButtons = document.querySelectorAll('[data-home-tab-btn]');
               const tabPanels = document.querySelectorAll('[data-home-tab-panel]');
               if (!tabButtons.length) return;
-
               tabButtons.forEach((button) => {
                 button.addEventListener('click', function () {
                   const sectionId = button.dataset.section;
                   const tabIndex = button.dataset.tab;
-
                   tabButtons.forEach((btn) => {
                     if (btn.dataset.section === sectionId) {
                       btn.classList.toggle('active', btn.dataset.tab === tabIndex);
                     }
                   });
-
                   tabPanels.forEach((panel) => {
                     if (panel.dataset.section === sectionId) {
                       panel.classList.toggle('active', panel.dataset.tab === tabIndex);
@@ -2231,19 +1997,15 @@
                 });
               });
             })();
-
             (function () {
               const sliders = document.querySelectorAll('[data-section-slider]');
               sliders.forEach((slider) => {
                 const track = slider.querySelector('[data-slider-track]');
                 const dots = Array.from(slider.querySelectorAll('[data-slider-dot]'));
                 const total = Number(slider.dataset.total || 0);
-
                 if (!track || total <= 1) return;
-
                 let current = 0;
                 let timer = null;
-
                 function render(index) {
                   current = index;
                   track.style.transform = `translateX(-${current * 100}%)`;
@@ -2251,38 +2013,31 @@
                     dot.classList.toggle('active', i === current);
                   });
                 }
-
                 function next() {
                   render((current + 1) % total);
                 }
-
                 function stop() {
                   if (timer) {
                     clearInterval(timer);
                     timer = null;
                   }
                 }
-
                 function start() {
                   stop();
                   timer = setInterval(next, 3500);
                 }
-
                 dots.forEach((dot, index) => {
                   dot.addEventListener('click', function () {
                     render(index);
                     start();
                   });
                 });
-
                 slider.addEventListener('mouseenter', stop);
                 slider.addEventListener('mouseleave', start);
-
                 render(0);
                 start();
               });
             })();
           </script>
 </body>
-
 </html>
