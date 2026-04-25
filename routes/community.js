@@ -57,9 +57,21 @@ router.get('/notice/:id', async (req, res) => {
       return res.status(404).send('공지사항을 찾을 수 없습니다.');
     }
 
+    const prevNotice = await Notice.findOne({
+      isVisible: true,
+      createdAt: { $gt: notice.createdAt }
+    }).sort({ createdAt: 1 });
+
+    const nextNotice = await Notice.findOne({
+      isVisible: true,
+      createdAt: { $lt: notice.createdAt }
+    }).sort({ createdAt: -1 });
+
     res.render('community/notice-detail', {
       pageTitle: notice.title,
       notice,
+      prevNotice,
+      nextNotice,
       ...common
     });
   } catch (error) {
@@ -67,6 +79,7 @@ router.get('/notice/:id', async (req, res) => {
     res.status(500).send('공지사항 상세 페이지 오류');
   }
 });
+
 
 router.get('/review', async (req, res) => {
   try {

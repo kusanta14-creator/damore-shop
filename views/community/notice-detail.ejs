@@ -79,6 +79,52 @@
       word-break: keep-all;
     }
 
+    .notice-nav {
+      margin-top: 18px;
+      background: #fff;
+      border: 1px solid #e8e0d4;
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .notice-nav-row {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 14px;
+      align-items: center;
+      padding: 18px 22px;
+      border-bottom: 1px solid #f0ebe3;
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.15s ease;
+    }
+
+    .notice-nav-row:last-child {
+      border-bottom: 0;
+    }
+
+    .notice-nav-row:hover {
+      background: #fcfaf7;
+    }
+
+    .notice-nav-label {
+      font-size: 13px;
+      font-weight: 800;
+      color: #777;
+    }
+
+    .notice-nav-title {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.5;
+      word-break: keep-all;
+    }
+
+    .notice-nav-empty {
+      color: #999;
+      font-weight: 500;
+    }
+
     .bottom-actions {
       margin-top: 20px;
       display: flex;
@@ -125,6 +171,11 @@
         width: 100%;
       }
 
+      .notice-nav-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+
       .bottom-actions a {
         width: 100%;
       }
@@ -151,6 +202,32 @@
       </div>
 
       <div class="detail-content"><%= notice.content || '' %></div>
+    </div>
+
+    <div class="notice-nav">
+      <% if (prevNotice) { %>
+        <a href="/community/notice/<%= prevNotice._id %>" class="notice-nav-row">
+          <div class="notice-nav-label">이전글</div>
+          <div class="notice-nav-title"><%= prevNotice.title %></div>
+        </a>
+      <% } else { %>
+        <div class="notice-nav-row">
+          <div class="notice-nav-label">이전글</div>
+          <div class="notice-nav-title notice-nav-empty">이전글이 없습니다.</div>
+        </div>
+      <% } %>
+
+      <% if (nextNotice) { %>
+        <a href="/community/notice/<%= nextNotice._id %>" class="notice-nav-row">
+          <div class="notice-nav-label">다음글</div>
+          <div class="notice-nav-title"><%= nextNotice.title %></div>
+        </a>
+      <% } else { %>
+        <div class="notice-nav-row">
+          <div class="notice-nav-label">다음글</div>
+          <div class="notice-nav-title notice-nav-empty">다음글이 없습니다.</div>
+        </div>
+      <% } %>
     </div>
 
     <div class="bottom-actions">
