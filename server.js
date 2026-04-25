@@ -99,6 +99,7 @@ app.use(async (req, res, next) => {
 
 app.use('/community', require('./routes/community'));
 
+app.use('/admin/events', require('./routes/admin-events'));
 app.use('/', authRoutes);
 app.use('/admin/products', adminProductsRoutes);
 app.use('/admin/shorts', adminShortsRoutes);
