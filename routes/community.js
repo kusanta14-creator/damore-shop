@@ -2,13 +2,21 @@ const express = require('express');
 const router = express.Router();
 const Category = require('../models/Category');
 const Notice = require('../models/Notice');
+const SiteContent = require('../models/SiteContent');
 
 async function getCommonRenderData(req) {
   const categories = await Category.find().sort({ order: 1, createdAt: 1 });
 
+  let siteContent = await SiteContent.findOne();
+  if (!siteContent) {
+    siteContent = await SiteContent.create({});
+  }
+
   return {
     categories,
-    currentPath: req.originalUrl || req.path
+    category: '',
+    currentPath: req.originalUrl || req.path,
+    siteContent
   };
 }
 
