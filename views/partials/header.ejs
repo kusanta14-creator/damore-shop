@@ -6,6 +6,10 @@
   const safeCurrentUser = typeof currentUser !== 'undefined' ? currentUser : null;
   const safeCartCount = typeof cartCount !== 'undefined' ? cartCount : 0;
   const isCommunityActive = safeCurrentPath.startsWith('/community');
+  const isMyPageActive =
+    safeCurrentPath.startsWith('/mypage') ||
+    safeCurrentPath.startsWith('/my-orders') ||
+    safeCurrentPath.startsWith('/order/lookup');
 %>
 
 <header>
@@ -29,9 +33,7 @@
               <% if (item.subCategories && item.subCategories.length > 0) { %>
                 <div class="dropdown-menu">
                   <% item.subCategories.forEach(subItem => { %>
-                    <a href="/category/<%= item.name %>?sub=<%= encodeURIComponent(subItem) %>">
-                      <%= subItem %>
-                    </a>
+                    <a href="/category/<%= item.name %>?sub=<%= encodeURIComponent(subItem) %>"><%= subItem %></a>
                   <% }) %>
                 </div>
               <% } %>
@@ -42,10 +44,7 @@
         <a href="/about" class="<%= safeCurrentPath === '/about' ? 'active' : '' %>">about</a>
 
         <div class="nav-item">
-          <a href="/community/notice" class="nav-link <%= isCommunityActive ? 'active' : '' %>">
-            커뮤니티
-          </a>
-
+          <a href="/community/notice" class="nav-link <%= isCommunityActive ? 'active' : '' %>">커뮤니티</a>
           <div class="dropdown-menu">
             <a href="/community/notice">공지사항</a>
             <a href="/community/review">리뷰</a>
@@ -59,13 +58,25 @@
         <% if (safeIsAdmin) { %>
           <a href="/admin/dashboard">관리자 수정</a>
           <a href="/logout">로그아웃</a>
-        <% } else if (safeCurrentUser) { %>
-          <span class="user-name"><%= safeCurrentUser.name %>님</span>
-          <a href="/my-orders">내 주문내역</a>
-          <a href="/logout">로그아웃</a>
         <% } else { %>
-          <a href="/order/lookup">주문조회</a>
-          <a href="/auth">로그인 / 회원가입</a>
+          <div class="mypage-menu">
+            <button type="button" class="mypage-btn <%= isMyPageActive ? 'active' : '' %>">
+              마이페이지
+            </button>
+
+            <div class="mypage-dropdown">
+              <% if (safeCurrentUser) { %>
+                <div class="mypage-user"><%= safeCurrentUser.name %>님</div>
+                <a href="/mypage">마이페이지</a>
+                <a href="/my-orders">주문조회</a>
+                <a href="/logout">로그아웃</a>
+              <% } else { %>
+                <a href="/auth">로그인</a>
+                <a href="/auth">회원가입</a>
+                <a href="/order/lookup">주문조회</a>
+              <% } %>
+            </div>
+          </div>
         <% } %>
 
         <a href="/cart">장바구니 <%= safeCartCount %></a>
@@ -73,3 +84,21 @@
     </div>
   </div>
 </header>
+
+<script>
+  document.addEventListener('click', function (e) {
+    const menu = document.querySelector('.mypage-menu');
+    if (!menu) return;
+
+    const btn = menu.querySelector('.mypage-btn');
+
+    if (btn && btn.contains(e.target)) {
+      menu.classList.toggle('open');
+      return;
+    }
+
+    if (!menu.contains(e.target)) {
+      menu.classList.remove('open');
+    }
+  });
+</script>
