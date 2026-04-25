@@ -38,8 +38,11 @@
             </div>
           <% }) %>
         <% } %>
+   
+        <a href="/about" class="<%= safeCurrentPath === '/about' ? 'active' : '' %>">about</a>
+      </nav>
 
-        <div class="nav-item">
+<div class="nav-item">
           <a href="/community/notice" class="nav-link <%= isCommunityActive ? 'active' : '' %>">
             커뮤니티
           </a>
@@ -51,9 +54,6 @@
             <a href="/community/customer">고객센터</a>
           </div>
         </div>
-
-        <a href="/about" class="<%= safeCurrentPath === '/about' ? 'active' : '' %>">about</a>
-      </nav>
 
       <div class="header-actions">
         <% if (safeIsAdmin) { %>
