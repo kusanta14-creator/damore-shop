@@ -61,10 +61,20 @@
       border-color: #111;
     }
 
+    .notice-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
     .admin-actions {
       display: flex;
       justify-content: flex-end;
-      margin-bottom: 18px;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     .admin-write-btn {
@@ -79,6 +89,53 @@
       text-decoration: none;
       font-size: 14px;
       font-weight: 800;
+    }
+
+    .search-form {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      width: 100%;
+      max-width: 460px;
+    }
+
+    .search-form input[type="text"] {
+      flex: 1;
+      min-width: 220px;
+      height: 44px;
+      padding: 0 14px;
+      border: 1px solid #ddd2c4;
+      border-radius: 999px;
+      background: #fff;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .search-form button,
+    .search-form a {
+      height: 44px;
+      padding: 0 16px;
+      border-radius: 999px;
+      border: 0;
+      background: #111;
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .search-form a {
+      background: #666;
+    }
+
+    .notice-summary {
+      margin-bottom: 14px;
+      color: #666;
+      font-size: 14px;
     }
 
     .board-card {
@@ -154,9 +211,57 @@
       border-radius: 18px;
     }
 
+    .pagination {
+      margin-top: 22px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .pagination a,
+    .pagination span {
+      min-width: 42px;
+      height: 42px;
+      padding: 0 12px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 800;
+      border: 1px solid #ddd2c4;
+      background: #fff;
+      color: #444;
+    }
+
+    .pagination .active {
+      background: #111;
+      color: #fff;
+      border-color: #111;
+    }
+
+    .pagination .disabled {
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
     @media (max-width: 768px) {
       .page {
         padding: 36px 14px 64px;
+      }
+
+      .notice-topbar {
+        align-items: stretch;
+      }
+
+      .search-form {
+        max-width: none;
+      }
+
+      .search-form input[type="text"] {
+        min-width: 0;
       }
 
       .board-row {
@@ -172,11 +277,14 @@
         display: none;
       }
 
-      .admin-actions {
-        justify-content: stretch;
+      .admin-actions,
+      .search-form {
+        width: 100%;
       }
 
-      .admin-write-btn {
+      .admin-write-btn,
+      .search-form button,
+      .search-form a {
         width: 100%;
       }
     }
@@ -198,11 +306,33 @@
       <a href="/community/customer">고객센터</a>
     </div>
 
-    <% if (isAdmin) { %>
-      <div class="admin-actions">
-        <a href="/admin/notices/new" class="admin-write-btn">공지 작성하기</a>
-      </div>
-    <% } %>
+    <div class="notice-topbar">
+      <form action="/community/notice" method="GET" class="search-form">
+        <input
+          type="text"
+          name="keyword"
+          placeholder="공지 제목 검색"
+          value="<%= keyword || '' %>"
+        />
+        <button type="submit">검색</button>
+        <% if (keyword) { %>
+          <a href="/community/notice">초기화</a>
+        <% } %>
+      </form>
+
+      <% if (isAdmin) { %>
+        <div class="admin-actions">
+          <a href="/admin/notices/new" class="admin-write-btn">공지 작성하기</a>
+        </div>
+      <% } %>
+    </div>
+
+    <div class="notice-summary">
+      총 <strong><%= totalCount || 0 %></strong>개의 공지
+      <% if (keyword) { %>
+        · 검색어: "<strong><%= keyword %></strong>"
+      <% } %>
+    </div>
 
     <% if (notices && notices.length > 0) { %>
       <div class="board-card">
@@ -228,8 +358,38 @@
           </a>
         <% }) %>
       </div>
+
+      <% if (totalPages > 1) { %>
+        <div class="pagination">
+          <% if (hasPrevPage) { %>
+            <a href="/community/notice?page=<%= currentPage - 1 %><%= keyword ? '&keyword=' + encodeURIComponent(keyword) : '' %>">이전</a>
+          <% } else { %>
+            <span class="disabled">이전</span>
+          <% } %>
+
+          <% for (let i = startPage; i <= endPage; i++) { %>
+            <% if (i === currentPage) { %>
+              <span class="active"><%= i %></span>
+            <% } else { %>
+              <a href="/community/notice?page=<%= i %><%= keyword ? '&keyword=' + encodeURIComponent(keyword) : '' %>"><%= i %></a>
+            <% } %>
+          <% } %>
+
+          <% if (hasNextPage) { %>
+            <a href="/community/notice?page=<%= currentPage + 1 %><%= keyword ? '&keyword=' + encodeURIComponent(keyword) : '' %>">다음</a>
+          <% } else { %>
+            <span class="disabled">다음</span>
+          <% } %>
+        </div>
+      <% } %>
     <% } else { %>
-      <div class="empty-box">등록된 공지사항이 없습니다.</div>
+      <div class="empty-box">
+        <% if (keyword) { %>
+          검색 결과가 없습니다.
+        <% } else { %>
+          등록된 공지사항이 없습니다.
+        <% } %>
+      </div>
     <% } %>
   </div>
 
