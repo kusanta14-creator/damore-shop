@@ -42,6 +42,7 @@ app.use(express.json());
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/community', require('./routes/community'));
+app.use('/admin/notices', require('./routes/admin-notices'));
 
 app.use(
   session({

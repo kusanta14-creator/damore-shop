@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= notice ? '공지 수정' : '공지 작성' %> | DAMORE ADMIN</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      color: #111;
+      padding: 30px 20px 60px;
+    }
+
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 24px;
+      font-size: 32px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .top-actions a {
+      border: 1px solid #ddd;
+      background: #fff;
+      color: #111;
+      padding: 10px 14px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #ececec;
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .field input[type="text"],
+    .field textarea,
+    .field select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 14px;
+      background: #fff;
+      outline: none;
+    }
+
+    .field textarea {
+      min-height: 260px;
+      resize: vertical;
+      line-height: 1.7;
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .submit-wrap {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .submit-wrap button,
+    .submit-wrap a {
+      border: 0;
+      background: #111;
+      color: #fff;
+      padding: 13px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    .submit-wrap a {
+      background: #666;
+    }
+
+    @media (max-width: 760px) {
+      .row-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%
+    const safeNotice = notice || {};
+  %>
+
+  <div class="wrap">
+    <h1><%= notice ? '공지 수정' : '공지 작성' %></h1>
+
+    <div class="top-actions">
+      <a href="/admin/dashboard">대시보드</a>
+      <a href="/admin/notices">공지 목록</a>
+    </div>
+
+    <div class="card">
+      <form action="<%= notice ? '/admin/notices/' + notice._id + '/edit' : '/admin/notices/new' %>" method="POST">
+        <div class="field">
+          <label for="title">제목</label>
+          <input type="text" id="title" name="title" value="<%= safeNotice.title || '' %>" required />
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label for="isPinned">상단 고정</label>
+            <select id="isPinned" name="isPinned">
+              <option value="false" <%= !safeNotice.isPinned ? 'selected' : '' %>>일반</option>
+              <option value="true" <%= safeNotice.isPinned ? 'selected' : '' %>>상단고정</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="isVisible">노출 여부</label>
+            <select id="isVisible" name="isVisible">
+              <option value="true" <%= safeNotice.isVisible !== false ? 'selected' : '' %>>노출</option>
+              <option value="false" <%= safeNotice.isVisible === false ? 'selected' : '' %>>숨김</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="content">내용</label>
+          <textarea id="content" name="content" required><%= safeNotice.content || '' %></textarea>
+        </div>
+
+        <div class="submit-wrap">
+          <button type="submit"><%= notice ? '공지 수정 저장' : '공지 등록' %></button>
+          <a href="/admin/notices">목록으로</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
