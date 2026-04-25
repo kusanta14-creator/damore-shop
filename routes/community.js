@@ -132,9 +132,55 @@ router.get('/review', async (req, res) => {
 router.get('/event', async (req, res) => {
   try {
     const common = await getCommonRenderData(req);
+    const status = String(req.query.status || 'all').trim();
+
+    const sampleEvents = [
+      {
+        _id: '1',
+        title: '피크닉 브랜드 굿즈 증정 이벤트',
+        summary: '어거스트플랜',
+        thumbnail: '/images/sample-event-1.jpg',
+        status: 'live',
+        dateLabel: '[5]'
+      },
+      {
+        _id: '2',
+        title: '카카오톡 채널 친구 추가 EVENT',
+        summary: '어거스트플랜',
+        thumbnail: '/images/sample-event-2.jpg',
+        status: 'live',
+        dateLabel: ''
+      },
+      {
+        _id: '3',
+        title: '어거스트 APP 리워드 이벤트',
+        summary: '어거스트플랜',
+        thumbnail: '/images/sample-event-3.jpg',
+        status: 'live',
+        dateLabel: '[4]'
+      },
+      {
+        _id: '4',
+        title: '멤버십 혜택 이벤트',
+        summary: '어거스트플랜',
+        thumbnail: '/images/sample-event-4.jpg',
+        status: 'done',
+        dateLabel: '[1]'
+      }
+    ];
+
+    let events = sampleEvents;
+
+    if (status === 'live') {
+      events = sampleEvents.filter((item) => item.status === 'live');
+    } else if (status === 'done') {
+      events = sampleEvents.filter((item) => item.status === 'done');
+    }
 
     res.render('community/event', {
       pageTitle: '이벤트',
+      events,
+      status,
       ...common
     });
   } catch (error) {

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= pageTitle %> | DAMORE</title>
+  <link rel="stylesheet" href="/css/common.css" />
+  <style>
+    body {
+      margin: 0;
+      background: #f6f4ef;
+      color: #111;
+      font-family: Arial, sans-serif;
+    }
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
+    .admin-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .admin-action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 16px;
+      border-radius: 999px;
+      background: #111;
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .admin-action-btn.sub {
+      background: #666;
+    }
+    .detail-card {
+      background: #fff;
+      border: 1px solid #e8e0d4;
+      border-radius: 18px;
+      overflow: hidden;
+    }
+    .detail-head {
+      padding: 26px 28px;
+      border-bottom: 1px solid #f0ebe3;
+    }
+    .detail-title {
+      margin: 0 0 10px;
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.4;
+      word-break: keep-all;
+    }
+    .detail-meta {
+      color: #777;
+      font-size: 14px;
+    }
+    .detail-content {
+      padding: 28px;
+      color: #333;
+      font-size: 15px;
+      line-height: 1.9;
+      white-space: pre-line;
+      word-break: keep-all;
+    }
+    .event-main-image {
+      width: 100%;
+      display: block;
+      border-top: 1px solid #f0ebe3;
+      border-bottom: 1px solid #f0ebe3;
+      background: #fafafa;
+    }
+    .event-main-image img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+    .event-detail-images {
+      display: grid;
+      gap: 14px;
+      padding: 0 28px 28px;
+    }
+    .event-detail-images img {
+      width: 100%;
+      display: block;
+      border-radius: 14px;
+      border: 1px solid #eee3d6;
+      background: #fafafa;
+    }
+    .event-nav {
+      margin-top: 18px;
+      background: #fff;
+      border: 1px solid #e8e0d4;
+      border-radius: 18px;
+      overflow: hidden;
+    }
+    .event-nav-row {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 14px;
+      align-items: center;
+      padding: 18px 22px;
+      border-bottom: 1px solid #f0ebe3;
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.15s ease;
+    }
+    .event-nav-row:last-child {
+      border-bottom: 0;
+    }
+    .event-nav-row:hover {
+      background: #fcfaf7;
+    }
+    .event-nav-label {
+      font-size: 13px;
+      font-weight: 800;
+      color: #777;
+    }
+    .event-nav-title {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.5;
+      word-break: keep-all;
+    }
+    .event-nav-empty {
+      color: #999;
+      font-weight: 500;
+    }
+    .bottom-actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .bottom-actions a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 16px;
+      border-radius: 10px;
+      background: #111;
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .bottom-actions a.sub {
+      background: #666;
+    }
+    @media (max-width: 768px) {
+      .page {
+        padding: 36px 14px 64px;
+      }
+      .detail-head,
+      .detail-content {
+        padding: 22px 18px;
+      }
+      .detail-title {
+        font-size: 24px;
+      }
+      .event-detail-images {
+        padding: 0 18px 22px;
+      }
+      .admin-actions {
+        justify-content: stretch;
+      }
+      .admin-action-btn {
+        width: 100%;
+      }
+      .event-nav-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+      .bottom-actions a {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('../partials/header') %>
+
+  <div class="page">
+    <% if (isAdmin) { %>
+      <div class="admin-actions">
+        <a href="/admin/events/new" class="admin-action-btn sub">새 이벤트 작성</a>
+        <a href="/admin/events/<%= event._id %>/edit" class="admin-action-btn">이 이벤트 수정</a>
+      </div>
+    <% } %>
+
+    <div class="detail-card">
+      <div class="detail-head">
+        <h1 class="detail-title"><%= event.title %></h1>
+        <div class="detail-meta">
+          <%= event.date || new Date(event.createdAt).toLocaleDateString('ko-KR') %>
+          · <%= event.status === 'done' ? '종료' : '진행중' %>
+        </div>
+      </div>
+
+      <% if (event.image) { %>
+        <div class="event-main-image">
+          <img src="<%= event.image %>" alt="<%= event.title %>">
+        </div>
+      <% } %>
+
+      <div class="detail-content"><%= event.content || '' %></div>
+
+      <% if (event.detailImages && event.detailImages.length > 0) { %>
+        <div class="event-detail-images">
+          <% event.detailImages.forEach((img) => { %>
+            <img src="<%= img %>" alt="이벤트 이미지">
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+
+    <div class="event-nav">
+      <% if (prevEvent) { %>
+        <a href="/community/event/<%= prevEvent._id %>" class="event-nav-row">
+          <div class="event-nav-label">이전글</div>
+          <div class="event-nav-title"><%= prevEvent.title %></div>
+        </a>
+      <% } else { %>
+        <div class="event-nav-row">
+          <div class="event-nav-label">이전글</div>
+          <div class="event-nav-title event-nav-empty">이전글이 없습니다.</div>
+        </div>
+      <% } %>
+
+      <% if (nextEvent) { %>
+        <a href="/community/event/<%= nextEvent._id %>" class="event-nav-row">
+          <div class="event-nav-label">다음글</div>
+          <div class="event-nav-title"><%= nextEvent.title %></div>
+        </a>
+      <% } else { %>
+        <div class="event-nav-row">
+          <div class="event-nav-label">다음글</div>
+          <div class="event-nav-title event-nav-empty">다음글이 없습니다.</div>
+        </div>
+      <% } %>
+    </div>
+
+    <div class="bottom-actions">
+      <a href="/community/event" class="sub">목록으로</a>
+    </div>
+  </div>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>

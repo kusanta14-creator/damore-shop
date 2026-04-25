@@ -6,6 +6,8 @@
   <title><%= pageTitle %> | DAMORE</title>
   <link rel="stylesheet" href="/css/common.css" />
   <style>
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
       background: #f6f4ef;
@@ -14,20 +16,21 @@
     }
 
     .page {
-      max-width: 1100px;
+      max-width: 1180px;
       margin: 0 auto;
-      padding: 48px 20px 80px;
+      padding: 48px 20px 90px;
     }
 
     .community-head {
-      margin-bottom: 28px;
       text-align: center;
+      margin-bottom: 18px;
     }
 
     .community-head h1 {
       margin: 0 0 10px;
       font-size: 34px;
       font-weight: 800;
+      letter-spacing: -0.03em;
     }
 
     .community-head p {
@@ -41,7 +44,7 @@
       justify-content: center;
       gap: 10px;
       flex-wrap: wrap;
-      margin-bottom: 34px;
+      margin-bottom: 24px;
     }
 
     .community-tabs a {
@@ -61,25 +64,208 @@
       border-color: #111;
     }
 
-    .event-box {
+    .event-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .event-filter {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .event-filter a {
+      min-width: 54px;
+      height: 34px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid #d9d0c4;
       background: #fff;
-      border: 1px solid #e8e0d4;
-      border-radius: 18px;
-      padding: 70px 20px;
+      color: #555;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .event-filter a.active {
+      background: #7b634c;
+      color: #fff;
+      border-color: #7b634c;
+    }
+
+    .admin-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .admin-write-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      background: #111;
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .event-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 28px 22px;
+    }
+
+    .event-card {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .event-thumb {
+      width: 100%;
+      aspect-ratio: 1.18 / 1;
+      overflow: hidden;
+      background: #ece8e1;
+    }
+
+    .event-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.25s ease;
+    }
+
+    .event-card:hover .event-thumb img {
+      transform: scale(1.03);
+    }
+
+    .event-thumb-fallback {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 14px;
+      background: #ece8e1;
+    }
+
+    .event-body {
+      padding: 10px 4px 0;
+      text-align: center;
+    }
+
+    .event-title {
+      margin: 0 0 8px;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.5;
+      word-break: keep-all;
+    }
+
+    .event-desc {
+      margin: 0 0 6px;
+      color: #666;
+      font-size: 12px;
+      line-height: 1.5;
+      min-height: 18px;
+    }
+
+    .event-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+      font-size: 11px;
+      color: #8a7f72;
+    }
+
+    .event-status {
+      font-weight: 700;
+    }
+
+    .event-status.live {
+      color: #b45252;
+    }
+
+    .event-status.done {
+      color: #8e8e8e;
+    }
+
+    .empty-box {
+      padding: 80px 20px;
       text-align: center;
       color: #666;
       font-size: 15px;
       line-height: 1.8;
+      background: #fff;
+      border: 1px solid #e8e0d4;
+      border-radius: 18px;
+    }
+
+    @media (max-width: 980px) {
+      .event-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding: 36px 14px 70px;
+      }
+
+      .event-grid {
+        grid-template-columns: 1fr;
+        gap: 26px;
+      }
+
+      .community-head h1 {
+        font-size: 28px;
+      }
+
+      .event-topbar {
+        align-items: stretch;
+      }
+
+      .event-filter,
+      .admin-actions {
+        width: 100%;
+      }
+
+      .admin-write-btn {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
   <%- include('../partials/header') %>
 
+  <%
+    const safeEvents = Array.isArray(typeof events !== 'undefined' ? events : []) ? events : [];
+    const safeStatus = String(typeof status !== 'undefined' ? status : 'all');
+  %>
+
   <div class="page">
     <div class="community-head">
       <h1>이벤트</h1>
-      <p>진행 중인 이벤트와 기획전을 확인해보세요.</p>
+      <p>다모어의 진행 중인 이벤트와 혜택을 확인해보세요.</p>
     </div>
 
     <div class="community-tabs">
@@ -89,10 +275,48 @@
       <a href="/community/customer">고객센터</a>
     </div>
 
-    <div class="event-box">
-      이벤트 페이지 준비중입니다.<br />
-      할인 이벤트, 쿠폰, 기획전 정보를 이곳에서 운영할 수 있습니다.
+    <div class="event-topbar">
+      <div class="event-filter">
+        <a href="/community/event" class="<%= safeStatus === 'all' ? 'active' : '' %>">전체</a>
+        <a href="/community/event?status=live" class="<%= safeStatus === 'live' ? 'active' : '' %>">진행</a>
+        <a href="/community/event?status=done" class="<%= safeStatus === 'done' ? 'active' : '' %>">종료</a>
+      </div>
+
+      <% if (isAdmin) { %>
+        <div class="admin-actions">
+          <a href="/admin/events/new" class="admin-write-btn">이벤트 작성하기</a>
+        </div>
+      <% } %>
     </div>
+
+    <% if (safeEvents.length > 0) { %>
+      <div class="event-grid">
+        <% safeEvents.forEach((event) => { %>
+          <a href="/community/event/<%= event._id %>" class="event-card">
+            <div class="event-thumb">
+              <% if (event.image) { %>
+                <img src="<%= event.image %>" alt="<%= event.title %>">
+              <% } else { %>
+                <div class="event-thumb-fallback">이미지 없음</div>
+              <% } %>
+            </div>
+
+            <div class="event-body">
+              <h2 class="event-title"><%= event.title || '제목 없음' %></h2>
+              <p class="event-desc"><%= event.summary || '' %></p>
+              <div class="event-meta">
+                <span class="event-status <%= event.status === 'done' ? 'done' : 'live' %>">
+                  <%= event.status === 'done' ? '종료' : '진행중' %>
+                </span>
+                <span><%= event.date || new Date(event.createdAt).toLocaleDateString('ko-KR') %></span>
+              </div>
+            </div>
+          </a>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <div class="empty-box">등록된 이벤트가 없습니다.</div>
+    <% } %>
   </div>
 
   <%- include('../partials/footer') %>
