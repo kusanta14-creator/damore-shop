@@ -47,4 +47,4 @@ router.get('/customer', async (req, res) => {
   });
 });
 
-module.exports = router;sdsd
+module.exports = router;
