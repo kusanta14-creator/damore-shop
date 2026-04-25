@@ -589,3 +589,44 @@ footer {
   border-bottom: 1px solid var(--line);
   margin-bottom: 4px;
 }
+.mypage-wrap {
+  position: relative;
+}
+
+.mypage-btn {
+  border: 0;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+  color: inherit;
+}
+
+.mypage-dropdown {
+  position: absolute;
+  top: calc(100% + 14px);
+  right: 0;
+  width: 160px;
+  background: #fff;
+  border: 1px solid var(--line);
+  box-shadow: 0 14px 34px rgba(0,0,0,0.12);
+  padding: 10px 0;
+  display: none;
+  z-index: 100;
+}
+
+.mypage-dropdown a {
+  display: block;
+  padding: 10px 16px;
+  font-size: 13px;
+  color: #111;
+  white-space: nowrap;
+}
+
+.mypage-dropdown a:hover {
+  background: #f5f3ef;
+}
+
+.mypage-wrap:hover .mypage-dropdown,
+.mypage-wrap.active .mypage-dropdown {
+  display: block;
+}

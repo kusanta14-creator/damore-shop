@@ -5,11 +5,13 @@
   const safeIsAdmin = typeof isAdmin !== 'undefined' ? isAdmin : false;
   const safeCurrentUser = typeof currentUser !== 'undefined' ? currentUser : null;
   const safeCartCount = typeof cartCount !== 'undefined' ? cartCount : 0;
+
   const isCommunityActive = safeCurrentPath.startsWith('/community');
   const isMyPageActive =
     safeCurrentPath.startsWith('/mypage') ||
     safeCurrentPath.startsWith('/my-orders') ||
-    safeCurrentPath.startsWith('/order/lookup');
+    safeCurrentPath.startsWith('/order/lookup') ||
+    safeCurrentPath.startsWith('/cart');
 %>
 
 <header>
@@ -33,7 +35,9 @@
               <% if (item.subCategories && item.subCategories.length > 0) { %>
                 <div class="dropdown-menu">
                   <% item.subCategories.forEach(subItem => { %>
-                    <a href="/category/<%= item.name %>?sub=<%= encodeURIComponent(subItem) %>"><%= subItem %></a>
+                    <a href="/category/<%= item.name %>?sub=<%= encodeURIComponent(subItem) %>">
+                      <%= subItem %>
+                    </a>
                   <% }) %>
                 </div>
               <% } %>
@@ -59,27 +63,38 @@
           <a href="/admin/dashboard">관리자 수정</a>
           <a href="/logout">로그아웃</a>
         <% } else { %>
+
+          <% if (safeCurrentUser) { %>
+            <span class="user-name"><%= safeCurrentUser.name %>님</span>
+          <% } else { %>
+            <a href="/auth">로그인</a>
+          <% } %>
+
           <div class="mypage-menu">
             <button type="button" class="mypage-btn <%= isMyPageActive ? 'active' : '' %>">
               마이페이지
             </button>
 
             <div class="mypage-dropdown">
+              <a href="/order/lookup">주문조회</a>
+              <a href="/mypage">마이페이지</a>
+              <a href="/my-orders">내 주문내역</a>
+              <a href="/cart">장바구니</a>
+              <a href="/mypage/wishlist">관심상품</a>
+              <a href="/mypage/recent">최근 본 상품</a>
+              <a href="/mypage/posts">내가 쓴 글</a>
+              <a href="/mypage/coupons">쿠폰 보관함</a>
+
               <% if (safeCurrentUser) { %>
-                <div class="mypage-user"><%= safeCurrentUser.name %>님</div>
-                <a href="/mypage">마이페이지</a>
-                <a href="/my-orders">주문조회</a>
                 <a href="/logout">로그아웃</a>
               <% } else { %>
-                <a href="/auth">로그인</a>
                 <a href="/auth">회원가입</a>
-                <a href="/order/lookup">주문조회</a>
               <% } %>
             </div>
           </div>
-        <% } %>
 
-        <a href="/cart">장바구니 <%= safeCartCount %></a>
+          <a href="/cart">장바구니 <%= safeCartCount %></a>
+        <% } %>
       </div>
     </div>
   </div>
