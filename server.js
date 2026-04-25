@@ -42,11 +42,6 @@ app.use(express.json());
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/community', require('./routes/community'));
-app.use('/admin/notices', require('./routes/admin-notices'));
-app.use('/admin/products', adminProductsRoutes);
-app.use('/admin/shorts', adminShortsRoutes);
-app.use('/admin/notices', require('./routes/admin-notices'));
-app.use('/admin', adminRoutes);
 
 app.use(
   session({
@@ -102,6 +97,13 @@ app.use(async (req, res, next) => {
     next();
   }
 });
+
+app.use('/community', require('./routes/community'));
+
+app.use('/admin/products', adminProductsRoutes);
+app.use('/admin/shorts', adminShortsRoutes);
+app.use('/admin/notices', require('./routes/admin-notices'));
+app.use('/admin', adminRoutes);
 
 function normalizeProductStatus(product) {
   if (!product) return product;
