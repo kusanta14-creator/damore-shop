@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>관리자 대시보드 | DAMORE ADMIN</title>
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     :root {
       --bg: #f5f3ef;
@@ -118,7 +121,7 @@
 
     .card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
     }
 
     .card.primary {
@@ -183,6 +186,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <div class="page-head">
@@ -237,13 +241,21 @@
         <p>브랜드 문구, 소개글, 푸터 정보 등을 수정합니다.</p>
       </a>
 
+      <a href="/admin/notices" class="card">
+        <strong>공지관리</strong>
+        <p>공지사항 작성, 수정, 삭제와 상단고정/노출 여부를 관리합니다.</p>
+      </a>
+
       <a href="/admin/home-sections" class="card">
         <strong>홈 섹션 관리</strong>
         <p>메인 홈 화면 섹션 추가, 수정, 노출 순서를 관리합니다.</p>
       </a>
     </div>
 
+
+
     <a href="/admin/logout" class="logout">로그아웃</a>
   </div>
 </body>
+
 </html>
