@@ -14,20 +14,28 @@ const noticeSchema = new mongoose.Schema(
       default: ''
     },
 
-    // 새 공지 상세 내용
     content: {
       type: String,
       trim: true,
       default: ''
     },
 
-    // 상단 고정 여부
+    image: {
+      type: String,
+      trim: true,
+      default: ''
+    },
+
+    detailImages: {
+      type: [String],
+      default: []
+    },
+
     isPinned: {
       type: Boolean,
       default: false
     },
 
-    // 노출 / 숨김 여부
     isVisible: {
       type: Boolean,
       default: true

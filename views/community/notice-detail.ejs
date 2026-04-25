@@ -79,6 +79,35 @@
       word-break: keep-all;
     }
 
+    .notice-main-image {
+      width: 100%;
+      display: block;
+      border-top: 1px solid #f0ebe3;
+      border-bottom: 1px solid #f0ebe3;
+      background: #fafafa;
+    }
+
+    .notice-main-image img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .notice-detail-images {
+      display: grid;
+      gap: 14px;
+      padding: 0 28px 28px;
+    }
+
+    .notice-detail-images img {
+      width: 100%;
+      display: block;
+      border-radius: 14px;
+      border: 1px solid #eee3d6;
+      background: #fafafa;
+    }
+
     .notice-nav {
       margin-top: 18px;
       background: #fff;
@@ -163,6 +192,10 @@
         font-size: 24px;
       }
 
+      .notice-detail-images {
+        padding: 0 18px 22px;
+      }
+
       .admin-actions {
         justify-content: stretch;
       }
@@ -201,7 +234,21 @@
         </div>
       </div>
 
+      <% if (notice.image) { %>
+        <div class="notice-main-image">
+          <img src="<%= notice.image %>" alt="<%= notice.title %>">
+        </div>
+      <% } %>
+
       <div class="detail-content"><%= notice.content || '' %></div>
+
+      <% if (notice.detailImages && notice.detailImages.length > 0) { %>
+        <div class="notice-detail-images">
+          <% notice.detailImages.forEach((img) => { %>
+            <img src="<%= img %>" alt="공지 이미지">
+          <% }) %>
+        </div>
+      <% } %>
     </div>
 
     <div class="notice-nav">
