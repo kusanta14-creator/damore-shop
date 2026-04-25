@@ -951,6 +951,41 @@
         padding: 58px 0;
       }
     }
+
+    /* ===== 모바일 HERO 강제 가로 유지 + 이미지 자동비율 ===== */
+    .hero-slide {
+      grid-template-columns: repeat(3, 1fr) !important;
+      min-height: 0 !important;
+      height: auto !important;
+    }
+
+    .hero-panel {
+      min-height: 0 !important;
+      height: auto !important;
+    }
+
+    .hero-panel img {
+      width: 100% !important;
+      height: auto !important;
+      object-fit: contain !important;
+      display: block !important;
+    }
+
+    @media (max-width: 1100px) {
+      .hero-slide {
+        grid-template-columns: repeat(3, 1fr) !important;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .hero {
+        padding: 14px 0 34px !important;
+      }
+
+      .hero-slide {
+        grid-template-columns: repeat(3, 1fr) !important;
+      }
+    }
   </style>
 </head>
 
@@ -1777,6 +1812,7 @@
                             }
                           }
                         </style>
+
 
                         <div class="container">
                           <div class="shorts-head">
