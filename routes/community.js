@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Category = require('../models/Category');
 const Notice = require('../models/Notice');
+const Event = require('../models/Event');
 const SiteContent = require('../models/SiteContent');
 
 async function getCommonRenderData(req) {
@@ -20,12 +21,11 @@ async function getCommonRenderData(req) {
   };
 }
 
-// 커뮤니티 메인 진입 시 공지사항으로 이동
 router.get('/', (req, res) => {
   return res.redirect('/community/notice');
 });
 
-// 공지사항 목록 + 검색 + 페이지네이션
+// 공지사항 목록
 router.get('/notice', async (req, res) => {
   try {
     const common = await getCommonRenderData(req);
@@ -76,7 +76,7 @@ router.get('/notice', async (req, res) => {
   }
 });
 
-// 공지사항 상세 + 이전글/다음글
+// 공지사항 상세
 router.get('/notice/:id', async (req, res) => {
   try {
     const common = await getCommonRenderData(req);
@@ -113,6 +113,82 @@ router.get('/notice/:id', async (req, res) => {
   }
 });
 
+// 이벤트 목록
+router.get('/event', async (req, res) => {
+  try {
+    const common = await getCommonRenderData(req);
+    const status = String(req.query.status || 'all').trim();
+    const keyword = String(req.query.keyword || '').trim();
+
+    const filter = {
+      isVisible: true
+    };
+
+    if (status === 'live') {
+      filter.status = 'live';
+    } else if (status === 'done') {
+      filter.status = 'done';
+    }
+
+    if (keyword) {
+      filter.title = { $regex: keyword, $options: 'i' };
+    }
+
+    const events = await Event.find(filter).sort({
+      isPinned: -1,
+      createdAt: -1
+    });
+
+    res.render('community/event', {
+      pageTitle: '이벤트',
+      events,
+      status,
+      keyword,
+      ...common
+    });
+  } catch (error) {
+    console.error('이벤트 목록 오류 >>>', error);
+    res.status(500).send(error.message || '이벤트 페이지 오류');
+  }
+});
+
+// 이벤트 상세
+router.get('/event/:id', async (req, res) => {
+  try {
+    const common = await getCommonRenderData(req);
+
+    const event = await Event.findOne({
+      _id: req.params.id,
+      isVisible: true
+    });
+
+    if (!event) {
+      return res.status(404).send('이벤트를 찾을 수 없습니다.');
+    }
+
+    const prevEvent = await Event.findOne({
+      isVisible: true,
+      createdAt: { $gt: event.createdAt }
+    }).sort({ createdAt: 1 });
+
+    const nextEvent = await Event.findOne({
+      isVisible: true,
+      createdAt: { $lt: event.createdAt }
+    }).sort({ createdAt: -1 });
+
+    res.render('community/event-detail', {
+      pageTitle: event.title,
+      event,
+      prevEvent,
+      nextEvent,
+      ...common
+    });
+  } catch (error) {
+    console.error('이벤트 상세 오류 >>>', error);
+    res.status(500).send(error.message || '이벤트 상세 페이지 오류');
+  }
+});
+
 // 리뷰
 router.get('/review', async (req, res) => {
   try {
@@ -125,67 +201,6 @@ router.get('/review', async (req, res) => {
   } catch (error) {
     console.error('리뷰 페이지 오류 >>>', error);
     res.status(500).send(error.message || '리뷰 페이지 오류');
-  }
-});
-
-// 이벤트
-router.get('/event', async (req, res) => {
-  try {
-    const common = await getCommonRenderData(req);
-    const status = String(req.query.status || 'all').trim();
-
-    const sampleEvents = [
-      {
-        _id: '1',
-        title: '피크닉 브랜드 굿즈 증정 이벤트',
-        summary: '어거스트플랜',
-        thumbnail: '/images/sample-event-1.jpg',
-        status: 'live',
-        dateLabel: '[5]'
-      },
-      {
-        _id: '2',
-        title: '카카오톡 채널 친구 추가 EVENT',
-        summary: '어거스트플랜',
-        thumbnail: '/images/sample-event-2.jpg',
-        status: 'live',
-        dateLabel: ''
-      },
-      {
-        _id: '3',
-        title: '어거스트 APP 리워드 이벤트',
-        summary: '어거스트플랜',
-        thumbnail: '/images/sample-event-3.jpg',
-        status: 'live',
-        dateLabel: '[4]'
-      },
-      {
-        _id: '4',
-        title: '멤버십 혜택 이벤트',
-        summary: '어거스트플랜',
-        thumbnail: '/images/sample-event-4.jpg',
-        status: 'done',
-        dateLabel: '[1]'
-      }
-    ];
-
-    let events = sampleEvents;
-
-    if (status === 'live') {
-      events = sampleEvents.filter((item) => item.status === 'live');
-    } else if (status === 'done') {
-      events = sampleEvents.filter((item) => item.status === 'done');
-    }
-
-    res.render('community/event', {
-      pageTitle: '이벤트',
-      events,
-      status,
-      ...common
-    });
-  } catch (error) {
-    console.error('이벤트 페이지 오류 >>>', error);
-    res.status(500).send(error.message || '이벤트 페이지 오류');
   }
 });
 
