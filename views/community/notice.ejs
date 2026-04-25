@@ -41,7 +41,7 @@
       justify-content: center;
       gap: 10px;
       flex-wrap: wrap;
-      margin-bottom: 34px;
+      margin-bottom: 24px;
     }
 
     .community-tabs a {
@@ -61,6 +61,26 @@
       border-color: #111;
     }
 
+    .admin-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 18px;
+    }
+
+    .admin-write-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      background: #111;
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
     .board-card {
       background: #fff;
       border: 1px solid #e8e0d4;
@@ -77,6 +97,11 @@
       border-bottom: 1px solid #f0ebe3;
       color: inherit;
       text-decoration: none;
+      transition: background 0.15s ease;
+    }
+
+    .board-row:hover {
+      background: #fcfaf7;
     }
 
     .board-row:last-child {
@@ -89,8 +114,14 @@
       color: #555;
     }
 
+    .board-row.head:hover {
+      background: #fbf9f5;
+    }
+
     .board-title {
       font-weight: 700;
+      line-height: 1.5;
+      word-break: keep-all;
     }
 
     .board-date {
@@ -124,6 +155,10 @@
     }
 
     @media (max-width: 768px) {
+      .page {
+        padding: 36px 14px 64px;
+      }
+
       .board-row {
         grid-template-columns: 1fr;
         gap: 8px;
@@ -135,6 +170,14 @@
 
       .board-row.head {
         display: none;
+      }
+
+      .admin-actions {
+        justify-content: stretch;
+      }
+
+      .admin-write-btn {
+        width: 100%;
       }
     }
   </style>
@@ -155,6 +198,12 @@
       <a href="/community/customer">고객센터</a>
     </div>
 
+    <% if (isAdmin) { %>
+      <div class="admin-actions">
+        <a href="/admin/notices/new" class="admin-write-btn">공지 작성하기</a>
+      </div>
+    <% } %>
+
     <% if (notices && notices.length > 0) { %>
       <div class="board-card">
         <div class="board-row head">
@@ -173,7 +222,9 @@
               <% } %>
             </div>
             <div class="board-title"><%= notice.title %></div>
-            <div class="board-date"><%= new Date(notice.createdAt).toLocaleDateString('ko-KR') %></div>
+            <div class="board-date">
+              <%= notice.date || new Date(notice.createdAt).toLocaleDateString('ko-KR') %>
+            </div>
           </a>
         <% }) %>
       </div>

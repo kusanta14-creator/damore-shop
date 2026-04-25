@@ -19,6 +19,32 @@
       padding: 48px 20px 80px;
     }
 
+    .admin-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .admin-action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 16px;
+      border-radius: 999px;
+      background: #111;
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .admin-action-btn.sub {
+      background: #666;
+    }
+
     .detail-card {
       background: #fff;
       border: 1px solid #e8e0d4;
@@ -36,6 +62,7 @@
       font-size: 28px;
       font-weight: 800;
       line-height: 1.4;
+      word-break: keep-all;
     }
 
     .detail-meta {
@@ -75,19 +102,55 @@
     .bottom-actions a.sub {
       background: #666;
     }
+
+    @media (max-width: 768px) {
+      .page {
+        padding: 36px 14px 64px;
+      }
+
+      .detail-head,
+      .detail-content {
+        padding: 22px 18px;
+      }
+
+      .detail-title {
+        font-size: 24px;
+      }
+
+      .admin-actions {
+        justify-content: stretch;
+      }
+
+      .admin-action-btn {
+        width: 100%;
+      }
+
+      .bottom-actions a {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
   <%- include('../partials/header') %>
 
   <div class="page">
+    <% if (isAdmin) { %>
+      <div class="admin-actions">
+        <a href="/admin/notices/new" class="admin-action-btn sub">새 공지 작성</a>
+        <a href="/admin/notices/<%= notice._id %>/edit" class="admin-action-btn">이 공지 수정</a>
+      </div>
+    <% } %>
+
     <div class="detail-card">
       <div class="detail-head">
         <h1 class="detail-title"><%= notice.title %></h1>
-        <div class="detail-meta"><%= new Date(notice.createdAt).toLocaleDateString('ko-KR') %></div>
+        <div class="detail-meta">
+          <%= notice.date || new Date(notice.createdAt).toLocaleDateString('ko-KR') %>
+        </div>
       </div>
 
-      <div class="detail-content"><%= notice.content %></div>
+      <div class="detail-content"><%= notice.content || '' %></div>
     </div>
 
     <div class="bottom-actions">
