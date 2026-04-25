@@ -87,14 +87,29 @@
       background: linear-gradient(to top, rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.10));
     }
     .hero-panel.left img,
-    .hero-panel.center img,
-    .hero-panel.right img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-     object-position: center conter ;
-    }
+.hero-panel.center img,
+.hero-panel.right img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+}
+
+/* 얼굴/상체가 위에 있을 때 */
+.hero-panel img.focus-top {
+  object-position: center top;
+}
+
+/* 로고/중앙 중심 */
+.hero-panel img.focus-center {
+  object-position: center center;
+}
+
+/* 하단 코디/신발 강조 */
+.hero-panel img.focus-bottom {
+  object-position: center bottom;
+}
 
     .hero-panel-link {
       position: absolute;
