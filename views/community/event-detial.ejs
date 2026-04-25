@@ -12,13 +12,11 @@
       color: #111;
       font-family: Arial, sans-serif;
     }
-
     .page {
       max-width: 900px;
       margin: 0 auto;
       padding: 48px 20px 80px;
     }
-
     .admin-actions {
       display: flex;
       justify-content: flex-end;
@@ -26,7 +24,6 @@
       margin-bottom: 16px;
       flex-wrap: wrap;
     }
-
     .admin-action-btn {
       display: inline-flex;
       align-items: center;
@@ -40,23 +37,19 @@
       font-size: 14px;
       font-weight: 800;
     }
-
     .admin-action-btn.sub {
       background: #666;
     }
-
     .detail-card {
       background: #fff;
       border: 1px solid #e8e0d4;
       border-radius: 18px;
       overflow: hidden;
     }
-
     .detail-head {
       padding: 26px 28px;
       border-bottom: 1px solid #f0ebe3;
     }
-
     .detail-title {
       margin: 0 0 10px;
       font-size: 28px;
@@ -64,12 +57,10 @@
       line-height: 1.4;
       word-break: keep-all;
     }
-
     .detail-meta {
       color: #777;
       font-size: 14px;
     }
-
     .detail-content {
       padding: 28px;
       color: #333;
@@ -78,7 +69,6 @@
       white-space: pre-line;
       word-break: keep-all;
     }
-
     .event-main-image {
       width: 100%;
       display: block;
@@ -86,20 +76,17 @@
       border-bottom: 1px solid #f0ebe3;
       background: #fafafa;
     }
-
     .event-main-image img {
       display: block;
       width: 100%;
       height: auto;
       object-fit: contain;
     }
-
     .event-detail-images {
       display: grid;
       gap: 14px;
       padding: 0 28px 28px;
     }
-
     .event-detail-images img {
       width: 100%;
       display: block;
@@ -107,7 +94,6 @@
       border: 1px solid #eee3d6;
       background: #fafafa;
     }
-
     .event-nav {
       margin-top: 18px;
       background: #fff;
@@ -115,7 +101,6 @@
       border-radius: 18px;
       overflow: hidden;
     }
-
     .event-nav-row {
       display: grid;
       grid-template-columns: 90px 1fr;
@@ -127,40 +112,33 @@
       color: inherit;
       transition: background 0.15s ease;
     }
-
     .event-nav-row:last-child {
       border-bottom: 0;
     }
-
     .event-nav-row:hover {
       background: #fcfaf7;
     }
-
     .event-nav-label {
       font-size: 13px;
       font-weight: 800;
       color: #777;
     }
-
     .event-nav-title {
       font-size: 15px;
       font-weight: 700;
       line-height: 1.5;
       word-break: keep-all;
     }
-
     .event-nav-empty {
       color: #999;
       font-weight: 500;
     }
-
     .bottom-actions {
       margin-top: 20px;
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
     }
-
     .bottom-actions a {
       display: inline-flex;
       align-items: center;
@@ -173,42 +151,33 @@
       font-size: 14px;
       font-weight: 700;
     }
-
     .bottom-actions a.sub {
       background: #666;
     }
-
     @media (max-width: 768px) {
       .page {
         padding: 36px 14px 64px;
       }
-
       .detail-head,
       .detail-content {
         padding: 22px 18px;
       }
-
       .detail-title {
         font-size: 24px;
       }
-
       .event-detail-images {
         padding: 0 18px 22px;
       }
-
       .admin-actions {
         justify-content: stretch;
       }
-
       .admin-action-btn {
         width: 100%;
       }
-
       .event-nav-row {
         grid-template-columns: 1fr;
         gap: 6px;
       }
-
       .bottom-actions a {
         width: 100%;
       }
@@ -228,7 +197,7 @@
 
     <div class="detail-card">
       <div class="detail-head">
-        <h1 class="detail-title"><%= event.title || '' %></h1>
+        <h1 class="detail-title"><%= event.title %></h1>
         <div class="detail-meta">
           <%= event.date || new Date(event.createdAt).toLocaleDateString('ko-KR') %>
           · <%= event.status === 'done' ? '종료' : '진행중' %>
@@ -237,7 +206,7 @@
 
       <% if (event.image) { %>
         <div class="event-main-image">
-          <img src="<%= event.image %>" alt="<%= event.title || '이벤트 이미지' %>">
+          <img src="<%= event.image %>" alt="<%= event.title %>">
         </div>
       <% } %>
 
