@@ -41,7 +41,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/community', require('./routes/community'));
 
 app.use(
   session({
@@ -100,6 +99,7 @@ app.use(async (req, res, next) => {
 
 app.use('/community', require('./routes/community'));
 
+app.use('/', authRoutes);
 app.use('/admin/products', adminProductsRoutes);
 app.use('/admin/shorts', adminShortsRoutes);
 app.use('/admin/notices', require('./routes/admin-notices'));
@@ -324,8 +324,6 @@ async function buildHomeSectionProductsMap(homeSections) {
 app.get('/health', (req, res) => {
   res.status(200).send('OK');
 });
-
-app.use('/', authRoutes);
 
 // 메인 페이지
 app.get('/', async (req, res) => {
@@ -1195,10 +1193,6 @@ app.post('/order/lookup/cancel-request', async (req, res) => {
     res.status(500).send('비회원 취소 요청 오류');
   }
 });
-
-app.use('/admin/products', adminProductsRoutes);
-app.use('/admin/shorts', adminShortsRoutes);
-app.use('/admin', adminRoutes);
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on ${BASE_URL}`);
