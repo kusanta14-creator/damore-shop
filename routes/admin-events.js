@@ -27,6 +27,11 @@ function getCloudinaryUrl(file) {
   return file?.path || file?.secure_url || file?.url || '';
 }
 
+function sendError(res, label, error) {
+  console.error(label, error);
+  return res.status(500).send(error.stack || error.message || label);
+}
+
 async function buildEventPayload(req, existingEvent = null) {
   const files = req.files || {};
   const imageFile = files.imageFile?.[0] || null;
@@ -65,8 +70,7 @@ router.get('/', checkAdmin, async (req, res) => {
     const events = await Event.find().sort({ isPinned: -1, createdAt: -1 });
     res.render('admin/events/index', { events });
   } catch (error) {
-    console.error(error);
-    res.status(500).send('이벤트 목록 페이지 오류');
+    return sendError(res, '이벤트 목록 페이지 오류', error);
   }
 });
 
@@ -90,8 +94,7 @@ router.post(
       await Event.create(payload);
       res.redirect('/admin/events');
     } catch (error) {
-      console.error(error);
-      res.status(500).send(error.message || '이벤트 등록 오류');
+      return sendError(res, '이벤트 등록 오류', error);
     }
   }
 );
@@ -109,8 +112,7 @@ router.get('/:id/edit', checkAdmin, async (req, res) => {
       event
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).send('이벤트 수정 페이지 오류');
+    return sendError(res, '이벤트 수정 페이지 오류', error);
   }
 });
 
@@ -144,8 +146,7 @@ router.post(
 
       res.redirect('/admin/events');
     } catch (error) {
-      console.error(error);
-      res.status(500).send(error.message || '이벤트 수정 오류');
+      return sendError(res, '이벤트 수정 오류', error);
     }
   }
 );
@@ -155,8 +156,7 @@ router.post('/:id/delete', checkAdmin, async (req, res) => {
     await Event.findByIdAndDelete(req.params.id);
     res.redirect('/admin/events');
   } catch (error) {
-    console.error(error);
-    res.status(500).send('이벤트 삭제 오류');
+    return sendError(res, '이벤트 삭제 오류', error);
   }
 });
 
