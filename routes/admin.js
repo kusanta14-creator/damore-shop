@@ -1,11 +1,11 @@
-console.log('admin routes loaded - sharp resize version');
+console.log('admin routes loaded - cloudinary upload version');
+
 const express = require('express');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 const multer = require('multer');
-const sharp = require('sharp');
-const path = require('path');
-const fs = require('fs');
+const cloudinary = require('../config/cloudinary');
+const streamifier = require('streamifier');
 
 const Admin = require('../models/Admin');
 const Product = require('../models/Product');
@@ -59,114 +59,41 @@ function normalizeColors(colors) {
   return [];
 }
 
-function ensureDir(dirPath) {
-  fs.mkdirSync(dirPath, { recursive: true });
-}
+function uploadBufferToCloudinary(buffer, folder, options = {}) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: `damore/${folder}`,
+        resource_type: 'image',
+        quality: options.quality || 'auto'
+      },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result.secure_url);
+      }
+    );
 
-function makeFileName(prefix = 'img', ext = '.webp') {
-  const timestamp = Date.now();
-  const random = Math.round(Math.random() * 1e9);
-  return `${prefix}-${timestamp}-${random}${ext}`;
-}
-
-function getFileExt(file) {
-  const original = (file?.originalname || '').toLowerCase();
-  const ext = path.extname(original);
-  return ext || '';
-}
-
-function isAnimatedCandidate(file) {
-  const mime = String(file?.mimetype || '').toLowerCase();
-  const ext = getFileExt(file);
-
-  return (
-    mime === 'image/gif' ||
-    mime === 'image/webp' ||
-    ext === '.gif' ||
-    ext === '.webp'
-  );
-}
-
-async function saveOriginalFile(file, folder) {
-  if (!file || !file.buffer) return '';
-
-  const ext = getFileExt(file) || '.bin';
-  const uploadDir = path.join(__dirname, '..', 'public', 'uploads', folder);
-  ensureDir(uploadDir);
-
-  const fileName = makeFileName(folder, ext);
-  const outputPath = path.join(uploadDir, fileName);
-
-  await fs.promises.writeFile(outputPath, file.buffer);
-  return `/uploads/${folder}/${fileName}`;
-}
-
-async function saveResizedImage(file, folder, options = {}) {
-  if (!file || !file.buffer) return '';
-
-  const {
-    width = null,
-    height = null,
-    fit = 'inside',
-    quality = 95
-  } = options;
-
-  const uploadDir = path.join(__dirname, '..', 'public', 'uploads', folder);
-  ensureDir(uploadDir);
-
-  const fileName = makeFileName(folder, '.webp');
-  const outputPath = path.join(uploadDir, fileName);
-
-  let transformer = sharp(file.buffer).rotate();
-
-  if (width && height) {
-    transformer = transformer.resize(width, height, {
-      fit,
-      position: 'centre',
-      withoutEnlargement: true
-    });
-  } else if (width) {
-    transformer = transformer.resize({
-      width,
-      fit,
-      withoutEnlargement: true
-    });
-  } else if (height) {
-    transformer = transformer.resize({
-      height,
-      fit,
-      withoutEnlargement: true
-    });
-  }
-
-  await transformer.webp({ quality }).toFile(outputPath);
-  return `/uploads/${folder}/${fileName}`;
+    streamifier.createReadStream(buffer).pipe(stream);
+  });
 }
 
 async function saveImagePreserveAnimation(file, folder, options = {}) {
   if (!file || !file.buffer) return '';
 
-  if (isAnimatedCandidate(file)) {
-    return saveOriginalFile(file, folder);
-  }
-
-  return saveResizedImage(file, folder, options);
+  return uploadBufferToCloudinary(file.buffer, folder, {
+    quality: options.quality || 95
+  });
 }
 
 async function getUploadedFiles(req) {
   const image = req.files?.image?.[0]
     ? await saveImagePreserveAnimation(req.files.image[0], 'products', {
-        width: 1200,
-        height: 1600,
-        fit: 'inside',
         quality: 95
       })
     : '';
 
   const detailImage = req.files?.detailImage?.[0]
     ? await saveImagePreserveAnimation(req.files.detailImage[0], 'products', {
-        width: 1400,
-        fit: 'inside',
         quality: 95
       })
     : '';
@@ -175,8 +102,6 @@ async function getUploadedFiles(req) {
     ? await Promise.all(
         req.files.detailImages.map(file =>
           saveImagePreserveAnimation(file, 'products', {
-            width: 1400,
-            fit: 'inside',
             quality: 95
           })
         )
