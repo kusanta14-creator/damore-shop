@@ -11,6 +11,21 @@ function checkAdmin(req, res, next) {
   next();
 }
 
+const eventUpload = upload.fields([
+  { name: 'imageFile', maxCount: 1 },
+  { name: 'detailImageFiles', maxCount: 20 }
+]);
+
+function handleUpload(req, res, next) {
+  eventUpload(req, res, function (error) {
+    if (error) {
+      console.error('Cloudinary 업로드 에러:', error);
+      return res.status(500).send(error.stack || error.message || String(error));
+    }
+    next();
+  });
+}
+
 function normalizeArrayInput(value) {
   if (Array.isArray(value)) return value;
   if (typeof value === 'undefined' || value === null) return [];
@@ -37,11 +52,8 @@ async function buildEventPayload(req, existingEvent = null) {
   const imageFile = files.imageFile?.[0] || null;
   const detailImageFiles = files.detailImageFiles || [];
 
-  const uploadedImage = getCloudinaryUrl(imageFile);
-
-  const image = uploadedImage
-    ? uploadedImage
-    : String(req.body.existingImage || existingEvent?.image || '').trim();
+  const image = getCloudinaryUrl(imageFile) ||
+    String(req.body.existingImage || existingEvent?.image || '').trim();
 
   const existingDetailImages = extractExistingArray(req.body.existingDetailImages);
 
@@ -81,23 +93,15 @@ router.get('/new', checkAdmin, (req, res) => {
   });
 });
 
-router.post(
-  '/new',
-  checkAdmin,
-  upload.fields([
-    { name: 'imageFile', maxCount: 1 },
-    { name: 'detailImageFiles', maxCount: 20 }
-  ]),
-  async (req, res) => {
-    try {
-      const payload = await buildEventPayload(req);
-      await Event.create(payload);
-      res.redirect('/admin/events');
-    } catch (error) {
-      return sendError(res, '이벤트 등록 오류', error);
-    }
+router.post('/new', checkAdmin, handleUpload, async (req, res) => {
+  try {
+    const payload = await buildEventPayload(req);
+    await Event.create(payload);
+    res.redirect('/admin/events');
+  } catch (error) {
+    return sendError(res, '이벤트 등록 오류', error);
   }
-);
+});
 
 router.get('/:id/edit', checkAdmin, async (req, res) => {
   try {
@@ -116,40 +120,32 @@ router.get('/:id/edit', checkAdmin, async (req, res) => {
   }
 });
 
-router.post(
-  '/:id/edit',
-  checkAdmin,
-  upload.fields([
-    { name: 'imageFile', maxCount: 1 },
-    { name: 'detailImageFiles', maxCount: 20 }
-  ]),
-  async (req, res) => {
-    try {
-      const event = await Event.findById(req.params.id);
+router.post('/:id/edit', checkAdmin, handleUpload, async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
 
-      if (!event) {
-        return res.status(404).send('이벤트를 찾을 수 없습니다.');
-      }
-
-      const payload = await buildEventPayload(req, event);
-
-      event.title = payload.title;
-      event.summary = payload.summary;
-      event.content = payload.content;
-      event.image = payload.image;
-      event.detailImages = payload.detailImages;
-      event.status = payload.status;
-      event.isPinned = payload.isPinned;
-      event.isVisible = payload.isVisible;
-
-      await event.save();
-
-      res.redirect('/admin/events');
-    } catch (error) {
-      return sendError(res, '이벤트 수정 오류', error);
+    if (!event) {
+      return res.status(404).send('이벤트를 찾을 수 없습니다.');
     }
+
+    const payload = await buildEventPayload(req, event);
+
+    event.title = payload.title;
+    event.summary = payload.summary;
+    event.content = payload.content;
+    event.image = payload.image;
+    event.detailImages = payload.detailImages;
+    event.status = payload.status;
+    event.isPinned = payload.isPinned;
+    event.isVisible = payload.isVisible;
+
+    await event.save();
+
+    res.redirect('/admin/events');
+  } catch (error) {
+    return sendError(res, '이벤트 수정 오류', error);
   }
-);
+});
 
 router.post('/:id/delete', checkAdmin, async (req, res) => {
   try {
