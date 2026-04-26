@@ -23,17 +23,8 @@ function extractExistingArray(bodyValue) {
     .filter(Boolean);
 }
 
-function collectEventMedia(event) {
-  const result = [];
-
-  if (!event) return result;
-  if (event.image) result.push(event.image);
-
-  (event.detailImages || []).forEach((item) => {
-    if (item) result.push(item);
-  });
-
-  return result;
+function getCloudinaryUrl(file) {
+  return file?.path || file?.secure_url || file?.url || '';
 }
 
 async function buildEventPayload(req, existingEvent = null) {
@@ -41,14 +32,20 @@ async function buildEventPayload(req, existingEvent = null) {
   const imageFile = files.imageFile?.[0] || null;
   const detailImageFiles = files.detailImageFiles || [];
 
-  const image = imageFile
-    ? imageFile.path
+  const uploadedImage = getCloudinaryUrl(imageFile);
+
+  const image = uploadedImage
+    ? uploadedImage
     : String(req.body.existingImage || existingEvent?.image || '').trim();
 
   const existingDetailImages = extractExistingArray(req.body.existingDetailImages);
 
-  const detailImages = detailImageFiles.length > 0
-    ? detailImageFiles.map((file) => file.path)
+  const uploadedDetailImages = detailImageFiles
+    .map(getCloudinaryUrl)
+    .filter(Boolean);
+
+  const detailImages = uploadedDetailImages.length > 0
+    ? uploadedDetailImages
     : (existingDetailImages.length > 0 ? existingDetailImages : (existingEvent?.detailImages || []));
 
   return {
@@ -66,10 +63,7 @@ async function buildEventPayload(req, existingEvent = null) {
 router.get('/', checkAdmin, async (req, res) => {
   try {
     const events = await Event.find().sort({ isPinned: -1, createdAt: -1 });
-
-    res.render('admin/events/index', {
-      events
-    });
+    res.render('admin/events/index', { events });
   } catch (error) {
     console.error(error);
     res.status(500).send('이벤트 목록 페이지 오류');
@@ -94,7 +88,6 @@ router.post(
     try {
       const payload = await buildEventPayload(req);
       await Event.create(payload);
-
       res.redirect('/admin/events');
     } catch (error) {
       console.error(error);
@@ -160,7 +153,6 @@ router.post(
 router.post('/:id/delete', checkAdmin, async (req, res) => {
   try {
     await Event.findByIdAndDelete(req.params.id);
-
     res.redirect('/admin/events');
   } catch (error) {
     console.error(error);
