@@ -2,11 +2,11 @@ const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('./cloudinary');
 
-// 🔥 파일명 안전하게 만드는 함수
+// 🔥 파일명 안전 처리
 function sanitizeFileName(name) {
   return String(name || 'file')
-    .replace(/\s+/g, '-')                 // 공백 → -
-    .replace(/[^a-zA-Z0-9-_]/g, '');      // 한글/특수문자 제거
+    .replace(/\s+/g, '-')           // 공백 제거
+    .replace(/[^a-zA-Z0-9-_]/g, ''); // 한글/특수문자 제거
 }
 
 const storage = new CloudinaryStorage({
@@ -16,7 +16,7 @@ const storage = new CloudinaryStorage({
     const base = sanitizeFileName(file.originalname.split('.')[0]);
 
     return {
-      folder: 'damore/uploads',
+      folder: 'damore',
       public_id: `${Date.now()}-${base}`, // 🔥 핵심
       format: ext,
     };
