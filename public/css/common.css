@@ -525,7 +525,7 @@ footer {
 
 .mypage-dropdown {
   position: absolute;
-  top: calc(100% + 14px);
+  top: 100%;
   right: 0;
   min-width: 170px;
   background: #fff;
@@ -537,8 +537,16 @@ footer {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transform: translateY(8px);
+  transform: translateY(6px);
   transition: 0.2s ease;
+}
+
+.mypage-menu {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 14px 0;
+  margin: -14px 0;
 }
 
 .mypage-menu:hover .mypage-dropdown,
