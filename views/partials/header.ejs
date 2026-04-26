@@ -1,134 +1,116 @@
-<% const safeCategories=Array.isArray(typeof categories !=='undefined' ? categories : []) ? categories : []; const
-  safeCategory=typeof category !=='undefined' ? category : '' ; const safeCurrentPath=typeof currentPath !=='undefined'
-  ? currentPath : '' ; const safeIsAdmin=typeof isAdmin !=='undefined' ? isAdmin : false; const safeCurrentUser=typeof
-  currentUser !=='undefined' ? currentUser : null; const safeCartCount=typeof cartCount !=='undefined' ? cartCount : 0;
-  const isCommunityActive=safeCurrentPath.startsWith('/community'); const
-  isMyPageActive=safeCurrentPath.startsWith('/mypage') || safeCurrentPath.startsWith('/my-orders') ||
-  safeCurrentPath.startsWith('/order/lookup') || safeCurrentPath.startsWith('/cart'); %>
+<%
+  const safeCategories = Array.isArray(typeof categories !== 'undefined' ? categories : []) ? categories : [];
+  const safeCategory = typeof category !== 'undefined' ? category : '';
+  const safeCurrentPath = typeof currentPath !== 'undefined' ? currentPath : '';
+  const safeIsAdmin = typeof isAdmin !== 'undefined' ? isAdmin : false;
+  const safeCurrentUser = typeof currentUser !== 'undefined' ? currentUser : null;
+  const safeCartCount = typeof cartCount !== 'undefined' ? cartCount : 0;
 
-  <header>
-    <div class="container">
-      <div class="header-inner">
-        <a href="/" class="brand">
-          <span class="brand-logo">DAMORE</span>
-          <span class="brand-sub">the more, the mood</span>
-        </a>
+  const isCommunityActive = safeCurrentPath.startsWith('/community');
+  const isMyPageActive =
+    safeCurrentPath.startsWith('/mypage') ||
+    safeCurrentPath.startsWith('/my-orders') ||
+    safeCurrentPath.startsWith('/order/lookup') ||
+    safeCurrentPath.startsWith('/cart');
+%>
 
-        <nav class="nav">
-          <a href="/" class="<%= safeCurrentPath === '/' ? 'active' : '' %>">all</a>
+<header>
+  <div class="container">
+    <div class="header-inner">
+      <a href="/" class="brand">
+        <span class="brand-logo">DAMORE</span>
+        <span class="brand-sub">the more, the mood</span>
+      </a>
 
-          <% if (safeCategories.length> 0) { %>
-            <% safeCategories.forEach(item=> { %>
-              <div class="nav-item">
-                <a href="/category/<%= item.name %>" class="nav-link <%= safeCategory === item.name ? 'active' : '' %>">
-                  <%= item.name %>
-                </a>
+      <nav class="nav">
+        <a href="/" class="<%= safeCurrentPath === '/' ? 'active' : '' %>">all</a>
 
-                <% if (item.subCategories && item.subCategories.length> 0) { %>
-                  <div class="dropdown-menu">
-                    <% item.subCategories.forEach(subItem=> { %>
-                      <a href="/category/<%= item.name %>?sub=<%= encodeURIComponent(subItem) %>">
-                        <%= subItem %>
-                      </a>
-                      <% }) %>
-                  </div>
-                  <% } %>
-              </div>
-              <% }) %>
-                <% } %>
+        <% if (safeCategories.length > 0) { %>
+          <% safeCategories.forEach(item => { %>
+            <div class="nav-item">
+              <a href="/category/<%= item.name %>" class="nav-link <%= safeCategory === item.name ? 'active' : '' %>">
+                <%= item.name %>
+              </a>
 
-                  <a href="/about" class="<%= safeCurrentPath === '/about' ? 'active' : '' %>">about</a>
+              <% if (item.subCategories && item.subCategories.length > 0) { %>
+                <div class="dropdown-menu">
+                  <% item.subCategories.forEach(subItem => { %>
+                    <a href="/category/<%= item.name %>?sub=<%= encodeURIComponent(subItem) %>">
+                      <%= subItem %>
+                    </a>
+                  <% }) %>
+                </div>
+              <% } %>
+            </div>
+          <% }) %>
+        <% } %>
 
-                  <div class="nav-item">
-                    <a href="/community/notice" class="nav-link <%= isCommunityActive ? 'active' : '' %>">커뮤니티</a>
-                    <div class="dropdown-menu">
-                      <a href="/community/notice">공지사항</a>
-                      <a href="/community/review">리뷰</a>
-                      <a href="/community/event">이벤트</a>
-                      <a href="/community/customer">고객센터</a>
-                    </div>
-                  </div>
-        </nav>
+        <a href="/about" class="<%= safeCurrentPath === '/about' ? 'active' : '' %>">about</a>
 
-        <div class="header-actions">
-          <% if (safeIsAdmin) { %>
-            <a href="/admin/dashboard">관리자 수정</a>
-            <a href="/logout">로그아웃</a>
-            <% } else { %>
-
-              <% if (safeCurrentUser) { %>
-                <span class="user-name">
-                  <%= safeCurrentUser.name %>님
-                </span>
-                <% } else { %>
-                  <a href="/auth">로그인</a>
-                  <% } %>
-
-                    <div class="header-actions">
-                      <% if (safeIsAdmin) { %>
-                        <a href="/admin/dashboard">관리자 수정</a>
-                        <a href="/logout">로그아웃</a>
-                        <% } else { %>
-
-                          <!-- 마이페이지 -->
-                          <div class="mypage-menu">
-                            <button type="button" class="mypage-btn <%= isMyPageActive ? 'active' : '' %>">
-                              마이페이지
-                            </button>
-
-                            <div class="mypage-dropdown">
-                              <% if (safeCurrentUser) { %>
-                                <div class="mypage-user">
-                                  <%= safeCurrentUser.name %>님
-                                </div>
-                                <a href="/mypage">마이페이지</a>
-                                <a href="/my-orders">주문조회</a>
-                                <a href="/wishlist">관심상품</a>
-                                <a href="/recent">최근본상품</a>
-                                <a href="/my-posts">내가쓴글</a>
-                                <a href="/coupon">쿠폰보관함</a>
-                                <% } else { %>
-                                  <a href="/auth">로그인</a>
-                                  <a href="/auth">회원가입</a>
-                                  <a href="/order/lookup">주문조회</a>
-                                  <% } %>
-                            </div>
-                          </div>
-
-                          <% } %>
-
-                            <!-- 장바구니 -->
-                            <a href="/cart">장바구니 <%= safeCartCount %></a>
-
-                            <!-- 🔥 로그인 상태일 때만 로그아웃 -->
-                            <% if (!safeIsAdmin && safeCurrentUser) { %>
-                              <a href="/logout">로그아웃</a>
-                              <% } %>
-                    </div>
+        <div class="nav-item">
+          <a href="/community/notice" class="nav-link <%= isCommunityActive ? 'active' : '' %>">커뮤니티</a>
+          <div class="dropdown-menu">
+            <a href="/community/notice">공지사항</a>
+            <a href="/community/review">리뷰</a>
+            <a href="/community/event">이벤트</a>
+            <a href="/community/customer">고객센터</a>
+          </div>
         </div>
+      </nav>
 
-        <a href="/cart">장바구니 <%= safeCartCount %></a>
+      <div class="header-actions">
+        <% if (safeIsAdmin) { %>
+          <a href="/admin/dashboard">관리자 수정</a>
+          <a href="/logout">로그아웃</a>
+        <% } else { %>
+
+          <% if (safeCurrentUser) { %>
+            <span class="user-name"><%= safeCurrentUser.name %>님</span>
+          <% } %>
+
+          <a href="/cart">장바구니 <%= safeCartCount %></a>
+
+          <div class="mypage-menu">
+            <button type="button" class="mypage-btn <%= isMyPageActive ? 'active' : '' %>">
+              마이페이지
+            </button>
+
+            <div class="mypage-dropdown">
+              <a href="/order/lookup">주문조회</a>
+              <a href="/my-orders">내 주문내역</a>
+              <a href="/wishlist">관심상품</a>
+              <a href="/recent">최근본상품</a>
+              <a href="/my-posts">내가쓴글</a>
+              <a href="/coupon">쿠폰보관함</a>
+            </div>
+          </div>
+
+          <% if (safeCurrentUser) { %>
+            <a href="/logout">로그아웃</a>
+          <% } else { %>
+            <a href="/auth">로그인</a>
+          <% } %>
+
         <% } %>
       </div>
     </div>
-    </div>
-  </header>
+  </div>
+</header>
 
-  <script>
-    document.addEventListener('click', function (e) {
-      const menu = document.querySelector('.mypage-menu');
-      if (!menu) return;
+<script>
+  document.addEventListener('click', function (e) {
+    const menu = document.querySelector('.mypage-menu');
+    if (!menu) return;
 
-      const btn = menu.querySelector('.mypage-btn');
+    const btn = menu.querySelector('.mypage-btn');
 
-      if (btn && btn.contains(e.target)) {
-        menu.classList.toggle('open');
-        return;
-      }
+    if (btn && btn.contains(e.target)) {
+      menu.classList.toggle('open');
+      return;
+    }
 
-      if (!menu.contains(e.target)) {
-        menu.classList.remove('open');
-      }
-    });
-
-  </script>
+    if (!menu.contains(e.target)) {
+      menu.classList.remove('open');
+    }
+  });
+</script>
